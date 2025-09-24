@@ -17,3 +17,5 @@ Imports:
     RCurl,
     readr,
     rlang
+URL: https://github.com/NinaZiegenbein/wrictools
+BugReports: https://github.com/NinaZiegenbein/wrictools/issues
