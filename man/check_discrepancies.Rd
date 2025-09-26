@@ -23,3 +23,20 @@ Checks for discrepancies between S1 and S2 measurements in the DataFrame and pri
 This function is not included in the big pre-processing function, as it is more intended to
 perform a quality check on your data and not to automatically inform the processing of the data.
 }
+\examples{
+data_txt <- system.file("extdata", "data.txt", package = "wrictools")
+lines <- readLines(data_txt)
+# Create example WRIC data frames
+result <- create_wric_df(
+  filepath = data_txt,
+  lines = lines,
+  save_csv = FALSE,
+  code_1 = "R1",
+  code_2 = "R2",
+  path_to_save = tempdir(),
+  start = NULL,
+  end = NULL,
+  notefilepath = NULL
+)
+check_discrepancies(result$df_room1)
+}

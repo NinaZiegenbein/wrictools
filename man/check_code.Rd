@@ -21,3 +21,17 @@ A list containing the codes for Room 1 and Room 2.
 \description{
 Check the subject ID code and return corresponding Room 1 and Room 2 codes.
 }
+\examples{
+# Example metadata for Room 1 and Room 2
+r1 <- data.frame(`Subject.ID` = "S001", `Comments` = "Morning")
+r2 <- data.frame(`Subject.ID` = "S002", `Comments` = "Afternoon")
+
+# Use subject IDs only
+check_code("id", NULL, r1, r2)
+
+# Use subject IDs + comments
+check_code("id+comment", NULL, r1, r2)
+
+# Use manual codes
+check_code("manual", c("custom1", "custom2"), r1, r2)
+}

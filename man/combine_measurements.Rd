@@ -17,3 +17,26 @@ A DataFrame with combined measurements.
 \description{
 Combines S1 and S2 measurements in the DataFrame using the specified method.
 }
+\examples{
+data_txt <- system.file("extdata", "data.txt", package = "wrictools")
+lines <- readLines(data_txt)
+
+# Create example WRIC DataFrames
+result <- create_wric_df(
+  filepath = data_txt,
+  lines = lines,
+  save_csv = FALSE,
+  code_1 = "R1",
+  code_2 = "R2",
+  path_to_save = tempdir(),
+  start = NULL,
+  end = NULL,
+  notefilepath = NULL
+)
+
+# Combine measurements using different methods
+combined_mean <- combine_measurements(result$df_room1, method = "mean")
+combined_median <- combine_measurements(result$df_room1, method = "median")
+combined_s1 <- combine_measurements(result$df_room1)
+
+}

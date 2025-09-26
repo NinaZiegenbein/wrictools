@@ -2,7 +2,7 @@
 % Please edit documentation in R/processing.R
 \name{add_relative_time}
 \alias{add_relative_time}
-\title{Add Relative Time in minutes to DataFrame. Rows before the start_time will be indicated negative.}
+\title{Add Relative Time in minutes to DataFrame. Rows before the \code{start_time} will be indicated negative.}
 \usage{
 add_relative_time(df, start_time = NULL)
 }
@@ -17,5 +17,13 @@ A data frame with an additional column 'relative_time\link{min}' indicating
 the time in minutes from the start time.
 }
 \description{
-Add Relative Time in minutes to DataFrame. Rows before the start_time will be indicated negative.
+Add Relative Time in minutes to DataFrame. Rows before the \code{start_time} will be indicated negative.
+}
+\examples{
+# Create example data
+df <- data.frame(
+  datetime = as.POSIXct(c("2023-11-13 11:40:00", "2023-11-13 11:45:00", "2023-11-13 11:50:00"))
+)
+add_relative_time(df)
+add_relative_time(df, start_time = "2023-11-13 11:45:00")
 }

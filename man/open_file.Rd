@@ -18,3 +18,4 @@ Opens a wric .txt file and reads its contents.
 \note{
 Raises an error if the file is not a valid wric data file.
 }
+\keyword{internal}

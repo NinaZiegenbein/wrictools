@@ -1,9 +1,13 @@
 Package: wrictools
-Title: What the Package Does (One Line, Title Case)
+Title: Processing, Analysis and Visualization of Whole Room Indirect Calorimetery Data
 Version: 0.0.0.9000
 Authors@R: 
-    person("Nina", "Ziegenbein", , "ninaz@ph.au.dk", role = c("aut", "cre"))
-Description: This repository contains functions, tutorials and examples to (pre)process and analyse the data from the whole room indirect calorimeter by Maastricht Instruments using the OmniCal software.
+    person("Nina", "Ziegenbein", , "nina.ziegenbein@web.de", role = c("aut", "cre"), comment = c(ORCID = "0009-0005-4913-8910"))
+Description: Description: Provides functions, tutorials, and examples to preprocess, 
+    analyze, and visualize data from whole room indirect calorimeters (WRIC) by 
+    Maastricht Instruments, using the 'OmniCal' software. Some functions may also 
+    work with WRICs from other manufacturers, though full functionality has only 
+    been validated for Maastricht Instruments devices.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

@@ -8,9 +8,8 @@
 #' @return A ggplot2 object visualizing the specified data with protocol highlights. Optionally saves the plot to a file if `save_png` is `TRUE`.
 #'
 #' @examples
-#' \dontrun{
-#' visualize_with_protocol("path/to/data.csv", plot = "Energy Expenditure (kcal/min)", save_png = TRUE)
-#' }
+#' csv <- system.file("extdata", "example.csv", package = "wrictools")
+#' visualize_with_protocol(csv, plot = "VO2")
 #' @export
 visualize_with_protocol <- function(csv_file, plot = "RER", protocol_colors_labels = NULL, save_png = FALSE, path_to_save = NULL) {
   protocol <- NULL
@@ -26,7 +25,7 @@ visualize_with_protocol <- function(csv_file, plot = "RER", protocol_colors_labe
   file_name = sub("\\.[^\\.]+$", "", basename(csv_file))
 
   p <- ggplot(df, aes(x = .data[["relative_time"]], y = .data[[plot]])) +
-    geom_line(color <- "blue") +
+    geom_line(color = "blue") +
     labs(title = paste(plot, "Over Time for", basename(csv_file)),
          x = "Relative Time (min)",
          y = plot) +

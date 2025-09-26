@@ -14,7 +14,10 @@ preprocess_wric_files(
   combine = TRUE,
   method = "mean",
   start = NULL,
-  end = NULL
+  end = NULL,
+  path = NULL,
+  api_url,
+  api_token
 )
 }
 \arguments{
@@ -37,10 +40,34 @@ preprocess_wric_files(
 \item{start}{character or POSIXct or NULL, rows before this will be removed, if NULL takes first row e.g "2023-11-13 11:43:00"}
 
 \item{end}{character or POSIXct or NULL, rows after this will be removed, if NULL takes last row e.g "2023-11-13 11:43:00"}
+
+\item{path}{File path where the exported file will be saved.}
+
+\item{api_url}{String, URL to the REDCap API, should be specified in your personal config.R file}
+
+\item{api_token}{String, personal token for the REDCap API, should be specified in your personal config.R file}
 }
 \value{
 A list where each key is a record ID and each value is a list with: (r1_metadata, r2_metadata, df_room1, df_room2).
 }
 \description{
 Preprocesses multiple wric_files by RedCAP record ID, extracting metadata, creating DataFrames, and optionally saving results.
+}
+\examples{
+\dontshow{if (file.exists(path.expand("~/.config.R"))) withAutoprint(\{ # examplesIf}
+source(path.expand("~/.config.R"))
+tmp_csv <- tempfile(fileext = ".csv")
+write.csv(data.frame(X1 = c("record1", "record2")), tmp_csv, row.names = FALSE)
+
+# Use dummy API URL and token
+if (file.exists(tmp_csv)) {
+  preprocess_wric_files(
+    csv_file = tmp_csv,
+    fieldname = "wric_data",
+    api_url = api_url,
+    api_token = api_token,
+    save_csv = FALSE
+  )
+}
+\dontshow{\}) # examplesIf}
 }

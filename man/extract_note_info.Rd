@@ -33,5 +33,12 @@ different participants.
 or it may be empty to indicate both.
 \item The \code{keywords_dict} can be modified to fit specific study protocols,
 with multi-group checks for keyword matching.
+\item See ReadMe or vignettes for more detailed examples.
 }
+}
+\examples{
+notes_file <- system.file("extdata", "note.txt", package = "wrictools")
+df1 <- data.frame(datetime = as.POSIXct("2023-11-13 11:40:00") + 0:2*300)
+df2 <- data.frame(datetime = as.POSIXct("2023-11-13 11:40:00") + 0:2*300)
+result <- extract_note_info(notes_file, df1, df2)
 }

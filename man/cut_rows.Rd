@@ -23,3 +23,21 @@ DataFrame with rows between the specified start and end dates, or the full DataF
 \description{
 Filters rows in a DataFrame based on an optional start and end datetime range.
 }
+\examples{
+df <- data.frame(
+  datetime = as.POSIXct(c(
+    "2023-11-13 11:40:00",
+    "2023-11-13 11:45:00",
+    "2023-11-13 11:50:00"
+  ))
+)
+
+# Filter rows from 11:45 onward
+cut_rows(df, start = "2023-11-13 11:45:00")
+
+# Filter rows between 11:40 and 11:45
+cut_rows(df, start = "2023-11-13 11:40:00", end = "2023-11-13 11:45:00")
+
+# No filtering (both NULL)
+cut_rows(df)
+}

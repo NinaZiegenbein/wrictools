@@ -23,3 +23,16 @@ A list containing the Room 1 code, Room 2 code, and DataFrames for r1_metadata a
 \description{
 Extracts metadata for two subjects from text lines and optionally saves it as CSV files.
 }
+\examples{
+lines <- c(
+  "OmniCal software by ing.P.F.M.Schoffelen, Dept. of Human Biology, Maastricht University",
+  "file identifier is C:\\\\MI_Room_Calorimeter\\\\Results_online\\\\1_minute\\\\Results.txt",
+  "",
+  "Room 1\tProject\tSubject ID\tExperiment performed by\tComments",
+  "\tPROJECT\tXXXX\tJANE DOE\t",
+  "Room 2\tProject\tSubject ID\tExperiment performed by\tComments",
+  "\tPROJECT\tYYYY\tJOHN DOE\t"
+)
+
+extract_meta_data(lines, code = "id", manual = NULL, save_csv = FALSE, path_to_save = NULL)
+}

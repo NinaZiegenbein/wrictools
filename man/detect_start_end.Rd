@@ -18,7 +18,7 @@ Returns NA if not possible to find start or end time.
 Automatically detect enter and exit from the chamber based on the notefile.
 Returns the start and end times for two participants.
 }
-\keyword{chamber}
-\keyword{detection}
-\keyword{entry}
-\keyword{exit}
+\examples{
+notes_path <- system.file("extdata", "note.txt", package = "wrictools")
+detect_start_end(notes_path)
+}

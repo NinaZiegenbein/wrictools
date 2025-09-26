@@ -47,3 +47,10 @@ A list containing the metadata and DataFrames for Room 1 and Room 2.
 \description{
 Preprocesses a wric data file, extracting metadata, creating DataFrames, and optionally saving results.
 }
+\examples{
+outdir <- file.path(tempdir(), "wrictools")
+dir.create(outdir, showWarnings = FALSE)
+data_txt <- system.file("extdata", "data_no_comment.txt", package = "wrictools")
+result <- preprocess_wric_file(data_txt, path_to_save = outdir)
+unlink(outdir, recursive = TRUE)
+}

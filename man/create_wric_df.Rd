@@ -44,3 +44,24 @@ Creates DataFrames for wric data from a file and optionally saves them as CSV fi
 \note{
 Raises an error if Date or Time columns are inconsistent across rows.
 }
+\examples{
+# Load example files from the package
+data_txt <- system.file("extdata", "data.txt", package = "wrictools")
+notes_txt <- system.file("extdata", "note.txt", package = "wrictools")
+
+# Create the data lines for parsing
+lines <- readLines(data_txt)
+
+# Call the function
+result <- create_wric_df(
+  filepath = data_txt,
+  lines = lines,
+  save_csv = FALSE,
+  code_1 = "XXXX",
+  code_2 = "YYYY",
+  path_to_save = tempdir(),
+  start = NULL,
+  end = NULL,
+  notefilepath = notes_txt
+)
+}

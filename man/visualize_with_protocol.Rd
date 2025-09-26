@@ -30,7 +30,6 @@ A ggplot2 object visualizing the specified data with protocol highlights. Option
 Visualizes time-series data from a WRIC CSV file, highlighting protocol changes and optionally saving the plot.
 }
 \examples{
-\dontrun{
-visualize_with_protocol("path/to/data.csv", plot = "Energy Expenditure (kcal/min)", save_png = TRUE)
-}
+csv <- system.file("extdata", "example.csv", package = "wrictools")
+visualize_with_protocol(csv, plot = "VO2")
 }
