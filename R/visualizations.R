@@ -13,7 +13,7 @@
 #' }
 #' @export
 visualize_with_protocol <- function(csv_file, plot = "RER", protocol_colors_labels = NULL, save_png = FALSE, path_to_save = NULL) {
-  protocol = NULL
+  protocol <- NULL
   if (is.null(protocol_colors_labels)) {
     # Default protocol colors and labels
     protocol_colors_labels <- data.frame(
@@ -23,11 +23,10 @@ visualize_with_protocol <- function(csv_file, plot = "RER", protocol_colors_labe
     )
   }
   df <- read_csv(csv_file, show_col_types = FALSE)
-  #dataframes[[substr(basename(csv_file), 1, 7)]] <- df
   file_name = sub("\\.[^\\.]+$", "", basename(csv_file))
 
   p <- ggplot(df, aes(x = .data[["relative_time"]], y = .data[[plot]])) +
-    geom_line(color = "blue") +
+    geom_line(color <- "blue") +
     labs(title = paste(plot, "Over Time for", basename(csv_file)),
          x = "Relative Time (min)",
          y = plot) +
