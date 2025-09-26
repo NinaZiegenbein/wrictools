@@ -1,0 +1,20 @@
+OmniCal software by ing.P.F.M.Schoffelen, Dept. of Human Biology, Maastricht University
+file identifier is C:\MI_Room_Calorimeter\Notes\example.txt	
+Date	Time	Comment
+
+11/13/23	21:14:08	21:15:29
+11/13/23	21:14:22	Begge deltagere ind i kammer
+11/13/23	22:39:53	deltagere i seng
+11/14/23	06:57:11	1 deltager vaagen 6:45 ca
+11/14/23	06:57:25	2 lige vaekket deltager
+11/14/23	07:01:36	1 start REE
+11/14/23	07:19:48	2 urin og saa Start REE
+11/14/23	07:32:50	1 stop REE
+11/14/23	07:43:24	2 stop REE
+11/14/23	07:50:33	1 venflon laegges
+11/14/23	08:13:27	1 start maaltid
+11/14/23	08:17:00	2 start maaltid
+11/14/23	08:29:23	1 faerdig 08:26
+11/14/23	08:44:42	2 stop maaltid 08:42
+11/14/23	08:47:48	1 ud
+11/14/23	06:51:36	2 exit
