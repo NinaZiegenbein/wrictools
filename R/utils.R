@@ -14,7 +14,7 @@
 NULL
 
 # Import from dplyr
-#' @importFrom dplyr select mutate filter contains all_of where
+#' @importFrom dplyr select mutate filter contains all_of where lead
 NULL
 
 # Import from readr
@@ -35,4 +35,8 @@ NULL
 
 # Import from rlang
 #' @importFrom rlang .data
+NULL
+
+# Import from ggplot
+#' @importFrom ggplot2 aes coord_cartesian geom_line geom_rect ggplot ggsave labs scale_fill_manual theme_minimal
 NULL
