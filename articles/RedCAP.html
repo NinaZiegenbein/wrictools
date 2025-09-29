@@ -67,7 +67,143 @@
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/NinaZiegenbein/wrictools" class="external-link">wrictools</a></span><span class="op">)</span></span></code></pre></div>
-  </main>
+<div class="section level2">
+<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h2>
+<p>In this tutorial, you will learn how to use the <strong>RedCap
+API</strong> to download and upload files from and to your RedCap
+project. The RedCap API allows you to interact with your project
+programmatically, enabling the automation of data transfers such as
+downloading and uploading files.</p>
+<div class="section level4">
+<h4 id="overview-of-the-tasks">Overview of the Tasks<a class="anchor" aria-label="anchor" href="#overview-of-the-tasks"></a>
+</h4>
+<ol style="list-style-type: decimal">
+<li>Obtain an API Token from RedCap.</li>
+<li>Set up a configuration file to securely store the API token.</li>
+<li>Download files from RedCap based on record IDs and field names.</li>
+<li>Process multiple files from RedCap</li>
+<li>Upload files to RedCap for specific records and fields.</li>
+</ol>
+</div>
+<div class="section level3">
+<h3 id="obtain-your-api-token">1. Obtain Your API Token<a class="anchor" aria-label="anchor" href="#obtain-your-api-token"></a>
+</h3>
+<p>To interact with the RedCap API, you need an <strong>API
+token</strong>. This token is used to authenticate your requests. Follow
+the steps below to get your token:</p>
+<ol style="list-style-type: decimal">
+<li>Go to your project in <a href="https://redcap.au.dk/" class="external-link">RedCap</a>.</li>
+<li>In the left-hand sidebar, look for the API option. If you don’t see
+it, ask the project administrator to enable API access for your
+user.</li>
+<li>Once you have access to the API page, you will see an option to
+Request API Token. This may take a few hours to be approved.</li>
+<li>After the token is approved, you will find it on the same page.</li>
+</ol>
+<p>Save this token securely as it will be needed to authenticate your
+requests.</p>
+</div>
+<div class="section level3">
+<h3 id="set-up-the-configuration-file">2. Set Up the Configuration File<a class="anchor" aria-label="anchor" href="#set-up-the-configuration-file"></a>
+</h3>
+<p>Before you can interact with the RedCap API, you need to create a
+config.r file. This file will store your API token and the RedCap URL.
+Use the example config_example.r provided in the repository.</p>
+<p>Here is an example of how your config.r file should look:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">api_token</span>       <span class="op">&lt;-</span> <span class="st">'YOUR_API_TOKEN'</span>  <span class="co"># Replace with your personal API token</span></span>
+<span><span class="va">api_url</span>         <span class="op">&lt;-</span> <span class="st">'https://redcap.au.dk/api/'</span>  <span class="co"># URL for AU RedCap projects</span></span></code></pre></div>
+<p>Important: Keep this file secure. If you are working with sensitive
+data, make sure not to share this file or commit it to a public
+repository. <em>If you use Git, make sure you add a
+<code>.gitignore</code> file and add <code>config.R</code> to it. You
+can take a look at the gitignore file in this repository for
+inspriation.</em></p>
+</div>
+<div class="section level3">
+<h3 id="export-files-from-redcap">3. Export Files from RedCap<a class="anchor" aria-label="anchor" href="#export-files-from-redcap"></a>
+</h3>
+<p>You can use the <code>export_file_from_redcap</code> function to
+download files from RedCap. The function requires three arguments:</p>
+<ul>
+<li>record_id: The unique identifier for the record you want to
+download.</li>
+<li>fieldname: The field name in RedCap where the file is stored.</li>
+<li>path: The path where you want to save the downloaded file. This
+parameter is optional. If you do not specify a path it will create a
+folder /tmp (temporary) in your current directory.</li>
+</ul>
+<p><em>Example:</em> Once your configuration file is set up, you can use
+the following code to download a file. Replace record_id and fieldname
+with your actual record ID and field name:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/export_file_from_redcap.html">export_file_from_redcap</a></span><span class="op">(</span>record_id <span class="op">=</span> <span class="st">"12345"</span>, fieldname <span class="op">=</span> <span class="st">"WRIC_raw"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="process-multiple-files-from-redcap">4. Process multiple files from RedCap<a class="anchor" aria-label="anchor" href="#process-multiple-files-from-redcap"></a>
+</h3>
+<p>Let’s assume you have multiple records and files that need to be
+processed. You can use the preprocess_WRIC_files function to download
+and process files for multiple records. You need to specify the record
+IDs in your project, and the easiest is if you save them in a .csv file.
+The function has arguments very similair to function
+<code>preprocess_WRIC_file</code> (and the functionname is only
+different in the additional s in the end):</p>
+<ul>
+<li>csv_file: The path to the CSV file containing the record IDs.</li>
+<li>fieldname: The REDCap field where the WRIC data is stored.</li>
+<li>code: Defines how subject IDs are generated (id, id+comment, or
+manual).</li>
+<li>manual: Optional custom codes for subjects in Room 1 and Room 2 if
+code is “manual”.</li>
+<li>save_csv: Whether to save the processed metadata and data to CSV
+files (default: TRUE).</li>
+<li>path_to_save: The directory where the CSV files should be saved
+(default is the current directory).</li>
+<li>combine: Whether to combine measurements from S1 and S2 (default:
+TRUE).</li>
+<li>method: The method used to combine measurements (“mean”, “median”,
+etc.).</li>
+<li>start and end: Optional date-time range to filter the data (default:
+NULL, which uses the entire dataset).</li>
+</ul>
+<p>The function returns a <strong>list where each key is a record
+ID</strong>, and the corresponding value is another list containing
+R1_metadata, R2_metadata, df_room1, df_room2.</p>
+<p><em>Example:</em> Assuming you have a CSV file (record_ids.csv) with
+record IDs and a fieldname of “WRIC_raw”, you can call the function like
+this:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">preprocess_WRIC_files</span><span class="op">(</span><span class="st">"./example_data/record_ids.csv"</span>, <span class="st">"WRIC_raw"</span>, </span>
+<span>                            code <span class="op">=</span> <span class="st">"id"</span>, save_csv <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">R1_metadata</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">$</span><span class="va">R1_metadata</span></span>
+<span><span class="va">R2_metadata</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">$</span><span class="va">R2_metadata</span></span>
+<span><span class="va">df_room1</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">$</span><span class="va">df_room1</span></span>
+<span><span class="va">df_room2</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">$</span><span class="va">df_room2</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="upload-files-to-redcap">5. Upload Files to RedCap<a class="anchor" aria-label="anchor" href="#upload-files-to-redcap"></a>
+</h3>
+<p>You can upload files to RedCap using the
+<code>upload_file_to_redcap</code> function. This function requires:</p>
+<ul>
+<li>filepath: The path to the file you want to upload.</li>
+<li>record_id: The record ID to which the file will be uploaded.</li>
+<li>fieldname: The field name where the file will be uploaded.</li>
+</ul>
+<p><em>Example:</em> To upload a file, use the following code, replacing
+filepath, record_id, and fieldname with your actual file path, record
+ID, and field name:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/upload_file_to_redcap.html">upload_file_to_redcap</a></span><span class="op">(</span>filepath <span class="op">=</span> <span class="st">"./example_data/XXXX_WRIC_data.csv"</span>, </span>
+<span>                    record_id <span class="op">=</span> <span class="st">"12345"</span>, fieldname <span class="op">=</span> <span class="st">"WRIC_processed"</span><span class="op">)</span></span></code></pre></div>
+<p>Remember to delete the tmp folder after uploading the files
+again.</p>
+</div>
+</div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
