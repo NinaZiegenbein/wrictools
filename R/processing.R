@@ -56,7 +56,7 @@ check_code <- function(code, manual, r1_metadata, r2_metadata) {
 #' )
 #'
 #' extract_meta_data(lines, code = "id", manual = NULL, save_csv = FALSE, path_to_save = NULL)
-extract_meta_data <- function(lines, code, manual, save_csv, path_to_save) {
+extract_meta_data <- function(lines, code, manual, save_csv = FALSE, path_to_save) {
   header_lines <- lapply(lines[4:7], function(line) unlist(strsplit(trimws(line), "\t")))
 
   # Standardize lengths to avoid errors - might have to rename your documents manually if there are eg IDs missing
@@ -500,7 +500,7 @@ extract_note_info <- function(notes_path, df_room1, df_room2, keywords_dict = NU
 #'   end = NULL,
 #'   notefilepath = notes_txt
 #' )
-create_wric_df <- function(filepath, lines, save_csv, code_1, code_2, path_to_save, start, end, notefilepath) {
+create_wric_df <- function(filepath, lines, save_csv = FALSE, code_1, code_2, path_to_save, start, end, notefilepath) {
 
   data_start_index <- which(grepl("^Room 1 Set 1", lines)) + 1
   df <- read_tsv(filepath, skip = data_start_index, col_names = FALSE)
@@ -723,7 +723,7 @@ combine_measurements <- function(df, method = "mean") {
 #' data_txt <- system.file("extdata", "data_no_comment.txt", package = "wrictools")
 #' result <- preprocess_wric_file(data_txt, path_to_save = outdir)
 #' unlink(outdir, recursive = TRUE)
-preprocess_wric_file <- function(filepath, code = "id", manual = NULL, save_csv = TRUE, path_to_save = NULL, combine = TRUE, method = "mean", start = NULL, end = NULL, notefilepath = NULL, keywords_dict = NULL) {
+preprocess_wric_file <- function(filepath, code = "id", manual = NULL, save_csv = FALSE, path_to_save = NULL, combine = TRUE, method = "mean", start = NULL, end = NULL, notefilepath = NULL, keywords_dict = NULL) {
   lines <- open_file(filepath)
   result <- extract_meta_data(lines, code, manual, save_csv, path_to_save)
   r1_metadata <- result$r1_metadata
@@ -852,7 +852,7 @@ upload_file_to_redcap <- function(filepath, record_id, fieldname, api_url, api_t
 #'   )
 #' }
 preprocess_wric_files <- function(csv_file, fieldname, code = "id", manual = NULL,
-                                  save_csv = TRUE, path_to_save = NULL, combine = TRUE,
+                                  save_csv = FALSE, path_to_save = NULL, combine = TRUE,
                                   method = "mean", start = NULL, end = NULL,
                                   path = NULL, api_url, api_token) {
   # Read record IDs from CSV

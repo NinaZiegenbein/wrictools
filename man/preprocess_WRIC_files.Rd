@@ -9,7 +9,7 @@ preprocess_wric_files(
   fieldname,
   code = "id",
   manual = NULL,
-  save_csv = TRUE,
+  save_csv = FALSE,
   path_to_save = NULL,
   combine = TRUE,
   method = "mean",

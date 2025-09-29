@@ -7,7 +7,7 @@
 create_wric_df(
   filepath,
   lines,
-  save_csv,
+  save_csv = FALSE,
   code_1,
   code_2,
   path_to_save,

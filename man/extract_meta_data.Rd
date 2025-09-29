@@ -4,7 +4,7 @@
 \alias{extract_meta_data}
 \title{Extracts metadata for two subjects from text lines and optionally saves it as CSV files.}
 \usage{
-extract_meta_data(lines, code, manual, save_csv, path_to_save)
+extract_meta_data(lines, code, manual, save_csv = FALSE, path_to_save)
 }
 \arguments{
 \item{lines}{List of strings containing the wric metadata.}
