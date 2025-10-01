@@ -2,7 +2,7 @@ Package: wrictools
 Title: Processing, Analysis and Visualization of Whole Room Indirect Calorimetery Data
 Version: 0.0.0.9000
 Authors@R: 
-    person("Nina", "Ziegenbein", , "nina.ziegenbein@web.de", role = c("aut", "cre"), comment = c(ORCID = "0009-0005-4913-8910"))
+    person("Nina", "Ziegenbein", , "nina.ziegenbein@web.de", role = c("aut", "cre", "cph"), comment = c(ORCID = "0009-0005-4913-8910"))
 Description: Description: Provides functions, tutorials, and examples to preprocess, 
     analyze, and visualize data from whole room indirect calorimeters (WRIC) by 
     Maastricht Instruments, using the 'OmniCal' software. Some functions may also 

@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 # wrictools
 
 <!-- badges: start -->
+[![R-CMD-check](https://github.com/NinaZiegenbein/wrictools/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/NinaZiegenbein/wrictools/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 This repository contains functions, tutorials and examples to (pre)process and analyse the data from the whole room indirect calorimeter by Maastricht Instruments using the OmniCal software. 

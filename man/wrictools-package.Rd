@@ -4,7 +4,7 @@
 \name{wrictools-package}
 \alias{wrictools}
 \alias{wrictools-package}
-\title{wrictools: Processing, Analysis and Visualization of Whole Room Indirect Calorimetery Data}
+\title{wrictools: Analyze Whole Room Indirect Calorimetery (WRIC) Data}
 \description{
 Description: Provides functions, tutorials, and examples to preprocess, analyze, and visualize data from whole room indirect calorimeters (WRIC) by Maastricht Instruments, using the 'OmniCal' software. Some functions may also work with WRICs from other manufacturers, though full functionality has only been validated for Maastricht Instruments devices.
 }
@@ -18,7 +18,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Nina Ziegenbein \email{nina.ziegenbein@web.de} (\href{https://orcid.org/0009-0005-4913-8910}{ORCID})
+\strong{Maintainer}: Nina Ziegenbein \email{nina.ziegenbein@web.de} (\href{https://orcid.org/0009-0005-4913-8910}{ORCID}) [copyright holder]
 
 }
 \keyword{internal}

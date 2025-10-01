@@ -5,6 +5,7 @@
 
 <!-- badges: start -->
 
+[![R-CMD-check](https://github.com/NinaZiegenbein/wrictools/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/NinaZiegenbein/wrictools/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 This repository contains functions, tutorials and examples to
@@ -15,7 +16,7 @@ If you instead want to use the functions in Python, please click below.
 Please note, that the Python code will not be further maintained as of
 March 03.2024.
 
-[![pt-br](https://img.shields.io/badge/Python-yellow.svg)](https://github.com/NinaZiegenbein/WRIC_processing/blob/main/README.python.md)
+[![pt-br](https://img.shields.io/badge/Python-yellow.svg)](https://github.com/hulmanlab/wrictools/blob/main/README.python.md)
 
 ## Example
 
@@ -90,7 +91,7 @@ will be removed, if NULL takes last rows e.g “2023-11-13 11:43:00” -
 the code will try to automatically extract the datetime and current
 protocol specification (sleeping, exercising, eating etc). If possible
 please read the [How To Note
-File](https://github.com/hulmanlab/WRIC_processing/blob/main/HowToNoteFile.pdf),
+File](https://github.com/hulmanlab/wrictools/blob/main/HowToNoteFile.pdf),
 before you start your study for consistent note taking. If there is a
 TimeStamp in the note e.g “Participants starts eating at 16:10”, the
 time of the creation of the note will be overwritten with the time
