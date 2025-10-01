@@ -37,6 +37,7 @@
 <li><a class="dropdown-item" href="../articles/RedCAP.html">RedCAP</a></li>
   </ul>
 </li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -285,14 +286,14 @@ will be removed, if NULL takes last rows e.g “2023-11-13 11:43:00”</li>
 <strong>notefilepath:</strong> If you specify a path to the
 corresponding notefile, the code will try to automatically extract the
 datetime and current protocol specification (sleeping, exercising,
-eating etc). If possible please read the <a href="https://github.com/hulmanlab/WRIC_processing/blob/main/HowToNoteFile.pdf" class="external-link">How
-To Note File</a>, before you start your study for consistent note
-taking. If there is a TimeStamp in the note e.g “Participants starts
-eating at 16:10”, the time of the creation of the note will be
-overwritten with the time specified in the free-text of the note. The
-“protocol” is extracted by keyword search. You can check currently
-included keywords and extend them by checking the keywords_dict in the
-extract_note_info() function of the preprocessing.R file.</li>
+eating etc). If possible please read the [How To Note File]<a href="https://github.com/hulmanlab/wrictools/blob/main/HowToNoteFile.pdf" class="external-link uri">https://github.com/hulmanlab/wrictools/blob/main/HowToNoteFile.pdf</a>),
+before you start your study for consistent note taking. If there is a
+TimeStamp in the note e.g “Participants starts eating at 16:10”, the
+time of the creation of the note will be overwritten with the time
+specified in the free-text of the note. The “protocol” is extracted by
+keyword search. You can check currently included keywords and extend
+them by checking the keywords_dict in the extract_note_info() function
+of the preprocessing.R file.</li>
 <li>
 <strong>keywords_dict:</strong> [Nested List] A “dictionary” with
 keywords for extracting protocol information out of the notefile.</li>
