@@ -8,55 +8,77 @@
 [![R-CMD-check](https://github.com/NinaZiegenbein/wrictools/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/NinaZiegenbein/wrictools/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-This repository contains functions, tutorials and examples to
-(pre)process and analyse the data from the whole room indirect
-calorimeter by Maastricht Instruments using the OmniCal software.
+## Overview
+
+This package provides functions, tutorials, and examples to preprocess,
+analyze, and visualize data from whole room indirect calorimeters (WRIC)
+by Maastricht Instruments, using the ‘OmniCal’ software. Some functions
+may also work with WRICs from other manufacturers, though full
+functionality has only been validated for Maastricht Instruments
+devices.
 
 If you instead want to use the functions in Python, please click below.
 Please note, that the Python code will not be further maintained as of
-March 03.2024.
-
+March 2025.
 [![pt-br](https://img.shields.io/badge/Python-yellow.svg)](https://github.com/hulmanlab/wrictools/blob/main/README.python.md)
 
-## Example
+## Installation
 
-This is a basic example which shows you how to solve a common problem:
+``` r
+# Install from CRAN
+install.packages("pak")
+```
+
+If instead you want to install `wrictools` from GitHub use:
+
+``` r
+library(remotes)
+install_github( "NinaZiegenbein/wrictools")
+```
+
+## Example Usage
+
+### Preprocess Local WRIC file(s)
+
+If you have a WRIC text file locally and want to preprocess it, the
+workflow involves reading the metadata at the top of the file,
+extracting the raw measurements into a structured CSV format, and
+trimming the dataset to only include rows between the specified study
+start and end times. Additional steps include adding a relative time
+variable, combining the two measurement streams, and optionally
+splitting the data by room (room1 and room2) before saving the final
+output as a CSV file. Many of these steps are parameter-controlled,
+allowing you to choose which actions to apply during preprocessing.
+
+*Note: The data.txt in the /data folder is synthetic data intended to
+highlight the data pipeline, but should not be used for actual analysis
+as it is unphysiological and does not correlate to the note.txt file
+either!*
 
 ``` r
 library(wrictools)
-## basic example code
+
+data_txt <- system.file("extdata", "data_no_comment.txt", package = "wrictools") # loading example data
+result <- preprocess_wric_file(data_txt) 
+#> Rows: 4 Columns: 67
+#> ── Column specification ────────────────────────────────────────────────────────
+#> Delimiter: "\t"
+#> chr   (4): X1, X18, X35, X52
+#> dbl  (56): X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15, X16, X2...
+#> lgl   (3): X17, X34, X51
+#> time  (4): X2, X19, X36, X53
+#> 
+#> ℹ Use `spec()` to retrieve the full column specification for this data.
+#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
-## Preprocess Local WRIC file(s)
-
-If you have a WRIC (txt) file locally and want to preprocess it: That
-means reading the metadata at the top of the file, extracting the data
-from the txt format into a csv format, only including certain rows
-between start and end of the study, adding a relative time measurement,
-combining the two measurements, splitting by room1 and room2 and saving
-the data as a csv. Some of these actions are optional, so you can choose
-based on the parameters you provide.
-
-*Note: The data.txt in the example_data folder is random data in the
-same form and is just to highlight the data pipeline, but should not be
-used for actual analysis!*
-
-``` r
-data_txt <- system.file("extdata", "data_no_comment.txt", package = "wrictools")
-result <- preprocess_WRIC_file(data_txt)
-R1_metadata <- result$R1_metadata
-R2_metadata <- result$R2_metadata
-df_room1 <- result$df_room1
-df_room2 <- result$df_room2
-```
-
-The above code specifies only the necessary parameter “filepath” and
+The above code specifies only the necessary parameter `filepath` and
 assumes the default values for all other parameters. But you can specify
 these parameters for yourself, as can be seen below. As these are the
 default options the two function calls return exactly the same results.
 
 ``` r
-result <- preprocess_WRIC_file(
+result <- preprocess_wric_file(
     data_txt, 
     code="id", 
     manual=NULL, 
@@ -69,6 +91,16 @@ result <- preprocess_WRIC_file(
     notefilepath= NULL,
     keywords_dict=NULL
 )
+#> Rows: 4 Columns: 67
+#> ── Column specification ────────────────────────────────────────────────────────
+#> Delimiter: "\t"
+#> chr   (4): X1, X18, X35, X52
+#> dbl  (56): X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15, X16, X2...
+#> lgl   (3): X17, X34, X51
+#> time  (4): X2, X19, X36, X53
+#> 
+#> ℹ Use `spec()` to retrieve the full column specification for this data.
+#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
 Here are explanations and options to all parameters you can specify: -
@@ -78,9 +110,9 @@ is “id”, also possible to specify “id+comment”, where both ID and
 comment values are combined or “manual”, where you can specify your
 own. - **manual** \[String\] Custom codes for subjects in Room 1 and
 Room 2 if `code` is “manual”. - **save_csv** \[Logical\], whether to
-save extracted metadata and data to CSV files or not. Default is True -
+save extracted metadata and data to CSV files or not. Default is False -
 **path_to_save** \[String\] Directory path for saving CSV files, NULL
-uses the current directory, NULL is Deafult. - **combine** \[Logical\],
+uses the current directory, NULL is Default. - **combine** \[Logical\],
 whether to combine S1 and S2 measurements. Default is True - **method**
 \[String\] Method for combining measurements (“mean”, “median”, “s1”,
 “s2”, “min”, “max”). - **start** \[character or POSIXct or NULL\], rows
@@ -108,58 +140,98 @@ either the metadata or the preprocessed actual data for either room 1 or
 2. If ´save_csv\` is True, then the DataFrames will be saved as csv
 files with “id_visit_WRIC_data.csv” or “id_visit_WRIC_metadata.csv”.
 
-## Preprocess multiple files on RedCap
-
-If you want to preprocess multiple files and access them on the RedCap
-Server using a csv-file containing the record IDs:
-
-To access the data on RedCap you first need to set up a `config.r` file.
-You can use the `config_example.r` as a template and input your personal
-API-Token to the repository with the data (see ‘Get your API Token for
-RedCap’ below). Make sure that if the config.r file stays locally and
-without anyone else having access to it. When handling sensitive data it
-might make sense to delete the token from the file after using it.
-
-Besides setting up the config file, you need to specify the field-name
-of your RedCap instrument where the raw WRIC-data is located (in the
-example below the field is named “WRIC_raw”) and you need to provide the
-record IDs of the records that you want to access. They simply need to
-be written in a column with no further words or comments and need to
-match the record IDs on RedCap.
-
-*Please note that the code below will not work for you until you 1) set
-up the config file, 2) create a csv with record ids and change the file
-path, 3) write the correct field name of your project.*
+As this is probably the most important function I have explained this
+here in length. But you can always run
 
 ``` r
-result <- preprocess_WRIC_files("./example_data/record_ids.csv", "WRIC_raw", code = "id", manual = NULL, save_csv = True, path_to_save = NULL, combine = True, method = "mean", start = NULL, end = NULL)
-R1_metadata <- result$R1_metadata
-R2_metadata <- result$R2_metadata
-df_room1 <- result$df_room1
-df_room2 <- result$df_room2
+?preprocess_wric_file
 ```
 
-## Get your API Token for RedCap
+to get the description, parameters, return values and examples of how to
+use the function or any other function within the package.
 
-- Go to your project and click on **API** in the menu on the left hand
-  side
-  - If you can not find the API option in the menu, you might have to
-    adjust the rights to your project by clicking on **User Rights** and
-    adjusting your API rights (or the creator of the project, if that is
-    not you)
-- You have to request the generation of an API Token (in my experience
-  takes only a couple hours)
-- At the same place you can find your Token after your request has been
-  approved and the token generated
+For a more detailed tutorial on how to use the package, please look at
+vignette `wrictools`.
 
-## Uploading Data to RedCap
+### Preprocess multiple files on RedCap
 
-You can use function
-`upload_file_to_redcap(filepath, record_id, fieldname)` to upload a file
-to a specific record and fieldname in RedCap. You need to have set-up
-your config file.
+If you want to preprocess multiple WRIC files stored on a REDCap server,
+you can supply a CSV file containing the record IDs of interest. The
+function will automatically fetch the corresponding raw WRIC data,
+preprocess it, and return the results.
 
-# Support, Maintenance and Future Work
+To connect to your REDCap project, you need your API token and the API
+URL for your instance. These should be stored in a local file (for
+example ~/.config.R) and sourced when you run the function. A minimal
+config file looks like this:
 
-For any issues, questions, or suggestions feel free to reach out to Nina
-Ziegenbein at <nina.ziegenbein@rm.dk>.
+``` r
+api_token <- '123C09E18E747592A693467A304EA32'
+api_url   <- 'https://redcap.au.dk/api/' #change this url to your RedCAP url (e.g. 'https://redcap.wustl.edu/')
+```
+
+<details>
+
+<summary>
+
+<strong>Get your API Token for RedCap</strong>
+</summary>
+
+- Go to your project and click on **API** in the menu on the left-hand
+  side.  
+- If you cannot find the API option, adjust your rights under **User
+  Rights** (or ask the project creator).  
+- Request the generation of an API Token.  
+- Once approved, you’ll find your Token in the same place.
+
+</details>
+
+⚠️ **Important:** Keep your token private and never share or commit it
+to version control. If working with sensitive data, consider removing
+the token from your config file after use.
+
+You also need to specify the field name of the REDCap instrument where
+the raw WRIC data is stored (e.g. “wric_data”) and provide the CSV with
+record IDs (one per row, no headers or extra text). The record IDs must
+exactly match those used in REDCap.
+
+``` r
+# Load your REDCap credentials
+source(path.expand("~/.config.R"))
+
+# This creates a temporary csv file with record ID's
+tmp_csv <- tempfile(fileext = ".csv")
+write.csv(data.frame(X1 = c(1, 2, 3)), tmp_csv, row.names = FALSE)
+
+# Preprocess WRIC files
+result <- preprocess_wric_files(
+  csv_file   = tmp_csv,
+  fieldname  = "wric_data",
+  api_url    = api_url,
+  api_token  = api_token,
+  save_csv   = TRUE,
+  combine    = TRUE,
+  method     = "mean"
+)
+```
+
+The function returns a list, where each element corresponds to one
+record ID. Each record ID contains its own metadata and preprocessed
+data frames for room1 and room2.
+
+## Other good-to-know functions
+
+Remember that you can learn more about each function and it’s usage by
+`?function_name`.
+
+- `upload_file_to_redcap` to upload data to RedCAP
+- `visualize_with_protocol`to visualize your data including highlights
+  of the protocol
+- `cut_rows` to cut your dataframe to certain timepoints
+- `check-discrepancies`to check the difference between the two sensors
+  within a chamber
+
+## Support, Maintenance and Future Work
+
+For any issues, questions, or suggestions feel free to open an issue on
+GitHub or reach out to Nina Ziegenbein at <ninzie@ph.au.dk>.

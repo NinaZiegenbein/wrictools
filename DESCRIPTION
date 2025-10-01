@@ -1,5 +1,5 @@
 Package: wrictools
-Title: Processing, Analysis and Visualization of Whole Room Indirect Calorimetery Data
+Title: Analyze Whole Room Indirect Calorimetery (WRIC) Data
 Version: 0.0.0.9000
 Authors@R: 
     person("Nina", "Ziegenbein", , "nina.ziegenbein@web.de", role = c("aut", "cre", "cph"), comment = c(ORCID = "0009-0005-4913-8910"))
