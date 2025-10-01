@@ -57,7 +57,7 @@ Preprocesses multiple wric_files by RedCAP record ID, extracting metadata, creat
 \dontshow{if (file.exists(path.expand("~/.config.R"))) withAutoprint(\{ # examplesIf}
 source(path.expand("~/.config.R"))
 tmp_csv <- tempfile(fileext = ".csv")
-write.csv(data.frame(X1 = c("record1", "record2")), tmp_csv, row.names = FALSE)
+write.csv(data.frame(X1 = c(1, 2, 3)), tmp_csv, row.names = FALSE)
 
 # Use dummy API URL and token
 if (file.exists(tmp_csv)) {
