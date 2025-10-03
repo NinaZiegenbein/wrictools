@@ -5,10 +5,12 @@
 \title{Automatically detect enter and exit from the chamber based on the notefile.
 Returns the start and end times for two participants.}
 \usage{
-detect_start_end(notes_path)
+detect_start_end(notes_path, entry_exit_dict = NULL)
 }
 \arguments{
 \item{notes_path}{string - path to the note file}
+
+\item{entry_exit_dict}{Nested List, used to extract entry/exit times from note file}
 }
 \value{
 list - A list of two elements ("1" and "2"), each containing a tuple (start, end) time.

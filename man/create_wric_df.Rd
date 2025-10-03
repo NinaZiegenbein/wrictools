@@ -13,7 +13,8 @@ create_wric_df(
   path_to_save,
   start,
   end,
-  notefilepath
+  notefilepath,
+  entry_exit_dict
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ create_wric_df(
 \item{end}{character or POSIXct or NULL, rows after this will be removed, if NULL takes last row e.g "2023-11-13 11:43:00"}
 
 \item{notefilepath}{String, The path to the notefile}
+
+\item{entry_exit_dict}{Nested List, used to extract entry/exit times from note file}
 }
 \value{
 A list containing DataFrames for Room 1 and Room 2 measurements.

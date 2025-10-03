@@ -235,13 +235,14 @@ save_dict <- function(dict_protocol, participant, datetime, value) {
 #' Returns the start and end times for two participants.
 #'
 #' @param notes_path string - path to the note file
+#' @param entry_exit_dict Nested List, used to extract entry/exit times from note file
 #' @return list - A list of two elements ("1" and "2"), each containing a tuple (start, end) time.
 #'                Returns NA if not possible to find start or end time.
 #' @export
 #' @examples
 #' notes_path <- system.file("extdata", "note.txt", package = "wrictools")
 #' detect_start_end(notes_path)
-detect_start_end <- function(notes_path) {
+detect_start_end <- function(notes_path, entry_exit_dict = NULL) {
   keywords_dict <- list(
     end = c("ud", "exit", "out"),
     start = c("ind i kammer", "enter", "ind", "entry")
@@ -477,6 +478,7 @@ extract_note_info <- function(notes_path, df_room1, df_room2, keywords_dict = NU
 #' @param start character or POSIXct or NULL, rows before this will be removed, if NULL takes first row e.g "2023-11-13 11:43:00"
 #' @param end  character or POSIXct or NULL, rows after this will be removed, if NULL takes last row e.g "2023-11-13 11:43:00"
 #' @param notefilepath String, The path to the notefile
+#' @param entry_exit_dict Nested List, used to extract entry/exit times from note file
 #' @return A list containing DataFrames for Room 1 and Room 2 measurements.
 #' @note Raises an error if Date or Time columns are inconsistent across rows.
 #' @export
@@ -500,7 +502,7 @@ extract_note_info <- function(notes_path, df_room1, df_room2, keywords_dict = NU
 #'   end = NULL,
 #'   notefilepath = notes_txt
 #' )
-create_wric_df <- function(filepath, lines, save_csv = FALSE, code_1, code_2, path_to_save, start, end, notefilepath) {
+create_wric_df <- function(filepath, lines, save_csv = FALSE, code_1, code_2, path_to_save, start, end, notefilepath, entry_exit_dict) {
 
   data_start_index <- which(grepl("^Room 1 Set 1", lines)) + 1
   df <- read_tsv(filepath, skip = data_start_index, col_names = FALSE)
@@ -553,7 +555,7 @@ create_wric_df <- function(filepath, lines, save_csv = FALSE, code_1, code_2, pa
     df_room1 <- cut_rows(df_room1, start, end)
     df_room2 <- cut_rows(df_room2, start, end)
   } else if (!is.null(notefilepath)) {
-    se_times <- detect_start_end(notefilepath)
+    se_times <- detect_start_end(notefilepath, entry_exit_dict)
     start_1 <- as.POSIXct(se_times[[1]][[1]], origin = "1970-01-01")
     end_1 <- as.POSIXct(se_times[[1]][[2]], origin = "1970-01-01")
     start_2 <- as.POSIXct(se_times[[2]][[1]], origin = "1970-01-01")
@@ -715,6 +717,7 @@ combine_measurements <- function(df, method = "mean") {
 #' @param end character or POSIXct or NULL, rows after this will be removed, if NULL takes last row e.g "2023-11-13 11:43:00"
 #' @param notefilepath String, Directory path of the corresponding note file (.txt)
 #' @param keywords_dict Nested List, used to extract protocol values from note file
+#' @param entry_exit_dict Nested List, used to extract entry/exit times from note file
 #' @return A list containing the metadata and DataFrames for Room 1 and Room 2.
 #' @export
 #' @examples
@@ -723,14 +726,14 @@ combine_measurements <- function(df, method = "mean") {
 #' data_txt <- system.file("extdata", "data_no_comment.txt", package = "wrictools")
 #' result <- preprocess_wric_file(data_txt, path_to_save = outdir)
 #' unlink(outdir, recursive = TRUE)
-preprocess_wric_file <- function(filepath, code = "id", manual = NULL, save_csv = FALSE, path_to_save = NULL, combine = TRUE, method = "mean", start = NULL, end = NULL, notefilepath = NULL, keywords_dict = NULL) {
+preprocess_wric_file <- function(filepath, code = "id", manual = NULL, save_csv = FALSE, path_to_save = NULL, combine = TRUE, method = "mean", start = NULL, end = NULL, notefilepath = NULL, keywords_dict = NULL, entry_exit_dict = NULL) {
   lines <- open_file(filepath)
   result <- extract_meta_data(lines, code, manual, save_csv, path_to_save)
   r1_metadata <- result$r1_metadata
   r2_metadata <- result$r2_metadata
   code_1 <- result$code_1
   code_2 <- result$code_2
-  result <- create_wric_df(filepath, lines, save_csv, code_1, code_2, path_to_save, start, end, notefilepath)
+  result <- create_wric_df(filepath, lines, save_csv, code_1, code_2, path_to_save, start, end, notefilepath, entry_exit_dict)
   df_room1 <- result$df_room1
   df_room2 <- result$df_room2
 

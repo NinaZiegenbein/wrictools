@@ -1,5 +1,5 @@
 OmniCal software by ing.P.F.M.Schoffelen, Dept. of Human Biology, Maastricht University
-file identifier is C:\MI_Room_Calorimeter\Notes\example.txt	
+file identifier is C:\MI_Room_Calorimeter\Notes\example.txt
 Date	Time	Comment
 
 11/13/23	21:14:08	21:15:29
@@ -15,6 +15,8 @@ Date	Time	Comment
 11/14/23	08:13:27	1 start maaltid
 11/14/23	08:17:00	2 start maaltid
 11/14/23	08:29:23	1 faerdig 08:26
-11/14/23	08:44:42	2 stop maaltid 08:42
+11/14/23	08:24:42	2 stop maaltid 08:22
+11/14/23	08:30:27	start maaltid
+11/14/23	08:39:23	stop maaltid
 11/14/23	08:47:48	1 ud
-11/14/23	06:51:36	2 exit
+11/14/23	08:51:36	2 exit

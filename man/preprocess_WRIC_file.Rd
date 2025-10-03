@@ -15,7 +15,8 @@ preprocess_wric_file(
   start = NULL,
   end = NULL,
   notefilepath = NULL,
-  keywords_dict = NULL
+  keywords_dict = NULL,
+  entry_exit_dict = NULL
 )
 }
 \arguments{
@@ -40,6 +41,8 @@ preprocess_wric_file(
 \item{notefilepath}{String, Directory path of the corresponding note file (.txt)}
 
 \item{keywords_dict}{Nested List, used to extract protocol values from note file}
+
+\item{entry_exit_dict}{Nested List, used to extract entry/exit times from note file}
 }
 \value{
 A list containing the metadata and DataFrames for Room 1 and Room 2.
