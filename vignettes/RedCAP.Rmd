@@ -46,7 +46,7 @@ Save this token securely as it will be needed to authenticate your requests.
 Before you can interact with the RedCap API, you need to create a config.r file. This file will store your API token and the RedCap URL. Use the example config_example.r provided in the repository.
 
 Here is an example of how your config.r file should look:
-```{r}
+```{r eval = FALSE}
 api_token       <- 'YOUR_API_TOKEN'  # Replace with your personal API token
 api_url         <- 'https://redcap.au.dk/api/'  # URL for AU RedCap projects
 ```

@@ -104,7 +104,7 @@ If you want to preprocess multiple WRIC files stored on a REDCap server, you can
 
 To connect to your REDCap project, you need your API token and the API URL for your instance. These should be stored in a local file (for example ~/.config.R) and sourced when you run the function. A minimal config file looks like this:
 
-```{r}
+```{r eval = FALSE}
 api_token <- '123C09E18E747592A693467A304EA32'
 api_url   <- 'https://redcap.au.dk/api/' #change this url to your RedCAP url (e.g. 'https://redcap.wustl.edu/')
 

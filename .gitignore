@@ -7,3 +7,5 @@
 /tests/testthat/*.csv
 inst/doc
 docs
+/doc/
+/Meta/
