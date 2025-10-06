@@ -26,7 +26,7 @@ March 2025.
 
 ``` r
 # Install from CRAN
-install.packages("pak")
+install.packages("wrictools")
 ```
 
 If instead you want to install `wrictools` from GitHub use:
@@ -58,9 +58,9 @@ either!*
 ``` r
 library(wrictools)
 
-data_txt <- system.file("extdata", "data_no_comment.txt", package = "wrictools") # loading example data
+data_txt <- system.file("extdata", "data.txt", package = "wrictools") # loading example data
 result <- preprocess_wric_file(data_txt) 
-#> Rows: 4 Columns: 67
+#> Rows: 717 Columns: 67
 #> ── Column specification ────────────────────────────────────────────────────────
 #> Delimiter: "\t"
 #> chr   (4): X1, X18, X35, X52
@@ -91,7 +91,7 @@ result <- preprocess_wric_file(
     notefilepath= NULL,
     keywords_dict=NULL
 )
-#> Rows: 4 Columns: 67
+#> Rows: 717 Columns: 67
 #> ── Column specification ────────────────────────────────────────────────────────
 #> Delimiter: "\t"
 #> chr   (4): X1, X18, X35, X52
@@ -139,11 +139,10 @@ Here are explanations and options to all parameters you can specify:
 - **keywords_dict:** \[Nested List\] A “dictionary” with keywords for
   extracting protocol information out of the notefile.
 
-The function returns a list with `R1_metadata`, `R2_metadata`,
-`df_room1` and `df_room2`. Each item of the list is a DataFrame of
-either the metadata or the preprocessed actual data for either room 1 or
-2. If `save_csv` is True, then the DataFrames will be saved as csv files
-with “id_visit_WRIC_data.csv” or “id_visit_WRIC_metadata.csv”.
+The function returns a list with
+`r1`\_metadata`,`r2_metadata`,`df_room1`and`df_room2`. Each item of the list is a DataFrame of either the metadata or the preprocessed actual data for either room 1 or 2. If`save_csv\`
+is True, then the DataFrames will be saved as csv files with
+“id_visit_WRIC_data.csv” or “id_visit_WRIC_metadata.csv”.
 
 As this is probably the most important function I have explained this
 here in length. But you can always run
