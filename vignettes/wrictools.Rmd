@@ -42,7 +42,13 @@ This document serves as a guided tutorial to help you get started using the WRIC
 
 
 # Getting Started
-Install the `wrictools` package from CRAN:
+We are in the process of submitting `wrictools` to CRAN, so for now you can install the current wrictools **development** version via GitHub:
+```{r eval = FALSE}
+library(remotes)
+install_github( "NinaZiegenbein/wrictools")
+```
+
+On the package is on CRAN you can install the `wrictools` package from CRAN:
 ```{r eval = FALSE}
 install.packages("wrictools")
 ```
