@@ -6,7 +6,7 @@ codes.
 ## Usage
 
 ``` r
-check_code(code, manual, r1_metadata, r2_metadata)
+check_code(code, manual, metadata)
 ```
 
 ## Arguments
@@ -37,19 +37,18 @@ A list containing the codes for Room 1 and Room 2.
 ## Examples
 
 ``` r
-# Example metadata for Room 1 and Room 2
-r1 <- data.frame(`Subject.ID` = "S001", `Comments` = "Morning")
-r2 <- data.frame(`Subject.ID` = "S002", `Comments` = "Afternoon")
+# Example metadata
+metadata <- data.frame(`Subject.ID` = "S001", `Comments` = "Morning")
 
 # Use subject IDs only
-check_code("id", NULL, r1, r2)
-#> [1] "S001" "S002"
+check_code("id", NULL, metadata)
+#> [1] "S001"
 
 # Use subject IDs + comments
-check_code("id+comment", NULL, r1, r2)
-#> [1] "S001_Morning"   "S002_Afternoon"
+check_code("id+comment", NULL, metadata)
+#> [1] "S001_Morning"
 
 # Use manual codes
-check_code("manual", c("custom1", "custom2"), r1, r2)
-#> [1] "custom1" "custom2"
+check_code("manual", "custom1", metadata)
+#> [1] "custom1"
 ```

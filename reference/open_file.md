@@ -1,6 +1,7 @@
-# Opens a wric .txt file and reads its contents.
+# Opens a WRIC .txt file and reads its contents, identifying the software version.
 
-Opens a wric .txt file and reads its contents.
+Opens a WRIC .txt file and reads its contents, identifying the software
+version.
 
 ## Usage
 
@@ -16,7 +17,11 @@ open_file(filepath)
 
 ## Value
 
-A list of strings representing the lines of the file.
+A list with two elements:
+
+- lines: the lines of the file
+
+- v1: TRUE if version 1, FALSE if version 2
 
 ## Note
 
