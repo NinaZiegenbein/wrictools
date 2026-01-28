@@ -10,8 +10,10 @@ test_that("preprocess_wric_file does not throw errors with various inputs", {
   )
 
   data_txt <- system.file("extdata", "data.txt", package = "wrictools")
+  data_v2_txt <- system.file("extdata", "data_v2.txt", package = "wrictools")
   data_no_comment_txt <- system.file("extdata", "data_no_comment.txt", package = "wrictools")
   note_txt <- system.file("extdata", "note.txt", package = "wrictools")
+  note_v2_txt <- system.file("extdata", "note_v2.txt", package = "wrictools")
   note_new_txt <- system.file("extdata", "note_new.txt", package = "wrictools")
   tmp <- tempdir()
 
