@@ -1,3 +1,4 @@
+
 test_that("preprocess_wric_file does not throw errors with various inputs", {
   # Defining an example dictionary
   example_dict <- list(
@@ -101,4 +102,59 @@ test_that("preprocess_wric_file does not throw errors with various inputs", {
                                    path_to_save = tmp)
   }, NA)
 
+})
+
+test_that("open_file detects version correctly", {
+  # Path to test files in inst/extdata
+  data_txt <- system.file("extdata", "data.txt", package = "wrictools")
+  data_v2_txt <- system.file("extdata", "data_v2.txt", package = "wrictools")
+
+  # Make sure the files exist (sanity check)
+  expect_true(file.exists(data_txt))
+  expect_true(file.exists(data_v2_txt))
+
+  # Test version 1 file
+  result_v1 <- open_file(data_txt)
+  expect_true(result_v1$v1)
+  expect_type(result_v1$lines, "character")
+  expect_gt(length(result_v1$lines), 0)  # not empty
+
+  # Test version 2 file
+  result_v2 <- open_file(data_v2_txt)
+  expect_false(result_v2$v1)
+  expect_type(result_v2$lines, "character")
+  expect_gt(length(result_v2$lines), 0)  # not empty
+})
+
+library(testthat)
+
+test_that("check_code works with different code options", {
+  # Example metadata for Room 1 and Room 2
+  r1 <- data.frame(`Subject.ID` = "S001", `Comments` = "Morning")
+
+  # Test ID only
+  expect_equal(check_code("id", NULL, r1), "S001")
+
+  # Test ID + comment
+  expect_equal(check_code("id+comment", NULL, r1), "S001_Morning")
+
+  # Test manual code
+  expect_equal(check_code("manual", "custom", r1), "custom")
+
+  # Test invalid input
+  expect_error(check_code("invalid_option", NULL, r1))
+  expect_error(check_code("manual", NULL, r1))  # manual must be provided
+})
+
+test_that("extract_metadata_new works", {
+  # Path to test files in inst/extdata
+  data_v2_txt <- system.file("extdata", "data_v2.txt", package = "wrictools")
+  res <- open_file(data_v2_txt)
+  result <- extract_metadata_new(res$lines, code = "id", manual = NULL, save_csv = FALSE)
+
+  expect_type(result, "list")
+  expect_true("code" %in% names(result))
+  expect_true("metadata" %in% names(result))
+
+  #TODO: Check that output correct, also when empty tabs
 })

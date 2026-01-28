@@ -2,7 +2,7 @@
 % Please edit documentation in R/processing.R
 \name{open_file}
 \alias{open_file}
-\title{Opens a wric .txt file and reads its contents.}
+\title{Opens a WRIC .txt file and reads its contents, identifying the software version.}
 \usage{
 open_file(filepath)
 }
@@ -10,10 +10,14 @@ open_file(filepath)
 \item{filepath}{description filepath}
 }
 \value{
-A list of strings representing the lines of the file.
+A list with two elements:
+\itemize{
+\item lines: the lines of the file
+\item v1: TRUE if version 1, FALSE if version 2
+}
 }
 \description{
-Opens a wric .txt file and reads its contents.
+Opens a WRIC .txt file and reads its contents, identifying the software version.
 }
 \note{
 Raises an error if the file is not a valid wric data file.

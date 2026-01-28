@@ -7,32 +7,28 @@
 #' @return A list containing the codes for Room 1 and Room 2.
 #' @export
 #' @examples
-#' # Example metadata for Room 1 and Room 2
-#' r1 <- data.frame(`Subject.ID` = "S001", `Comments` = "Morning")
-#' r2 <- data.frame(`Subject.ID` = "S002", `Comments` = "Afternoon")
+#' # Example metadata
+#' metadata <- data.frame(`Subject.ID` = "S001", `Comments` = "Morning")
 #'
 #' # Use subject IDs only
-#' check_code("id", NULL, r1, r2)
+#' check_code("id", NULL, metadata)
 #'
 #' # Use subject IDs + comments
-#' check_code("id+comment", NULL, r1, r2)
+#' check_code("id+comment", NULL, metadata)
 #'
 #' # Use manual codes
-#' check_code("manual", c("custom1", "custom2"), r1, r2)
-check_code <- function(code, manual, r1_metadata, r2_metadata) {
+#' check_code("manual", "custom1", metadata)
+check_code <- function(code, manual, metadata) {
   if (code == "id") {
-    code_1 <- r1_metadata$`Subject.ID`[1]
-    code_2 <- r2_metadata$`Subject.ID`[1]
+    code_out <- metadata$`Subject.ID`[1]
   } else if (code == "id+comment") {
-    code_1 <- paste0(r1_metadata$`Subject.ID`[1], "_", r1_metadata$`Comments`[1])
-    code_2 <- paste0(r2_metadata$`Subject.ID`[1], "_", r2_metadata$`Comments`[1])
+    code_out <- paste0(metadata$`Subject.ID`[1], "_", metadata$`Comments`[1])
   } else if (code == "manual" && !is.null(manual)) {
-    code_1 <- manual[1]
-    code_2 <- manual[2]
+    code_out <- manual
   } else {
-    stop("Invalid code parameter. Choose 'id', 'id+comment', or 'manual'.")
+    stop("Invalid code parameter. Choose 'id', 'id+comment', or 'manual' and provide a manual code.")
   }
-  return(c(code_1, code_2))
+  return(code_out)
 }
 
 #' Extracts metadata for two subjects from text lines and optionally saves it as CSV files.
@@ -79,22 +75,72 @@ extract_meta_data <- function(lines, code, manual, save_csv = FALSE, path_to_sav
   r1_metadata <- as.data.frame(data_r1, stringsAsFactors = FALSE)
   r2_metadata <- as.data.frame(data_r2, stringsAsFactors = FALSE)
 
-  codes <- check_code(code, manual, r1_metadata, r2_metadata)
+  code_1 <- check_code(code, if (!is.null(manual)) manual[1] else NULL, r1_metadata)
+  code_2 <- check_code(code, if (!is.null(manual)) manual[2] else NULL, r2_metadata)
 
   if (save_csv) {
-    room1_filename <- ifelse(!is.null(path_to_save), paste0(path_to_save, "/", codes[[1]], "_wric_metadata.csv"), paste0(codes[[1]], "_wric_metadata.csv"))
-    room2_filename <- ifelse(!is.null(path_to_save), paste0(path_to_save, "/", codes[[2]], "_wric_metadata.csv"), paste0(codes[[2]], "_wric_metadata.csv"))
+    room1_filename <- ifelse(!is.null(path_to_save), paste0(path_to_save, "/", code_1, "_wric_metadata.csv"), paste0(code_1, "_wric_metadata.csv"))
+    room2_filename <- ifelse(!is.null(path_to_save), paste0(path_to_save, "/", code_2, "_wric_metadata.csv"), paste0(code_2, "_wric_metadata.csv"))
     write.csv(r1_metadata, room1_filename, row.names = FALSE)
     write.csv(r2_metadata, room2_filename, row.names = FALSE)
   }
 
-  return(list(code_1 = codes[1], code_2 = codes[2], r1_metadata = r1_metadata, r2_metadata = r2_metadata))
+  return(list(code_1 = code_1, code_2 = code_2, r1_metadata = r1_metadata, r2_metadata = r2_metadata))
 }
 
-#' Opens a wric .txt file and reads its contents.
+extract_metadata_new <- function(lines, code, manual = NULL, save_csv = FALSE, path_to_save = NULL) {
+
+  # ---- Header line for new format (line 5) ----
+  header_line <- unlist(strsplit(trimws(lines[5]), "\t"))
+
+  # For the metadata row, let's assume it is line 6
+  data_line <- unlist(strsplit(trimws(lines[6]), "\t"))
+
+  # Adjust lengths to match header
+  adjust_length <- function(data, reference) {
+    length_diff <- length(reference) - length(data)
+    if (length_diff > 0) {
+      data <- c(data, rep(NA, length_diff))  # pad with NAs
+    } else if (length_diff < 0) {
+      data <- head(data, length(reference))  # truncate if too long
+    }
+    return(data)
+  }
+
+  data_line <- adjust_length(data_line, header_line)
+
+  # Create metadata data.frame
+  metadata <- as.data.frame(
+    setNames(as.list(data_line), header_line),
+    stringsAsFactors = FALSE
+  )
+  print(metadata)
+  # Check code / manual override
+  code <- check_code(code, if (!is.null(manual)) manual[1] else NULL, metadata)
+
+  #TODO: Actually rethink id_codes (e.g studyid+subjectid+measurementid), maybe add check_code_new function
+
+  # Save CSV if requested
+  if (save_csv) {
+    room1_filename <- ifelse(
+      !is.null(path_to_save),
+      paste0(path_to_save, "/", code, "_wric_metadata.csv"),
+      paste0(code, "_wric_metadata.csv")
+    )
+    write.csv(metadata, room1_filename, row.names = FALSE)
+  }
+
+  # Return list same as old structure
+  return(list(code = code, metadata = metadata))
+}
+
+
+#' Opens a WRIC .txt file and reads its contents, identifying the software version.
 #'
 #' @param filepath description filepath
-#' @return A list of strings representing the lines of the file.
+#' @return A list with two elements:
+#'   - lines: the lines of the file
+#'   - v1: TRUE if version 1, FALSE if version 2
 #' @note Raises an error if the file is not a valid wric data file.
 #' @keywords internal
 open_file <- function(filepath) {
@@ -102,10 +148,23 @@ open_file <- function(filepath) {
     stop("The file must be a .txt file.")
   }
   lines <- readLines(filepath)
-  if (length(lines) == 0 || !grepl("^OmniCal software", lines[1])) {
-    stop("The provided file is not a valid wric data file.")
+  if (length(lines) == 0) {
+    stop("The file is empty and not a valid WRIC data file.")
   }
-  return(lines)
+
+  # Check for version 1 header
+  if (grepl("^OmniCal software by ing\\.P\\.F\\.M\\.Schoffelen", lines[1])) {
+    v1 <- TRUE
+  }
+  # Check for version 2 header
+  else if (grepl("^2\\.[0-9]+\\.[0-9]+\\.[0-9]+\\s+Omnical software by Maastricht Instruments B\\.V\\.", lines[1])) {
+    v1 <- FALSE
+  }
+  else {
+    stop("The provided file is not a recognized Maastricht Instruments WRIC data file (neither version 1 nor 2).")
+  }
+
+  return(list(lines = lines, v1 = v1))
 }
 
 #' Add Relative Time in minutes to DataFrame. Rows before the `start_time` will be indicated negative.
@@ -727,7 +786,9 @@ combine_measurements <- function(df, method = "mean") {
 #' result <- preprocess_wric_file(data_txt, path_to_save = outdir)
 #' unlink(outdir, recursive = TRUE)
 preprocess_wric_file <- function(filepath, code = "id", manual = NULL, save_csv = FALSE, path_to_save = NULL, combine = TRUE, method = "mean", start = NULL, end = NULL, notefilepath = NULL, keywords_dict = NULL, entry_exit_dict = NULL) {
-  lines <- open_file(filepath)
+  res <- open_file(filepath)
+  lines <- res$lines
+  v1 <- res$v1
   result <- extract_meta_data(lines, code, manual, save_csv, path_to_save)
   r1_metadata <- result$r1_metadata
   r2_metadata <- result$r2_metadata
