@@ -267,8 +267,12 @@ GitHub or reach out to Nina Ziegenbein at <ninzie@ph.au.dk>.
   field name.
 
 - [`extract_meta_data()`](https://ninaziegenbein.github.io/wrictools/reference/extract_meta_data.md)
-  : Extracts metadata for two subjects from text lines and optionally
-  saves it as CSV files.
+  : Extracts metadata (software v1) for two subjects from text lines and
+  optionally saves it as CSV files.
+
+- [`extract_metadata_new()`](https://ninaziegenbein.github.io/wrictools/reference/extract_metadata_new.md)
+  : Extracts metadata (software v2) for a single subject from text lines
+  and optionally saves it as a CSV file.
 
 - [`extract_note_info()`](https://ninaziegenbein.github.io/wrictools/reference/extract_note_info.md)
   : Extracts and processes note information from a specified notes file,

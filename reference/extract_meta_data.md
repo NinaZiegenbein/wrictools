@@ -1,7 +1,7 @@
-# Extracts metadata for two subjects from text lines and optionally saves it as CSV files.
+# Extracts metadata (software v1) for two subjects from text lines and optionally saves it as CSV files.
 
-Extracts metadata for two subjects from text lines and optionally saves
-it as CSV files.
+Extracts metadata (software v1) for two subjects from text lines and
+optionally saves it as CSV files.
 
 ## Usage
 
@@ -17,7 +17,8 @@ extract_meta_data(lines, code, manual, save_csv = FALSE, path_to_save)
 
 - code:
 
-  Method for generating subject IDs ("id", "id+comment", or "manual").
+  Method for generating subject IDs ("id", "id+comment", "study+id"
+  (only for software v2), or "manual").
 
 - manual:
 

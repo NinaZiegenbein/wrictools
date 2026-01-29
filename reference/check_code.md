@@ -6,47 +6,49 @@ codes.
 ## Usage
 
 ``` r
-check_code(code, manual, metadata)
+check_code(code, manual, metadata, v1 = FALSE)
 ```
 
 ## Arguments
 
 - code:
 
-  Method for generating subject IDs ("id", "id+comment", or "manual").
+  Method for generating subject IDs ("id", "id+comment", "study+id", or
+  "manual").
 
 - manual:
 
-  A list of custom codes for Room 1 and Room 2, required if `code` is
-  "manual".
+  A custom code(string), required if `code` is "manual".
 
-- r1_metadata:
+- metadata:
 
-  DataFrame for metadata of Room 1, containing "Subject ID" and
-  "Comments".
+  DataFrame for metadata of Room 1.
 
-- r2_metadata:
+- v1:
 
-  DataFrame for metadata of Room 2, containing "Subject ID" and
-  "Comments".
+  Boolean, Software Version, default FALSE.
 
 ## Value
 
-A list containing the codes for Room 1 and Room 2.
+String, the resulting code.
 
 ## Examples
 
 ``` r
 # Example metadata
-metadata <- data.frame(`Subject.ID` = "S001", `Comments` = "Morning")
+metadata <- data.frame(`Subject.ID` = "S001", `Study.ID` = "studyname", `Comments` = "Morning")
 
-# Use subject IDs only
+# Use subject ID only
 check_code("id", NULL, metadata)
 #> [1] "S001"
 
-# Use subject IDs + comments
+# Use subject ID + comment
 check_code("id+comment", NULL, metadata)
 #> [1] "S001_Morning"
+
+# Use study ID + subject ID
+check_code("study+id", NULL, metadata)
+#> [1] "studyname_S001"
 
 # Use manual codes
 check_code("manual", "custom1", metadata)

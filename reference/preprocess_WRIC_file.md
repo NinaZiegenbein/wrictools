@@ -30,7 +30,8 @@ preprocess_wric_file(
 
 - code:
 
-  Method for generating subject IDs ("id", "id+comment", or "manual").
+  Method for generating subject IDs ("id", "id+comment", "study+id"
+  (only for software v2), or "manual").
 
 - manual:
 

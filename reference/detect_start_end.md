@@ -6,7 +6,7 @@ notefile. Returns the start and end times for two participants.
 ## Usage
 
 ``` r
-detect_start_end(notes_path, entry_exit_dict = NULL)
+detect_start_end(notes_path, v1 = FALSE, entry_exit_dict = NULL)
 ```
 
 ## Arguments
@@ -31,18 +31,18 @@ notes_path <- system.file("extdata", "note.txt", package = "wrictools")
 detect_start_end(notes_path)
 #> $`1`
 #> $`1`[[1]]
-#> [1] "2023-11-13 21:14:22 UTC"
+#> [1] NA
 #> 
 #> $`1`[[2]]
-#> [1] "2023-11-14 08:47:48 UTC"
+#> [1] NA
 #> 
 #> 
 #> $`2`
 #> $`2`[[1]]
-#> [1] "2023-11-13 21:14:22 UTC"
+#> [1] NA
 #> 
 #> $`2`[[2]]
-#> [1] "2023-11-14 08:51:36 UTC"
+#> [1] NA
 #> 
 #> 
 ```
