@@ -1,28 +1,33 @@
 #' Check the subject ID code and return corresponding Room 1 and Room 2 codes.
 #'
-#' @param code Method for generating subject IDs ("id", "id+comment", or "manual").
-#' @param manual A list of custom codes for Room 1 and Room 2, required if `code` is "manual".
-#' @param r1_metadata DataFrame for metadata of Room 1, containing "Subject ID" and "Comments".
-#' @param r2_metadata DataFrame for metadata of Room 2, containing "Subject ID" and "Comments".
-#' @return A list containing the codes for Room 1 and Room 2.
+#' @param code Method for generating subject IDs ("id", "id+comment", "study+id", or "manual").
+#' @param manual A custom code(string), required if `code` is "manual".
+#' @param metadata DataFrame for metadata of Room 1.
+#' @param v1 Boolean, Software Version, default FALSE.
+#' @return String, the resulting code.
 #' @export
 #' @examples
 #' # Example metadata
-#' metadata <- data.frame(`Subject.ID` = "S001", `Comments` = "Morning")
+#' metadata <- data.frame(`Subject.ID` = "S001", `Study.ID` = "studyname", `Comments` = "Morning")
 #'
-#' # Use subject IDs only
+#' # Use subject ID only
 #' check_code("id", NULL, metadata)
 #'
-#' # Use subject IDs + comments
+#' # Use subject ID + comment
 #' check_code("id+comment", NULL, metadata)
+#'
+#' # Use study ID + subject ID
+#' check_code("study+id", NULL, metadata)
 #'
 #' # Use manual codes
 #' check_code("manual", "custom1", metadata)
-check_code <- function(code, manual, metadata) {
+check_code <- function(code, manual, metadata, v1 = FALSE) {
   if (code == "id") {
     code_out <- metadata$`Subject.ID`[1]
   } else if (code == "id+comment") {
     code_out <- paste0(metadata$`Subject.ID`[1], "_", metadata$`Comments`[1])
+  } else if (code == "study+id" && !v1) { # only available for v2
+    code_out <- paste0(metadata$`Study.ID`[1], "_", metadata$`Subject.ID`[1])
   } else if (code == "manual" && !is.null(manual)) {
     code_out <- manual
   } else {
@@ -31,7 +36,7 @@ check_code <- function(code, manual, metadata) {
   return(code_out)
 }
 
-#' Extracts metadata for two subjects from text lines and optionally saves it as CSV files.
+#' Extracts metadata (software v1) for two subjects from text lines and optionally saves it as CSV files.
 #'
 #' @param lines List of strings containing the wric metadata.
 #' @inheritParams preprocess_wric_file
@@ -75,8 +80,8 @@ extract_meta_data <- function(lines, code, manual, save_csv = FALSE, path_to_sav
   r1_metadata <- as.data.frame(data_r1, stringsAsFactors = FALSE)
   r2_metadata <- as.data.frame(data_r2, stringsAsFactors = FALSE)
 
-  code_1 <- check_code(code, if (!is.null(manual)) manual[1] else NULL, r1_metadata)
-  code_2 <- check_code(code, if (!is.null(manual)) manual[2] else NULL, r2_metadata)
+  code_1 <- check_code(code, if (!is.null(manual)) manual[1] else NULL, r1_metadata, v1 = TRUE)
+  code_2 <- check_code(code, if (!is.null(manual)) manual[2] else NULL, r2_metadata, v1 = TRUE)
 
   if (save_csv) {
     room1_filename <- ifelse(!is.null(path_to_save), paste0(path_to_save, "/", code_1, "_wric_metadata.csv"), paste0(code_1, "_wric_metadata.csv"))
@@ -88,12 +93,41 @@ extract_meta_data <- function(lines, code, manual, save_csv = FALSE, path_to_sav
   return(list(code_1 = code_1, code_2 = code_2, r1_metadata = r1_metadata, r2_metadata = r2_metadata))
 }
 
+#' Extracts metadata (software v2) for a single subject from text lines and optionally saves it as a CSV file.
+#'
+#' @param lines List of strings containing the wric metadata.
+#' @param manual Custom code for the subject if `code` is "manual".
+#' @inheritParams preprocess_wric_file
+#' @param save_csv Logical, whether to save extracted metadata to a CSV file.
+#' @param path_to_save Directory path for saving the CSV file, NULL uses the current directory.
+#' @return A list containing:
+#' \describe{
+#'   \item{code}{The generated subject code.}
+#'   \item{metadata}{A data.frame containing the extracted metadata.}
+#' }
+#' @export
+#' @examples
+#' lines <- c(
+#'   "2.0.0.15\tOmnical software by Maastricht Instruments B.V.",
+#'   "file identifier is C:\\Omnical\\Results Room 1\\1 min\\Results.txt",
+#'   "Calibration values\t18.0\t0.795",
+#'   "",
+#'   "Subject ID\tStudy ID\tMeasurement ID\tResearcher ID\tComments",
+#'   "ZeroTest\t\t\tNZ\tZero Test 14.01.2026"
+#' )
+#'
+#' # Extract metadata and generate code from subject ID only
+#' extract_metadata_new(lines, code = "id", manual = NULL, save_csv = FALSE)
+#'
+#' # Extract metadata using ID + comment as code
+#' extract_metadata_new(lines, code = "id+comment", manual = NULL, save_csv = FALSE)
+#'
+#' # Extract metadata using a manual code
+#' extract_metadata_new(lines, code = "manual", manual = "custom_code", save_csv = FALSE)
+
 extract_metadata_new <- function(lines, code, manual = NULL, save_csv = FALSE, path_to_save = NULL) {
 
-  # ---- Header line for new format (line 5) ----
   header_line <- unlist(strsplit(trimws(lines[5]), "\t"))
-
-  # For the metadata row, let's assume it is line 6
   data_line <- unlist(strsplit(trimws(lines[6]), "\t"))
 
   # Adjust lengths to match header
@@ -109,28 +143,21 @@ extract_metadata_new <- function(lines, code, manual = NULL, save_csv = FALSE, p
 
   data_line <- adjust_length(data_line, header_line)
 
-  # Create metadata data.frame
   metadata <- as.data.frame(
     setNames(as.list(data_line), header_line),
     stringsAsFactors = FALSE
-  )
-  print(metadata)
-  # Check code / manual override
-  code <- check_code(code, if (!is.null(manual)) manual[1] else NULL, metadata)
-
-  #TODO: Actually rethink id_codes (e.g studyid+subjectid+measurementid), maybe add check_code_new function
+    )
+  code <- check_code(code, if (!is.null(manual)) manual[1] else NULL, metadata, v1 = FALSE)
 
   # Save CSV if requested
   if (save_csv) {
-    room1_filename <- ifelse(
+    filename <- ifelse(
       !is.null(path_to_save),
       paste0(path_to_save, "/", code, "_wric_metadata.csv"),
       paste0(code, "_wric_metadata.csv")
     )
-    write.csv(metadata, room1_filename, row.names = FALSE)
+    write.csv(metadata, filename, row.names = FALSE)
   }
-
-  # Return list same as old structure
   return(list(code = code, metadata = metadata))
 }
 
@@ -294,6 +321,7 @@ save_dict <- function(dict_protocol, participant, datetime, value) {
 #' Returns the start and end times for two participants.
 #'
 #' @param notes_path string - path to the note file
+#' @param v1 Boolean, Software Version, default FALSE.
 #' @param entry_exit_dict Nested List, used to extract entry/exit times from note file
 #' @return list - A list of two elements ("1" and "2"), each containing a tuple (start, end) time.
 #'                Returns NA if not possible to find start or end time.
@@ -301,10 +329,10 @@ save_dict <- function(dict_protocol, participant, datetime, value) {
 #' @examples
 #' notes_path <- system.file("extdata", "note.txt", package = "wrictools")
 #' detect_start_end(notes_path)
-detect_start_end <- function(notes_path, entry_exit_dict = NULL) {
+detect_start_end <- function(notes_path, v1 = FALSE, entry_exit_dict = NULL) {
   keywords_dict <- list(
     end = c("ud", "exit", "out"),
-    start = c("ind i kammer", "enter", "ind", "entry")
+    start = c("ind i kammer", "enter", "ind", "entry", "in")
   )
 
   # Read the note file and create a DataFrame
@@ -316,7 +344,8 @@ detect_start_end <- function(notes_path, entry_exit_dict = NULL) {
 
   # Combine to datetime
   df_note$datetime <- as.POSIXct(
-    paste(df_note$Date, df_note$Time), format = "%m/%d/%y %H:%M:%S"
+    paste(df_note$Date, df_note$Time),
+    format = if (v1) "%m/%d/%y %H:%M:%S" else "%d/%m/%Y %H:%M:%S"
   )
   df_note <- df_note[, !(names(df_note) %in% c("Date", "Time"))]
 
@@ -614,7 +643,7 @@ create_wric_df <- function(filepath, lines, save_csv = FALSE, code_1, code_2, pa
     df_room1 <- cut_rows(df_room1, start, end)
     df_room2 <- cut_rows(df_room2, start, end)
   } else if (!is.null(notefilepath)) {
-    se_times <- detect_start_end(notefilepath, entry_exit_dict)
+    se_times <- detect_start_end(notefilepath, v1 = TRUE, entry_exit_dict)
     start_1 <- as.POSIXct(se_times[[1]][[1]], origin = "1970-01-01")
     end_1 <- as.POSIXct(se_times[[1]][[2]], origin = "1970-01-01")
     start_2 <- as.POSIXct(se_times[[2]][[1]], origin = "1970-01-01")
@@ -766,7 +795,7 @@ combine_measurements <- function(df, method = "mean") {
 #' Preprocesses a wric data file, extracting metadata, creating DataFrames, and optionally saving results.
 #'
 #' @param filepath Path to the wric .txt file.
-#' @param code Method for generating subject IDs ("id", "id+comment", or "manual").
+#' @param code Method for generating subject IDs ("id", "id+comment", "study+id" (only for software v2), or "manual").
 #' @param manual Custom codes for subjects in Room 1 and Room 2 if `code` is "manual".
 #' @param save_csv Logical, whether to save extracted metadata and data to CSV files.
 #' @param path_to_save Directory path for saving CSV files, NULL uses the current directory.
@@ -943,3 +972,4 @@ preprocess_wric_files <- function(csv_file, fieldname, code = "id", manual = NUL
 
   return(dataframes)
 }
+

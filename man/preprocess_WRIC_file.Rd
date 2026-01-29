@@ -22,7 +22,7 @@ preprocess_wric_file(
 \arguments{
 \item{filepath}{Path to the wric .txt file.}
 
-\item{code}{Method for generating subject IDs ("id", "id+comment", or "manual").}
+\item{code}{Method for generating subject IDs ("id", "id+comment", "study+id" (only for software v2), or "manual").}
 
 \item{manual}{Custom codes for subjects in Room 1 and Room 2 if \code{code} is "manual".}
 

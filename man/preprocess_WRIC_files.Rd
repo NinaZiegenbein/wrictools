@@ -25,7 +25,7 @@ preprocess_wric_files(
 
 \item{fieldname}{The field name for exporting wric data from RedCAP.}
 
-\item{code}{Method for generating subject IDs ("id", "id+comment", or "manual").}
+\item{code}{Method for generating subject IDs ("id", "id+comment", "study+id" (only for software v2), or "manual").}
 
 \item{manual}{Custom codes for subjects in Room 1 and Room 2 if \code{code} is "manual".}
 

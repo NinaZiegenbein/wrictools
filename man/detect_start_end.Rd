@@ -5,7 +5,7 @@
 \title{Automatically detect enter and exit from the chamber based on the notefile.
 Returns the start and end times for two participants.}
 \usage{
-detect_start_end(notes_path, entry_exit_dict = NULL)
+detect_start_end(notes_path, v1 = FALSE, entry_exit_dict = NULL)
 }
 \arguments{
 \item{notes_path}{string - path to the note file}

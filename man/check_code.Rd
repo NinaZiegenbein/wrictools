@@ -4,32 +4,35 @@
 \alias{check_code}
 \title{Check the subject ID code and return corresponding Room 1 and Room 2 codes.}
 \usage{
-check_code(code, manual, metadata)
+check_code(code, manual, metadata, v1 = FALSE)
 }
 \arguments{
-\item{code}{Method for generating subject IDs ("id", "id+comment", or "manual").}
+\item{code}{Method for generating subject IDs ("id", "id+comment", "study+id", or "manual").}
 
-\item{manual}{A list of custom codes for Room 1 and Room 2, required if \code{code} is "manual".}
+\item{manual}{A custom code(string), required if \code{code} is "manual".}
 
-\item{r1_metadata}{DataFrame for metadata of Room 1, containing "Subject ID" and "Comments".}
+\item{metadata}{DataFrame for metadata of Room 1.}
 
-\item{r2_metadata}{DataFrame for metadata of Room 2, containing "Subject ID" and "Comments".}
+\item{v1}{Boolean, Software Version, default FALSE.}
 }
 \value{
-A list containing the codes for Room 1 and Room 2.
+String, the resulting code.
 }
 \description{
 Check the subject ID code and return corresponding Room 1 and Room 2 codes.
 }
 \examples{
 # Example metadata
-metadata <- data.frame(`Subject.ID` = "S001", `Comments` = "Morning")
+metadata <- data.frame(`Subject.ID` = "S001", `Study.ID` = "studyname", `Comments` = "Morning")
 
-# Use subject IDs only
+# Use subject ID only
 check_code("id", NULL, metadata)
 
-# Use subject IDs + comments
+# Use subject ID + comment
 check_code("id+comment", NULL, metadata)
+
+# Use study ID + subject ID
+check_code("study+id", NULL, metadata)
 
 # Use manual codes
 check_code("manual", "custom1", metadata)

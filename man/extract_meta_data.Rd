@@ -2,14 +2,14 @@
 % Please edit documentation in R/processing.R
 \name{extract_meta_data}
 \alias{extract_meta_data}
-\title{Extracts metadata for two subjects from text lines and optionally saves it as CSV files.}
+\title{Extracts metadata (software v1) for two subjects from text lines and optionally saves it as CSV files.}
 \usage{
 extract_meta_data(lines, code, manual, save_csv = FALSE, path_to_save)
 }
 \arguments{
 \item{lines}{List of strings containing the wric metadata.}
 
-\item{code}{Method for generating subject IDs ("id", "id+comment", or "manual").}
+\item{code}{Method for generating subject IDs ("id", "id+comment", "study+id" (only for software v2), or "manual").}
 
 \item{manual}{Custom codes for Room 1 and Room 2 subjects if \code{code} is "manual".}
 
@@ -21,7 +21,7 @@ extract_meta_data(lines, code, manual, save_csv = FALSE, path_to_save)
 A list containing the Room 1 code, Room 2 code, and DataFrames for r1_metadata and r2_metadata.
 }
 \description{
-Extracts metadata for two subjects from text lines and optionally saves it as CSV files.
+Extracts metadata (software v1) for two subjects from text lines and optionally saves it as CSV files.
 }
 \examples{
 lines <- c(

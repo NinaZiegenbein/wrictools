@@ -131,24 +131,33 @@ library(testthat)
 test_that("check_code works with different code options", {
   # Example metadata for Room 1 and Room 2
   r1 <- data.frame(`Subject.ID` = "S001", `Comments` = "Morning")
+  r2 <- data.frame(`Subject.ID` = "S001", `Study.ID` = "studyname", `Comments` = "Morning")
 
   # Test ID only
-  expect_equal(check_code("id", NULL, r1), "S001")
+  expect_equal(check_code("id", NULL, r1, v1 = TRUE), "S001")
 
   # Test ID + comment
-  expect_equal(check_code("id+comment", NULL, r1), "S001_Morning")
+  expect_equal(check_code("id+comment", NULL, r1, v1 = TRUE), "S001_Morning")
+
+  # Test study+ID
+  expect_equal(check_code("study+id", NULL, r2, v1 = FALSE), "studyname_S001")
+
+  # Test ID + comment
+  expect_error(check_code("study+id", NULL, r2, v1 = TRUE))
 
   # Test manual code
-  expect_equal(check_code("manual", "custom", r1), "custom")
+  expect_equal(check_code("manual", "custom", r1, v1 = TRUE), "custom")
 
   # Test invalid input
-  expect_error(check_code("invalid_option", NULL, r1))
-  expect_error(check_code("manual", NULL, r1))  # manual must be provided
+  expect_error(check_code("invalid_option", NULL, r1, v1 = TRUE))
+  expect_error(check_code("manual", NULL, r1, v1 = TRUE))  # manual must be provided
 })
 
 test_that("extract_metadata_new works", {
   # Path to test files in inst/extdata
   data_v2_txt <- system.file("extdata", "data_v2.txt", package = "wrictools")
+  tmp <- tempdir()
+
   res <- open_file(data_v2_txt)
   result <- extract_metadata_new(res$lines, code = "id", manual = NULL, save_csv = FALSE)
 
@@ -156,5 +165,46 @@ test_that("extract_metadata_new works", {
   expect_true("code" %in% names(result))
   expect_true("metadata" %in% names(result))
 
-  #TODO: Check that output correct, also when empty tabs
+  metadata <- result$metadata
+  str(metadata)
+  print(metadata)
+  # Check correct alignment of values
+  expect_equal(metadata$Subject.ID[1], "ZeroTest")
+  expect_equal(metadata$Researcher.ID[1], "XX")
+  expect_equal(metadata$Comments[1], "Zero Test 14.01.2026")
+  expect_equal(metadata$Study.ID[1], "")
+  expect_equal(metadata$Measurement.ID[1], "")
+})
+
+test_that("detect_start_end works for v1 and v2 note files", {
+  note_v1_path <- system.file("extdata", "note.txt", package = "wrictools")
+  note_v2_path <- system.file("extdata", "note_v2.txt", package = "wrictools")
+
+  # Test v1
+  times_v1 <- detect_start_end(note_v1_path, v1 = TRUE)
+  expected_times <- list(
+    "1" = list(
+      as.POSIXct("2023-11-13 21:14:22"),
+      as.POSIXct("2023-11-14 08:47:48")
+    ),
+    "2" = list(
+      as.POSIXct("2023-11-13 21:14:22"),
+      as.POSIXct("2023-11-14 08:51:36")
+    )
+  )
+  expect_equal(times_v1, expected_times)
+
+  # Test v2
+  times_v2 <- detect_start_end(note_v2_path, v1 = FALSE)
+  expected_times <- list(
+    "1" = list(
+      as.POSIXct("2026-01-14 11:59:43"),
+      as.POSIXct("2026-01-14 12:20:15")
+    ),
+    "2" = list(
+      as.POSIXct("2026-01-14 11:59:43"),
+      as.POSIXct("2026-01-14 12:20:15")
+    )
+  )
+  expect_equal(times_v2, expected_times)
 })
