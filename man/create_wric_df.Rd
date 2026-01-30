@@ -7,7 +7,6 @@
 create_wric_df(
   filepath,
   lines,
-  save_csv = FALSE,
   code_1,
   code_2,
   path_to_save,
@@ -21,8 +20,6 @@ create_wric_df(
 \item{filepath}{Path to the wric .txt file.}
 
 \item{lines}{List of strings read from the file to locate the data start.}
-
-\item{save_csv}{Logical, whether to save DataFrames as CSV files.}
 
 \item{code_1}{String representing the codes for Room 1.}
 
@@ -59,7 +56,6 @@ lines <- readLines(data_txt)
 result <- create_wric_df(
   filepath = data_txt,
   lines = lines,
-  save_csv = FALSE,
   code_1 = "XXXX",
   code_2 = "YYYY",
   path_to_save = tempdir(),

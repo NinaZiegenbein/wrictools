@@ -45,7 +45,13 @@ preprocess_wric_file(
 \item{entry_exit_dict}{Nested List, used to extract entry/exit times from note file}
 }
 \value{
-A list containing the metadata and DataFrames for Room 1 and Room 2.
+A list with four elements:
+\describe{
+\item{r1_metadata}{List containing metadata extracted for Room 1.}
+\item{r2_metadata}{List containing metadata extracted for Room 2.}
+\item{df_room1}{Data frame with processed WRIC measurements for Room 1.}
+\item{df_room2}{Data frame with processed WRIC measurements for Room 2.}
+}
 }
 \description{
 Preprocesses a wric data file, extracting metadata, creating DataFrames, and optionally saving results.
