@@ -23,6 +23,9 @@ test_that("preprocess_wric_file does not throw errors with various inputs", {
     result <- preprocess_wric_file(data_txt, path_to_save = tmp)
   }, NA)
 
+  print("old version")
+  str(result$df_room1)
+
   # Test with specific filepath and code parameter
   expect_error({
     result <- preprocess_wric_file(data_no_comment_txt, path_to_save = tmp)
@@ -265,3 +268,17 @@ test_that("create_wric_df_new parses new WRIC format correctly", {
   expect_equal(as.numeric(max(df3$datetime)), as.numeric(end_time))
 })
 
+test_that("Make sure combine_measurements works for both old and new version", {
+  # ---- Load example files ----
+  data_v2_path <- system.file("extdata", "data_v2.txt", package = "wrictools")
+  note_v2_path <- system.file("extdata", "note_v2.txt", package = "wrictools")
+
+  res <- open_file(data_v2_path)
+  lines <- res$lines
+  df <- create_wric_df_new(filepath = data_v2_path, lines = lines,
+    code = "study+id", notefilepath = note_v2_path)
+  df_combined <- combine_measurements(df, method = "mean")
+
+  expect_s3_class(df_combined, "data.frame")
+  expect_true("VO2" %in% names(df_combined))
+})

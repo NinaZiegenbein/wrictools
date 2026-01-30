@@ -864,8 +864,8 @@ check_discrepancies <- function(df, threshold = 0.05, individual = FALSE) {
 #' combined_s1 <- combine_measurements(result$df_room1)
 #'
 combine_measurements <- function(df, method = "mean") {
-  s1_columns <- df %>% select(contains("_S1_")) %>% names()
-  s2_columns <- df %>% select(contains("_S2_")) %>% names()
+  s1_columns <- df %>% select(contains("S1_")) %>% names()
+  s2_columns <- df %>% select(contains("S2_")) %>% names()
   non_s_columns <- names(df)[!names(df) %in% c(s1_columns, s2_columns)]
 
   combined <- df[, non_s_columns]
@@ -887,7 +887,7 @@ combine_measurements <- function(df, method = "mean") {
     } else {
       stop("Method not supported. Use 'mean', 'median', 's1', 's2', 'min', or 'max'.")
     }
-    column_name <- sub("^.*?_S[12]_", "", s1_columns[i])
+    column_name <- sub("^(r[12]_)?S[12]_", "", s1_columns[i])
     combined[[column_name]] <- combined_values
   }
   return(combined)
