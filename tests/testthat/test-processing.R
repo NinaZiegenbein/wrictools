@@ -166,8 +166,6 @@ test_that("extract_metadata_new works", {
   expect_true("metadata" %in% names(result))
 
   metadata <- result$metadata
-  str(metadata)
-  print(metadata)
   # Check correct alignment of values
   expect_equal(metadata$Subject.ID[1], "ZeroTest")
   expect_equal(metadata$Researcher.ID[1], "XX")
@@ -208,3 +206,62 @@ test_that("detect_start_end works for v1 and v2 note files", {
   )
   expect_equal(times_v2, expected_times)
 })
+
+test_that("create_wric_df_new parses new WRIC format correctly", {
+  data_v2_path  <- system.file("extdata", "data_v2.txt", package = "wrictools")
+  note_v2_path  <- system.file("extdata", "note_v2.txt", package = "wrictools")
+
+  res <- open_file(data_v2_path)
+  lines <- res$lines
+
+  # ---- Case 1: With note file ----
+  df <- create_wric_df_new(
+    filepath = data_v2_path,
+    lines = lines,
+    code = "study+id",
+    path_to_save = NULL,
+    start = NULL,
+    end = NULL,
+    notefilepath = note_v2_path
+  )
+  expect_s3_class(df, "data.frame")
+  expect_true("datetime" %in% names(df))
+  expect_true("relative_time" %in% names(df))
+
+  expect_true(any(grepl("^S1_VO2", names(df))))
+  expect_true(any(grepl("^S2_VO2", names(df))))
+  expect_s3_class(df$datetime, "POSIXct")
+
+  expect_equal(
+    as.numeric(min(df$datetime)),
+    as.numeric(as.POSIXct("2026-01-14 11:59:43"))
+  )
+
+  expect_equal(
+    as.numeric(max(df$datetime)),
+    as.numeric(as.POSIXct("2026-01-14 12:20:15"))
+  )
+
+  # ---- Case 2: Without note file ----
+  df2 <- create_wric_df_new(filepath = data_v2_path, lines = lines, code = "study+id")
+  expect_equal(
+    as.numeric(min(df2$datetime)),
+    as.numeric(as.POSIXct("2026-01-14 11:58:00"))
+  )
+  expect_equal(
+    as.numeric(max(df2$datetime)),
+    as.numeric(as.POSIXct("2026-01-14 12:21:00"))
+  )
+
+  # ---- Case 3: Specified start and end ----
+  start_time <- as.POSIXct("2026-01-14 11:59:00")
+  end_time   <- as.POSIXct("2026-01-14 12:10:00")
+
+  df3 <- create_wric_df_new(filepath = data_v2_path, lines = lines,
+    code = "study+id", start = start_time, end = end_time)
+
+  expect_s3_class(df3, "data.frame")
+  expect_equal(as.numeric(min(df3$datetime)), as.numeric(start_time))
+  expect_equal(as.numeric(max(df3$datetime)), as.numeric(end_time))
+})
+

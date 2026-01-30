@@ -15,6 +15,8 @@ extract_metadata_new(
 \arguments{
 \item{lines}{List of strings containing the wric metadata.}
 
+\item{code}{Method for generating subject IDs ("id", "id+comment", "study+id" (only for software v2), or "manual").}
+
 \item{manual}{Custom code for the subject if \code{code} is "manual".}
 
 \item{save_csv}{Logical, whether to save extracted metadata to a CSV file.}

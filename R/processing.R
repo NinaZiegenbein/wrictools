@@ -590,7 +590,7 @@ extract_note_info <- function(notes_path, df_room1, df_room2, keywords_dict = NU
 #'   end = NULL,
 #'   notefilepath = notes_txt
 #' )
-create_wric_df <- function(filepath, lines, save_csv = FALSE, code_1, code_2, path_to_save, start, end, notefilepath, entry_exit_dict) {
+create_wric_df <- function(filepath, lines, code_1, code_2, path_to_save, start, end, notefilepath, entry_exit_dict) {
 
   data_start_index <- which(grepl("^Room 1 Set 1", lines)) + 1
   df <- read_tsv(filepath, skip = data_start_index, col_names = FALSE)
@@ -601,7 +601,7 @@ create_wric_df <- function(filepath, lines, save_csv = FALSE, code_1, code_2, pa
   # Define new column names
   columns <- c("Date", "Time", "VO2", "VCO2", "RER", "FiO2", "FeO2", "FiCO2", "FeCO2", "Flow",
                "Activity Monitor", "Energy Expenditure (kcal/min)", "Energy Expenditure (kJ/min)",
-               "Pressure Ambient", "Temperature", "Relative Humidity")
+               "Pressure Ambient", "Temperature Room", "Relative Humidity Room")
   new_columns <- c()
   for (set_num in c("S1", "S2")) {
     for (room in c("r1", "r2")) {
@@ -670,6 +670,78 @@ create_wric_df <- function(filepath, lines, save_csv = FALSE, code_1, code_2, pa
 
   return(list(df_room1 = df_room1, df_room2 = df_room2))
 }
+
+create_wric_df_new <- function(filepath, lines, code, path_to_save = NULL, start = NULL, end = NULL, notefilepath = NULL, entry_exit_dict = NULL) {
+
+  header_start_index <- which(grepl("^Set 1", lines))
+  if (length(header_start_index) == 0) {
+    stop("Could not find 'Set 1' header in file.")
+  }
+
+  # Due to an empty column between Set1 and Set2 "normal" parsing fails or throws warnings,
+  # which is why I delete this column manually before parsing. This is far from
+  # ideal and needs to be handled, if future updates ever delete that column.
+  data_lines <- lines[(header_start_index + 3):length(lines)]
+  data_lines <- gsub("\t\t", "\t", data_lines)
+
+  df <- read_tsv(I(data_lines), col_names = FALSE, show_col_types = FALSE)
+
+  # Drop completely empty columns and rows
+  df <- df %>% dplyr::select(where(~ !all(is.na(.))))
+
+
+  # Define new column names
+  base_columns <- c(
+    "Date", "Time", "VO2", "VCO2", "RER", "Energy Expenditure (kJ/min)", "Energy Expenditure (kcal/min)",
+    "FiO2", "FeO2", "FiCO2", "FeCO2", "Flow", "Pressure Ambient", "Temperature Flow",
+    "Relative Humidity Flow", "Temperature Room", "Relative Humidity Room")
+
+  new_columns <- c(paste0("S1_", base_columns), paste0("S2_", base_columns))
+
+  if (ncol(df) != length(new_columns)) {
+    stop("Unexpected number of columns in new WRIC file.")
+  }
+
+  colnames(df) <- new_columns
+  df <- df %>% dplyr::filter(!is.na(S1_Date) & S1_Date != "")
+
+  # Check for consistent Date and Time columns
+  date_cols <- df %>% dplyr::select(contains("_Date"))
+  time_cols <- df %>% dplyr::select(contains("_Time"))
+  if (!all(apply(date_cols, 1, function(x) length(unique(x)) == 1)) ||
+      !all(apply(time_cols, 1, function(x) length(unique(x)) == 1))) {
+    stop("Date or Time columns do not match across sets in some rows.")
+  }
+
+  # Combine Date and Time to DateTime
+  df <- df %>% mutate(S1_Date = as.character(.data$S1_Date), S1_Time = as.character(.data$S1_Time))
+  datetime <- as.POSIXct(paste(df$S1_Date, df$S1_Time), format = "%d/%m/%Y %H:%M:%S")
+  df$datetime <- datetime
+
+  # delete now unnecessary date and time columns
+  df <- df %>%
+    dplyr::select(-contains("_Date"), -contains("_Time"))
+
+  # Cut to only include desired rows
+  if (!is.null(start) && !is.null(end)) {
+    df <- cut_rows(df, start, end)
+  } else if (!is.null(notefilepath)) {
+    se_times <- detect_start_end(notefilepath, v1 = FALSE, entry_exit_dict = entry_exit_dict)
+    start_time <- as.POSIXct(se_times[[1]][[1]], origin = "1970-01-01")
+    end_time   <- as.POSIXct(se_times[[1]][[2]], origin = "1970-01-01")
+
+    if (!is.null(start)) start_time <- start
+    if (!is.null(end))   end_time   <- end
+
+    df <- cut_rows(df, start_time, end_time)
+  }
+
+  df <- add_relative_time(df)
+
+  return(df)
+}
+
+
 
 #' Checks for discrepancies between S1 and S2 measurements in the DataFrame and prints them to the console.
 #' This function is not included in the big pre-processing function, as it is more intended to
@@ -806,7 +878,13 @@ combine_measurements <- function(df, method = "mean") {
 #' @param notefilepath String, Directory path of the corresponding note file (.txt)
 #' @param keywords_dict Nested List, used to extract protocol values from note file
 #' @param entry_exit_dict Nested List, used to extract entry/exit times from note file
-#' @return A list containing the metadata and DataFrames for Room 1 and Room 2.
+#' @return A list with four elements:
+#' \describe{
+#'   \item{r1_metadata}{List containing metadata extracted for Room 1.}
+#'   \item{r2_metadata}{List containing metadata extracted for Room 2.}
+#'   \item{df_room1}{Data frame with processed WRIC measurements for Room 1.}
+#'   \item{df_room2}{Data frame with processed WRIC measurements for Room 2.}
+#' }
 #' @export
 #' @examples
 #' outdir <- file.path(tempdir(), "wrictools")
@@ -823,7 +901,7 @@ preprocess_wric_file <- function(filepath, code = "id", manual = NULL, save_csv 
   r2_metadata <- result$r2_metadata
   code_1 <- result$code_1
   code_2 <- result$code_2
-  result <- create_wric_df(filepath, lines, save_csv, code_1, code_2, path_to_save, start, end, notefilepath, entry_exit_dict)
+  result <- create_wric_df(filepath, lines, code_1, code_2, path_to_save, start, end, notefilepath, entry_exit_dict)
   df_room1 <- result$df_room1
   df_room2 <- result$df_room2
 
