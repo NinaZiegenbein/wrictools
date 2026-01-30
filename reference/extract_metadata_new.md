@@ -21,6 +21,11 @@ extract_metadata_new(
 
   List of strings containing the wric metadata.
 
+- code:
+
+  Method for generating subject IDs ("id", "id+comment", "study+id"
+  (only for software v2), or "manual").
+
 - manual:
 
   Custom code for the subject if `code` is "manual".

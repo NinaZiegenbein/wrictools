@@ -78,7 +78,23 @@ preprocess_wric_file(
 
 ## Value
 
-A list containing the metadata and DataFrames for Room 1 and Room 2.
+A list with four elements:
+
+- r1_metadata:
+
+  List containing metadata extracted for Room 1.
+
+- r2_metadata:
+
+  List containing metadata extracted for Room 2.
+
+- df_room1:
+
+  Data frame with processed WRIC measurements for Room 1.
+
+- df_room2:
+
+  Data frame with processed WRIC measurements for Room 2.
 
 ## Examples
 

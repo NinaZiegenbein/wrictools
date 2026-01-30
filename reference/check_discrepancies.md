@@ -42,7 +42,6 @@ lines <- readLines(data_txt)
 result <- create_wric_df(
   filepath = data_txt,
   lines = lines,
-  save_csv = FALSE,
   code_1 = "R1",
   code_2 = "R2",
   path_to_save = tempdir(),

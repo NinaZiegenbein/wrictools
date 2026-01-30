@@ -27,6 +27,10 @@
   : Creates DataFrames for wric data from a file and optionally saves
   them as CSV files.
 
+- [`create_wric_df_new()`](https://ninaziegenbein.github.io/wrictools/reference/create_wric_df_new.md)
+  : Creates a DataFrame for WRIC data from the new Omnical software
+  format.
+
 - [`cut_rows()`](https://ninaziegenbein.github.io/wrictools/reference/cut_rows.md)
   : Filters rows in a DataFrame based on an optional start and end
   datetime range.

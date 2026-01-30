@@ -15,6 +15,10 @@ detect_start_end(notes_path, v1 = FALSE, entry_exit_dict = NULL)
 
   string - path to the note file
 
+- v1:
+
+  Boolean, Software Version, default FALSE.
+
 - entry_exit_dict:
 
   Nested List, used to extract entry/exit times from note file
