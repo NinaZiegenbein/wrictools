@@ -282,3 +282,66 @@ test_that("Make sure combine_measurements works for both old and new version", {
   expect_s3_class(df_combined, "data.frame")
   expect_true("VO2" %in% names(df_combined))
 })
+
+test_that("extract_protocol_events works for old and new software", {
+
+  # Example note file path
+  note_path_v1 <- system.file("extdata", "note.txt", package = "wrictools")
+  note_path_v2 <- system.file("extdata", "note_v2.txt", package = "wrictools")
+
+  # ---- v1 test (old software) ----
+  output_v1 <- extract_protocol_events(
+    notes_path = note_path_v1,
+    v1 = TRUE
+  )
+  cat("\n--- v1 output ---\n")
+  str(output_v1)
+  # sanity check: check first timestamp and protocol for participant 1
+  first_entry_v1 <- output_v1[["1"]][[1]]
+  expect_s3_class(first_entry_v1$timestamp, "POSIXct")
+  expect_equal(as.character(first_entry_v1$timestamp), "2023-11-13 22:41:14")
+  expect_equal(first_entry_v1$protocol, 1)
+
+  # ---- v2 test (new software) ----
+  output_v2 <- extract_protocol_events(
+    notes_path = note_path_v2,
+    v1 = FALSE
+  )
+  cat("\n--- v2 output ---\n")
+  str(output_v2)
+
+  # sanity check: first timestamp and protocol for "all"
+  first_entry_v2 <- output_v2[["all"]][[1]]
+  expect_s3_class(first_entry_v2$timestamp, "POSIXct")
+  expect_equal(as.character(first_entry_v2$timestamp), "2026-01-14 11:58:01")
+  expect_equal(first_entry_v2$protocol, 4)
+
+})
+
+test_that("apply_protocols applies protocol correctly", {
+  data_v2_path <- system.file("extdata", "data_v2.txt", package = "wrictools")
+  note_v2_path <- system.file("extdata", "note_v2.txt", package = "wrictools")
+
+  # Load df
+  lines <- readLines(data_v2_path)
+  df <- create_wric_df_new(filepath = data_v2_path, lines = lines, code = "study+id",
+                           start = NULL, end = NULL, notefilepath = NULL)
+
+  # Extract protocol
+  protocol_events <- extract_protocol_events(note_v2_path, v1 = FALSE)
+
+  # Apply protocol
+  df_applied <- apply_protocols(df, protocol_events, participant = "all")
+
+  # Check first protocol value
+  first_protocol <- df_applied$protocol[df_applied$datetime >= protocol_events[["all"]][[1]]$timestamp][1]
+  expect_equal(first_protocol, 4)
+
+  # Check last protocol value
+  last_protocol <- df_applied$protocol[df_applied$datetime >= protocol_events[["all"]][[2]]$timestamp][1]
+  expect_equal(last_protocol, 0)
+
+  # Manual inspection
+  # str(df_applied)
+})
+

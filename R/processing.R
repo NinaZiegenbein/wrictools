@@ -405,6 +405,17 @@ append_protocol_entry <- function(dict_protocol, participant, timestamp, value) 
   return(dict_protocol)
 }
 
+.get_keywords_dict <- function() {
+  keywords_dict <- list(
+    sleeping = list(keywords = list(c("seng", "sleeping", "bed", "sove", "soeve", "godnat", "night", "sleep")), value = 1),
+    eating = list(keywords = list(c("start", "begin", "began"), c("maaltid", "eat", "meal", "food", "spis", "maal", "maad", "mad", "frokost", "morgenmad", "middag", "snack", "aftensmad")), value = 2),
+    stop_sleeping = list(keywords = list(c("vaagen", "vaekke", "vaek", "wake", "woken", "vaagnet")), value = 0),
+    stop_anything = list(keywords = list(c("faerdig", "faerdig", "stop", "end ", "finished", "slut")), value = 0),
+    activity = list(keywords = list(c("start", "begin", "began"), c("step", "exercise", "physical activity", "active", "motion", "aktiv")), value = 3),
+    ree_start = list(keywords = list(c("start", "begin", "began"), c("REE", "BEE", "BMR", "RMR", "RER")), value = 4)
+  )
+  return(keywords_dict)
+}
 
 #' Extracts and processes note information from a specified notes file, categorizing events
 #' based on predefined keywords, and updates two DataFrames with protocol information for
@@ -433,14 +444,7 @@ extract_note_info <- function(notes_path, df_room1, df_room2, keywords_dict = NU
 
   # Define keywords dictionary
   if (is.null(keywords_dict)) {
-    keywords_dict <- list(
-      sleeping = list(keywords = list(c("seng", "sleeping", "bed", "sove", "soeve", "godnat", "night", "sleep")), value = 1),
-      eating = list(keywords = list(c("start", "begin", "began"), c("maaltid", "eat", "meal", "food", "spis", "maal", "maad", "mad", "frokost", "morgenmad", "middag", "snack", "aftensmad")), value = 2),
-      stop_sleeping = list(keywords = list(c("vaagen", "vaekke", "vaek", "wake", "woken", "vaagnet")), value = 0),
-      stop_anything = list(keywords = list(c("faerdig", "faerdig", "stop", "end ", "finished", "slut")), value = 0),
-      activity = list(keywords = list(c("start", "begin", "began"), c("step", "exercise", "physical activity", "active", "motion", "aktiv")), value = 3),
-      ree_start = list(keywords = list(c("start", "begin", "began"), c("REE", "BEE", "BMR", "RMR", "RER")), value = 4)
-    )
+    keywords_dict <- .get_keywords_dict()
   }
 
   # Load note file and create DataFrame
@@ -551,6 +555,145 @@ extract_note_info <- function(notes_path, df_room1, df_room2, keywords_dict = NU
   df_room2 <- update_protocol(df_room2, protocol_list_2)
 
   return(list(df_room1 = df_room1, df_room2 = df_room2))
+}
+
+#' Extract protocol events from a note file (without applying to dataframes)
+#'
+#' @param notes_path Path to the note file (.txt)
+#' @param keywords_dict Optional custom keywords dictionary
+#' @param v1 Logical, TRUE if old software format (two participants), FALSE for new format (single participant / all)
+#' @return A list with protocol events, structured by participant ("1", "2", or "all")
+#' @export
+extract_protocol_events <- function(notes_path, keywords_dict = NULL, v1 = FALSE) {
+
+  if (is.null(keywords_dict)) {
+    keywords_dict <- .get_keywords_dict()
+  }
+
+  # Read note file
+  notes_content <- readLines(notes_path, encoding = "UTF-8")
+  lines <- strsplit(notes_content[-(1:2)], "\t")
+  df_note <- as.data.frame(do.call(rbind, lines[-(1:2)]), stringsAsFactors = FALSE)
+  colnames(df_note) <- unlist(lines[[1]])
+  df_note <- na.omit(df_note)
+
+  # Convert to datetime
+  if (v1) {# old software: mm/dd/yy
+    df_note$datetime <- as.POSIXct(paste(df_note$Date, df_note$Time), format = "%m/%d/%y %H:%M:%S")
+  } else {# new software: dd/mm/yyyy
+    df_note$datetime <- as.POSIXct(paste(df_note$Date, df_note$Time), format = "%d/%m/%Y %H:%M:%S")
+  }
+
+  df_note <- df_note[, !names(df_note) %in% c("Date", "Time")]
+
+  # Patterns
+  time_pattern <- "([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5]\\d"
+  drift_pattern <- "^\\d{2}:\\d{2}(:\\d{2})?$"
+  drift <- NULL
+
+  # Initialize empty protocol list
+  if (v1) {
+    dict_protocol <- list("1" = list(), "2" = list())
+  } else {
+    dict_protocol <- list("all" = list())
+  }
+
+  for (i in seq_len(nrow(df_note))) {
+    row <- df_note[i, ]
+    comment <- tolower(row$Comment)
+    comment <- iconv(comment, to = "UTF-8")
+
+    # Determine participants
+    if (v1) {
+      if (grepl("^1", comment)) {
+        participants <- "1"
+      } else if (grepl("^2", comment)) {
+        participants <- "2"
+      } else {
+        participants <- c("1", "2")
+      }
+    } else {
+      participants <- "all"
+    }
+
+    # Handle first-row drift
+    if (i == 1 && grepl(drift_pattern, row$Comment)) {
+      if (grepl("^\\d{2}:\\d{2}$", row$Comment)) {
+        row$Comment <- paste0(row$Comment, ":00")
+      }
+      new_datetime <- as.POSIXct(paste(as.Date(row$datetime), row$Comment), format = "%Y-%m-%d %H:%M:%S")
+      drift <- new_datetime - row$datetime
+      next
+    }
+
+    # Loop over keywords
+    for (category in names(keywords_dict)) {
+      entry <- keywords_dict[[category]]
+      keywords <- entry$keywords
+      value <- entry$value
+
+      match_found <- FALSE
+      if (length(keywords) > 1) {
+        # Multi-group keyword check
+        if (all(sapply(keywords, function(group) any(grepl(paste(group, collapse = "|"), comment, ignore.case = TRUE))))) {
+          match_found <- TRUE
+        }
+      } else {
+        # Single-group keyword check
+        if (any(sapply(keywords, function(group) any(grepl(paste(group, collapse = "|"), comment, ignore.case = TRUE))))) {
+          match_found <- TRUE
+        }
+      }
+
+      if (match_found) {
+        match_time <- regmatches(comment, regexpr(time_pattern, comment))
+        if (length(match_time) > 0) {
+          timestamp <- as.POSIXct(paste(as.Date(row$datetime), match_time), format = "%Y-%m-%d %H:%M")
+        } else {
+          timestamp <- row$datetime
+        }
+
+        # Append to protocol list
+        for (p in participants) {
+          dict_protocol[[p]] <- append(dict_protocol[[p]], list(list(timestamp = timestamp, protocol = value)))
+        }
+      }
+    }
+  }
+
+  # Apply drift to timestamps if any
+  if (!is.null(drift)) {
+    for (p in names(dict_protocol)) {
+      dict_protocol[[p]] <- lapply(dict_protocol[[p]], function(x) {
+        x$timestamp <- x$timestamp + drift
+        x
+      })
+    }
+  }
+
+  return(dict_protocol)
+}
+
+#' Apply protocol events to a WRIC dataframe
+#'
+#' @param df A dataframe with a `datetime` column.
+#' @param protocol_events List returned by `extract_protocol_events_only()`.
+#' @param participant Optional, "1", "2", or "all" (used for v2). Default is "all".
+#' @return The input dataframe with a new column `protocol` containing the protocol values.
+#' @export
+apply_protocols <- function(df, protocol_events, participant = "all") {
+  df <- df %>% dplyr::mutate(protocol = 0)  # default 0
+
+  events <- protocol_events[[participant]]
+
+  if (length(events) == 0) return(df)
+
+  # Apply protocol events
+  for (ev in events) {
+    df$protocol[df$datetime >= ev$timestamp] <- ev$protocol
+  }
+
+  return(df)
 }
 
 
