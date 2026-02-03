@@ -112,10 +112,10 @@ and a fieldname of “WRIC_raw”, you can call the function like this:
 ``` r
 result <- preprocess_WRIC_files("./example_data/record_ids.csv", "WRIC_raw", 
                             code = "id", save_csv = TRUE)
-R1_metadata <- result$R1_metadata
-R2_metadata <- result$R2_metadata
-df_room1 <- result$df_room1
-df_room2 <- result$df_room2
+R1_metadata <- result$metadata$r1
+R2_metadata <- result$metadata$r2
+df_room1 <- result$dfs$room1
+df_room2 <- result$dfs$room2
 ```
 
 ### 5. Upload Files to RedCap

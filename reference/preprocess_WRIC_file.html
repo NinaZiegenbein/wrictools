@@ -114,17 +114,20 @@
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A list with four elements:</p><dl><dt>r1_metadata</dt>
-<dd><p>List containing metadata extracted for Room 1.</p></dd>
+    <p>list
+A list with the following components:</p><dl><dt>version</dt>
+<dd><p>Character string indicating the detected software version
+(<code>"1"</code> for old software, <code>"2"</code> for new software).</p></dd>
 
-<dt>r2_metadata</dt>
-<dd><p>List containing metadata extracted for Room 2.</p></dd>
+<dt>metadata</dt>
+<dd><p>A named list containing extracted metadata.
+For version 1, this includes <code>r1</code> and <code>r2</code>.
+For version 2, this contains a single <code>metadata</code> entry.</p></dd>
 
-<dt>df_room1</dt>
-<dd><p>Data frame with processed WRIC measurements for Room 1.</p></dd>
-
-<dt>df_room2</dt>
-<dd><p>Data frame with processed WRIC measurements for Room 2.</p></dd>
+<dt>dfs</dt>
+<dd><p>A named list containing processed data frames.
+For version 1: <code>room1</code> and <code>room2</code>.
+For version 2: <code>data</code>.</p></dd>
 
 
 </dl></div>

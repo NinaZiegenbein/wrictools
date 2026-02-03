@@ -78,23 +78,23 @@ preprocess_wric_file(
 
 ## Value
 
-A list with four elements:
+list A list with the following components:
 
-- r1_metadata:
+- version:
 
-  List containing metadata extracted for Room 1.
+  Character string indicating the detected software version (`"1"` for
+  old software, `"2"` for new software).
 
-- r2_metadata:
+- metadata:
 
-  List containing metadata extracted for Room 2.
+  A named list containing extracted metadata. For version 1, this
+  includes `r1` and `r2`. For version 2, this contains a single
+  `metadata` entry.
 
-- df_room1:
+- dfs:
 
-  Data frame with processed WRIC measurements for Room 1.
-
-- df_room2:
-
-  Data frame with processed WRIC measurements for Room 2.
+  A named list containing processed data frames. For version 1: `room1`
+  and `room2`. For version 2: `data`.
 
 ## Examples
 

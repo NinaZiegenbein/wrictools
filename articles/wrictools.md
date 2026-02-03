@@ -88,10 +88,10 @@ result <- preprocess_wric_file(data_txt)
 #> ℹ Use `spec()` to retrieve the full column specification for this data.
 #> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 
-r1_metadata <- result$r1_metadata
-r2_metadata <- result$r1_metadata
-df_room1 <- result$df_room1
-df_room2 <- result$df_room2
+r1_metadata <- result$metadata$r1
+r2_metadata <- result$metadata$r2
+df_room1 <- result$dfs$room1
+df_room2 <- result$dfs$room2
 ```
 
 The function returns a list with “R1_metadata”, “R2_metadata”,
@@ -250,35 +250,8 @@ result <- preprocess_wric_file(data_txt,
 #> ℹ Use `spec()` to retrieve the full column specification for this data.
 #> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 #> [1] "Starting time for room 1 is 2023-11-13 21:14:22 and end 2023-11-14 08:47:48 and for room 2 start is 2023-11-13 21:14:22 and end 2023-11-14 08:51:36"
-head(result$df_room1)
-#>              datetime relative_time      VO2     VCO2       RER     FiO2
-#> 1 2023-11-13 21:16:21             0 686.7342 566.7062 0.8373200 19.49793
-#> 2 2023-11-13 21:17:21             1 786.6187 674.9738 0.8434745 21.00086
-#> 3 2023-11-13 21:18:21             2 747.9670 642.8713 0.9094570 20.89094
-#> 4 2023-11-13 21:19:21             3 638.9924 573.3978 0.8835660 20.31344
-#> 5 2023-11-13 21:20:21             4 559.1194 469.9648 0.8630800 19.80281
-#> 6 2023-11-13 21:21:21             5 491.8286 402.0223 0.8309455 20.91918
-#>       FeO2     FiCO2     FeCO2     Flow Activity Monitor
-#> 1 20.55501 0.0429490 0.0695075 192.5606                0
-#> 2 21.15050 0.0464570 0.0737055 142.5044                0
-#> 3 19.31386 0.0449615 0.0701650 129.1857                0
-#> 4 20.75081 0.0426345 0.0792335 122.5511                0
-#> 5 21.02666 0.0422005 0.0831505 121.0656                0
-#> 6 20.23761 0.0438175 0.0920320 118.0396                0
-#>   Energy Expenditure (kcal/min) Energy Expenditure (kJ/min) Pressure Ambient
-#> 1                      3.398292                    14.83090         968.4605
-#> 2                      3.927646                    16.35775         983.6174
-#> 3                      3.520535                    14.76036        1015.6308
-#> 4                      3.338119                    13.44594        1051.7866
-#> 5                      2.536662                    11.00702         953.7645
-#> 6                      2.520482                    10.16457        1039.1763
-#>   Temperature Room Relative Humidity Room protocol
-#> 1         20.13625               49.16104        0
-#> 2         19.97139               45.53661        0
-#> 3         21.04801               48.88103        0
-#> 4         21.81045               47.30645        0
-#> 5         21.66687               48.72191        0
-#> 6         19.72161               52.90930        0
+head(result$dfs$df_room1)
+#> NULL
 ```
 
 When looking at `df_room1` now, we can see a new column called
@@ -335,15 +308,21 @@ When specifying a notefilepath, the function will
     #> 
     #>  [36mℹ [39m Use `spec()` to retrieve the full column specification for this data.
     #>  [36mℹ [39m Specify the column types or set `show_col_types = FALSE` to quiet this message.
-    #> $r1_metadata
+    #> $version
+    #> [1] "1"
+    #> 
+    #> $metadata
+    #> $metadata$r1
     #>   Project Subject.ID Experiment.performed.by Comments
     #> 1 PROJECT       XXXX                JANE DOE  Visit 2
     #> 
-    #> $r2_metadata
+    #> $metadata$r2
     #>   Project Subject.ID Experiment.performed.by Comments
     #> 1 PROJECT       YYYY                JOHN DOE  VISIT 1
     #> 
-    #> $df_room1
+    #> 
+    #> $dfs
+    #> $dfs$room1
     #>                datetime relative_time        VO2        VCO2          RER
     #> 1   2023-11-13 21:02:00             0  59.912819  45.2727600    0.8042405
     #> 2   2023-11-13 21:03:00             1  56.230214  44.3741035    0.8095575
@@ -3217,7 +3196,7 @@ When specifying a notefilepath, the function will
     #> 716         24.28916               54.32538
     #> 717         23.64762               54.62584
     #> 
-    #> $df_room2
+    #> $dfs$room2
     #>                datetime relative_time          VO2        VCO2        RER
     #> 1   2023-11-13 21:02:00             0   16.8689075   15.992995  1.1775590
     #> 2   2023-11-13 21:03:00             1   24.0544030   14.705714  0.7209420
@@ -6248,36 +6227,9 @@ result <- preprocess_wric_file(data_txt, notefilepath = note_txt)
 #> ℹ Use `spec()` to retrieve the full column specification for this data.
 #> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 #> [1] "Starting time for room 1 is 2023-11-13 21:14:22 and end 2023-11-14 08:47:48 and for room 2 start is 2023-11-13 21:14:22 and end 2023-11-14 08:51:36"
-data <- result$df_room1
+data <- result$dfs$df_room1
 head(data)
-#>              datetime relative_time      VO2     VCO2       RER     FiO2
-#> 1 2023-11-13 21:16:21             0 686.7342 566.7062 0.8373200 19.49793
-#> 2 2023-11-13 21:17:21             1 786.6187 674.9738 0.8434745 21.00086
-#> 3 2023-11-13 21:18:21             2 747.9670 642.8713 0.9094570 20.89094
-#> 4 2023-11-13 21:19:21             3 638.9924 573.3978 0.8835660 20.31344
-#> 5 2023-11-13 21:20:21             4 559.1194 469.9648 0.8630800 19.80281
-#> 6 2023-11-13 21:21:21             5 491.8286 402.0223 0.8309455 20.91918
-#>       FeO2     FiCO2     FeCO2     Flow Activity Monitor
-#> 1 20.55501 0.0429490 0.0695075 192.5606                0
-#> 2 21.15050 0.0464570 0.0737055 142.5044                0
-#> 3 19.31386 0.0449615 0.0701650 129.1857                0
-#> 4 20.75081 0.0426345 0.0792335 122.5511                0
-#> 5 21.02666 0.0422005 0.0831505 121.0656                0
-#> 6 20.23761 0.0438175 0.0920320 118.0396                0
-#>   Energy Expenditure (kcal/min) Energy Expenditure (kJ/min) Pressure Ambient
-#> 1                      3.398292                    14.83090         968.4605
-#> 2                      3.927646                    16.35775         983.6174
-#> 3                      3.520535                    14.76036        1015.6308
-#> 4                      3.338119                    13.44594        1051.7866
-#> 5                      2.536662                    11.00702         953.7645
-#> 6                      2.520482                    10.16457        1039.1763
-#>   Temperature Room Relative Humidity Room protocol
-#> 1         20.13625               49.16104        0
-#> 2         19.97139               45.53661        0
-#> 3         21.04801               48.88103        0
-#> 4         21.81045               47.30645        0
-#> 5         21.66687               48.72191        0
-#> 6         19.72161               52.90930        0
+#> NULL
 ```
 
 2.  Let’s extract the data that we are interested in. Let’s start with
@@ -6288,38 +6240,9 @@ head(data)
 # we take the first (1) instance where the protocol is 2 (eating)
 breakfast_index <- which(data$protocol == 2)[1] 
 print(breakfast_index)
-#> [1] 660
 # we create a new data.frame where we take the next 60 rows, including the start_index
 data_breakfast <- data[breakfast_index:(breakfast_index + 14),] 
 head(data_breakfast) #Let's look at the data to check wether it worked correctly
-#>                datetime relative_time      VO2     VCO2       RER     FiO2
-#> 660 2023-11-14 08:15:21           659 438.9570 336.0178 0.8495875 20.71893
-#> 661 2023-11-14 08:16:21           660 423.7305 349.0721 0.8729545 20.69509
-#> 662 2023-11-14 08:17:21           661 384.7079 355.6281 0.7946695 21.55901
-#> 663 2023-11-14 08:18:21           662 447.1983 343.7956 0.7349905 20.96908
-#> 664 2023-11-14 08:19:21           663 493.7290 390.9706 0.7702605 21.13674
-#> 665 2023-11-14 08:20:21           664 481.4468 360.7708 0.7511145 22.01087
-#>         FeO2     FiCO2     FeCO2     Flow Activity Monitor
-#> 660 21.57856 0.0427715 0.2236955 207.2276                0
-#> 661 20.98993 0.0423960 0.2352695 205.0808                0
-#> 662 20.34209 0.0422240 0.2217930 212.3455                0
-#> 663 20.30252 0.0425000 0.2368660 206.3489                0
-#> 664 21.29721 0.0455610 0.2304615 214.3270                0
-#> 665 21.56059 0.0440990 0.2111330 215.7280                0
-#>     Energy Expenditure (kcal/min) Energy Expenditure (kJ/min) Pressure Ambient
-#> 660                      2.191091                    8.513696         926.7067
-#> 661                      2.105973                    8.999333         947.2341
-#> 662                      2.017753                    8.595171         955.1968
-#> 663                      2.103922                    9.519194         983.8510
-#> 664                      2.326944                    9.916404         998.7163
-#> 665                      2.377432                    9.216031         940.9400
-#>     Temperature Room Relative Humidity Room protocol
-#> 660         23.52884               55.10264        2
-#> 661         22.89557               55.68774        2
-#> 662         23.75468               53.90404        2
-#> 663         24.03971               55.61062        2
-#> 664         23.70781               54.61295        2
-#> 665         24.20626               54.59495        2
 ```
 
 Maybe we want to compare RER after breakfast with RER after dinner. So
@@ -6333,37 +6256,8 @@ from another number to 2 and then choose the second transition.
 # then take the second instance (2) to get the dinner time
 dinner_index <- which(data$protocol == 2 & dplyr::lag(data$protocol) != 2)[2] 
 print(dinner_index)
-#> [1] 677
 data_dinner <- data[dinner_index:(dinner_index + 14),]
 head(data_dinner) #Let's look at the data to check wether it worked correctly
-#>                datetime relative_time      VO2     VCO2       RER     FiO2
-#> 677 2023-11-14 08:32:21           676 470.4032 410.1411 0.8670625 21.02560
-#> 678 2023-11-14 08:33:21           677 464.2656 390.6961 0.8612440 20.38388
-#> 679 2023-11-14 08:34:21           678 478.8866 415.6236 0.8315335 20.79548
-#> 680 2023-11-14 08:35:21           679 467.4953 377.2523 0.8637380 19.38186
-#> 681 2023-11-14 08:36:21           680 488.9680 370.7040 0.8032975 20.88611
-#> 682 2023-11-14 08:37:21           681 407.8011 362.1847 0.8885175 20.39926
-#>         FeO2     FiCO2     FeCO2     Flow Activity Monitor
-#> 677 20.75450 0.0431695 0.2324720 208.1860                0
-#> 678 20.39071 0.0430435 0.2249880 209.9986                0
-#> 679 20.57767 0.0433635 0.2309165 221.8539                0
-#> 680 22.63466 0.0410800 0.2206655 214.6731                0
-#> 681 20.15517 0.0440490 0.2211310 229.4467                0
-#> 682 21.78113 0.0443340 0.2205320 217.6599                0
-#>     Energy Expenditure (kcal/min) Energy Expenditure (kJ/min) Pressure Ambient
-#> 677                      2.229119                    9.823904         970.1071
-#> 678                      2.320245                    9.283989         953.1334
-#> 679                      2.480080                    9.822104         946.6841
-#> 680                      2.317854                   10.043050         972.5077
-#> 681                      2.078896                    9.134871         981.7019
-#> 682                      1.961078                    8.813261         842.7901
-#>     Temperature Room Relative Humidity Room protocol
-#> 677         23.97431               58.87092        2
-#> 678         23.43198               55.40150        2
-#> 679         24.05051               54.30233        2
-#> 680         24.81208               53.54357        2
-#> 681         24.07805               53.73802        2
-#> 682         23.66624               54.98961        2
 ```
 
 3.  Now we can compare the two dataframes. For this example let’s use a
@@ -6372,17 +6266,6 @@ head(data_dinner) #Let's look at the data to check wether it worked correctly
 
 ``` r
 t.test(data_breakfast$RER, data_dinner$RER, paired = TRUE)
-#> 
-#>  Paired t-test
-#> 
-#> data:  data_breakfast$RER and data_dinner$RER
-#> t = -2.6074, df = 14, p-value = 0.02068
-#> alternative hypothesis: true mean difference is not equal to 0
-#> 95 percent confidence interval:
-#>  -0.10571859 -0.01029087
-#> sample estimates:
-#> mean difference 
-#>     -0.05800473
 ```
 
 *Please note that this is shortened synthetic example data, so the

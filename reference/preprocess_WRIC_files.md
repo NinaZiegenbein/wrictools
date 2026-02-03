@@ -85,8 +85,36 @@ preprocess_wric_files(
 
 ## Value
 
-A list where each key is a record ID and each value is a list with:
-(r1_metadata, r2_metadata, df_room1, df_room2).
+A named list where each name corresponds to a record ID. Each element of
+the list is itself a list containing:
+
+- version:
+
+  Character, either "1" or "2" depending on the WRIC file version.
+
+- metadata:
+
+  List of metadata.
+
+  v1
+
+  :   List with `r1` and `r2` metadata for version 1 files.
+
+  v2
+
+  :   List with `metadata` for version 2 files.
+
+- dfs:
+
+  List of data frames.
+
+  v1
+
+  :   List with `room1` and `room2` data frames for version 1 files.
+
+  v2
+
+  :   List with `data` for version 2 files.
 
 ## Examples
 

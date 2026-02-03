@@ -178,10 +178,10 @@ this:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">preprocess_WRIC_files</span><span class="op">(</span><span class="st">"./example_data/record_ids.csv"</span>, <span class="st">"WRIC_raw"</span>, </span>
 <span>                            code <span class="op">=</span> <span class="st">"id"</span>, save_csv <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">R1_metadata</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">$</span><span class="va">R1_metadata</span></span>
-<span><span class="va">R2_metadata</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">$</span><span class="va">R2_metadata</span></span>
-<span><span class="va">df_room1</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">$</span><span class="va">df_room1</span></span>
-<span><span class="va">df_room2</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">$</span><span class="va">df_room2</span></span></code></pre></div>
+<span><span class="va">R1_metadata</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">$</span><span class="va">metadata</span><span class="op">$</span><span class="va">r1</span></span>
+<span><span class="va">R2_metadata</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">$</span><span class="va">metadata</span><span class="op">$</span><span class="va">r2</span></span>
+<span><span class="va">df_room1</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">$</span><span class="va">dfs</span><span class="op">$</span><span class="va">room1</span></span>
+<span><span class="va">df_room2</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">$</span><span class="va">dfs</span><span class="op">$</span><span class="va">room2</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="upload-files-to-redcap">5. Upload Files to RedCap<a class="anchor" aria-label="anchor" href="#upload-files-to-redcap"></a>

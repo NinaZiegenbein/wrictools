@@ -119,8 +119,31 @@
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A list where each key is a record ID and each value is a list with: (r1_metadata, r2_metadata, df_room1, df_room2).</p>
-    </div>
+    <p>A named list where each name corresponds to a record ID. Each element of the list is itself a list containing:</p><dl><dt>version</dt>
+<dd><p>Character, either "1" or "2" depending on the WRIC file version.</p></dd>
+
+<dt>metadata</dt>
+<dd><p>List of metadata.</p><dl><dt>v1</dt>
+<dd><p>List with <code>r1</code> and <code>r2</code> metadata for version 1 files.</p></dd>
+
+<dt>v2</dt>
+<dd><p>List with <code>metadata</code> for version 2 files.</p></dd>
+
+
+</dl></dd>
+
+<dt>dfs</dt>
+<dd><p>List of data frames.</p><dl><dt>v1</dt>
+<dd><p>List with <code>room1</code> and <code>room2</code> data frames for version 1 files.</p></dd>
+
+<dt>v2</dt>
+<dd><p>List with <code>data</code> for version 2 files.</p></dd>
+
+
+</dl></dd>
+
+
+</dl></div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
