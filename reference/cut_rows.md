@@ -31,6 +31,11 @@ cut_rows(df, start = NULL, end = NULL)
 data.frame DataFrame with rows between the specified start and end
 dates, or the full DataFrame if both are NULL.
 
+## Details
+
+Throws an error if filtering by start and end results in an empty
+DataFrame: no rows remain after applying the start/end window.
+
 ## Examples
 
 ``` r

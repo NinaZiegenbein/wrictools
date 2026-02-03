@@ -250,25 +250,6 @@ result <- preprocess_wric_file(data_txt,
 #> ℹ Use `spec()` to retrieve the full column specification for this data.
 #> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 #> [1] "Starting time for room 1 is 2023-11-13 21:14:22 and end 2023-11-14 08:47:48 and for room 2 start is 2023-11-13 21:14:22 and end 2023-11-14 08:51:36"
-#> Drift: 1.35
-#>             timestamp protocol
-#> 1 2023-11-13 22:39:53        1
-#> 2 2023-11-14 06:45:00        0
-#> 3 2023-11-14 07:01:36        4
-#> 4 2023-11-14 07:32:50        0
-#> 5 2023-11-14 08:13:27        2
-#> 6 2023-11-14 08:26:00        0
-#> 7 2023-11-14 08:30:27        2
-#> 8 2023-11-14 08:39:23        0
-#>             timestamp protocol
-#> 1 2023-11-13 22:39:53        1
-#> 2 2023-11-14 06:57:25        0
-#> 3 2023-11-14 07:19:48        4
-#> 4 2023-11-14 07:43:24        0
-#> 5 2023-11-14 08:17:00        2
-#> 6 2023-11-14 08:22:00        0
-#> 7 2023-11-14 08:30:27        2
-#> 8 2023-11-14 08:39:23        0
 head(result$df_room1)
 #>              datetime relative_time      VO2     VCO2       RER     FiO2
 #> 1 2023-11-13 21:16:21             0 686.7342 566.7062 0.8373200 19.49793
@@ -6267,25 +6248,6 @@ result <- preprocess_wric_file(data_txt, notefilepath = note_txt)
 #> ℹ Use `spec()` to retrieve the full column specification for this data.
 #> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 #> [1] "Starting time for room 1 is 2023-11-13 21:14:22 and end 2023-11-14 08:47:48 and for room 2 start is 2023-11-13 21:14:22 and end 2023-11-14 08:51:36"
-#> Drift: 1.35
-#>             timestamp protocol
-#> 1 2023-11-13 22:39:53        1
-#> 2 2023-11-14 06:45:00        0
-#> 3 2023-11-14 07:01:36        4
-#> 4 2023-11-14 07:32:50        0
-#> 5 2023-11-14 08:13:27        2
-#> 6 2023-11-14 08:26:00        0
-#> 7 2023-11-14 08:30:27        2
-#> 8 2023-11-14 08:39:23        0
-#>             timestamp protocol
-#> 1 2023-11-13 22:39:53        1
-#> 2 2023-11-14 06:57:25        0
-#> 3 2023-11-14 07:19:48        4
-#> 4 2023-11-14 07:43:24        0
-#> 5 2023-11-14 08:17:00        2
-#> 6 2023-11-14 08:22:00        0
-#> 7 2023-11-14 08:30:27        2
-#> 8 2023-11-14 08:39:23        0
 data <- result$df_room1
 head(data)
 #>              datetime relative_time      VO2     VCO2       RER     FiO2

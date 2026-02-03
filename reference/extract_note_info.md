@@ -1,8 +1,8 @@
-# Extracts and processes note information from a specified notes file, categorizing events based on predefined keywords, and updates two DataFrames with protocol information for different participants.
+# Apply protocol events from note files to room data
 
-Extracts and processes note information from a specified notes file,
-categorizing events based on predefined keywords, and updates two
-DataFrames with protocol information for different participants.
+Reads a note file, extracts protocol events for each participant,
+applies any detected time drift, and updates the protocol column in the
+provided room data frames.
 
 ## Usage
 
@@ -14,62 +14,48 @@ extract_note_info(notes_path, df_room1, df_room2, keywords_dict = NULL)
 
 - notes_path:
 
-  string - The file path to the notes file containing event data.
+  character Path to the note file containing protocol events.
 
 - df_room1:
 
-  DataFrame - DataFrame for participant 1, to be updated with protocol
-  info.
+  data.frame Data frame for room 1 containing at least a "datetime"
+  column.
 
 - df_room2:
 
-  DataFrame - DataFrame for participant 2, to be updated with protocol
-  info.
+  data.frame Data frame for room 2 containing at least a "datetime"
+  column.
 
 - keywords_dict:
 
-  nested list - used to identify keywords to extract protocol values
+  list, optional Custom dictionary of keywords to identify protocol
+  events. If NULL, a default set is used.
 
 ## Value
 
-list - A list containing two updated DataFrames: - `df_room1`: Updated
-DataFrame for participant 1 with protocol data. - `df_room2`: Updated
-DataFrame for participant 2 with protocol data.
+A list with two elements:
 
-## Note
+- df_room1:
 
-- The 'Comment' field should start with '1' or '2' to indicate the
-  participant, or it may be empty to indicate both.
+  Data frame for room 1 with updated protocol column.
 
-- The `keywords_dict` can be modified to fit specific study protocols,
-  with multi-group checks for keyword matching.
+- df_room2:
 
-- See ReadMe or vignettes for more detailed examples.
+  Data frame for room 2 with updated protocol column.
 
 ## Examples
 
 ``` r
-notes_file <- system.file("extdata", "note.txt", package = "wrictools")
-df1 <- data.frame(datetime = as.POSIXct("2023-11-13 11:40:00") + 0:2*300)
-df2 <- data.frame(datetime = as.POSIXct("2023-11-13 11:40:00") + 0:2*300)
-result <- extract_note_info(notes_file, df1, df2)
-#> Drift: 1.35
-#>             timestamp protocol
-#> 1 2023-11-13 22:39:53        1
-#> 2 2023-11-14 06:45:00        0
-#> 3 2023-11-14 07:01:36        4
-#> 4 2023-11-14 07:32:50        0
-#> 5 2023-11-14 08:13:27        2
-#> 6 2023-11-14 08:26:00        0
-#> 7 2023-11-14 08:30:27        2
-#> 8 2023-11-14 08:39:23        0
-#>             timestamp protocol
-#> 1 2023-11-13 22:39:53        1
-#> 2 2023-11-14 06:57:25        0
-#> 3 2023-11-14 07:19:48        4
-#> 4 2023-11-14 07:43:24        0
-#> 5 2023-11-14 08:17:00        2
-#> 6 2023-11-14 08:22:00        0
-#> 7 2023-11-14 08:30:27        2
-#> 8 2023-11-14 08:39:23        0
+df1 <- data.frame(datetime = as.POSIXct(c("2023-11-13 22:40:00", "2023-11-13 22:50:00")))
+df2 <- data.frame(datetime = as.POSIXct(c("2023-11-13 22:40:00", "2023-11-13 22:50:00")))
+note_file <- system.file("extdata", "note.txt", package = "wrictools")
+res <- extract_note_info(note_file, df1, df2)
+res$df_room1
+#>              datetime protocol
+#> 1 2023-11-13 22:41:21        1
+#> 2 2023-11-13 22:51:21        1
+res$df_room2
+#>              datetime protocol
+#> 1 2023-11-13 22:41:21        1
+#> 2 2023-11-13 22:51:21        1
 ```

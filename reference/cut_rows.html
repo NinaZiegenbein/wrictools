@@ -71,6 +71,11 @@ End datetime; rows after this will be removed. If NULL, uses the latest datetime
     <p>data.frame
 DataFrame with rows between the specified start and end dates, or the full DataFrame if both are NULL.</p>
     </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>Throws an error if filtering by start and end results in an empty DataFrame:
+no rows remain after applying the start/end window.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>

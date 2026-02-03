@@ -11,11 +11,11 @@ create_wric_df(
   lines,
   code_1,
   code_2,
-  path_to_save,
-  start,
-  end,
-  notefilepath,
-  entry_exit_dict
+  path_to_save = NULL,
+  start = NULL,
+  end = NULL,
+  notefilepath = NULL,
+  entry_exit_dict = NULL
 )
 ```
 

@@ -279,9 +279,11 @@ GitHub or reach out to Nina Ziegenbein at <ninzie@ph.au.dk>.
   and optionally saves it as a CSV file.
 
 - [`extract_note_info()`](https://ninaziegenbein.github.io/wrictools/reference/extract_note_info.md)
-  : Extracts and processes note information from a specified notes file,
-  categorizing events based on predefined keywords, and updates two
-  DataFrames with protocol information for different participants.
+  : Apply protocol events from note files to room data
+
+- [`extract_note_info_new()`](https://ninaziegenbein.github.io/wrictools/reference/extract_note_info_new.md)
+  : Apply protocol events from note files to a single room data frame
+  (new software)
 
 - [`preprocess_wric_file()`](https://ninaziegenbein.github.io/wrictools/reference/preprocess_WRIC_file.md)
   : Preprocesses a wric data file, extracting metadata, creating
