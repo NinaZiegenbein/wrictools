@@ -2,43 +2,39 @@
 % Please edit documentation in R/processing.R
 \name{extract_note_info}
 \alias{extract_note_info}
-\title{Extracts and processes note information from a specified notes file, categorizing events
-based on predefined keywords, and updates two DataFrames with protocol information for
-different participants.}
+\title{Apply protocol events from note files to room data}
 \usage{
 extract_note_info(notes_path, df_room1, df_room2, keywords_dict = NULL)
 }
 \arguments{
-\item{notes_path}{string - The file path to the notes file containing event data.}
+\item{notes_path}{character
+Path to the note file containing protocol events.}
 
-\item{df_room1}{DataFrame - DataFrame for participant 1, to be updated with protocol info.}
+\item{df_room1}{data.frame
+Data frame for room 1 containing at least a "datetime" column.}
 
-\item{df_room2}{DataFrame - DataFrame for participant 2, to be updated with protocol info.}
+\item{df_room2}{data.frame
+Data frame for room 2 containing at least a "datetime" column.}
 
-\item{keywords_dict}{nested list - used to identify keywords to extract protocol values}
+\item{keywords_dict}{list, optional
+Custom dictionary of keywords to identify protocol events. If NULL, a default set is used.}
 }
 \value{
-list - A list containing two updated DataFrames:
-- \code{df_room1}: Updated DataFrame for participant 1 with protocol data.
-- \code{df_room2}: Updated DataFrame for participant 2 with protocol data.
+A list with two elements:
+\describe{
+\item{df_room1}{Data frame for room 1 with updated protocol column.}
+\item{df_room2}{Data frame for room 2 with updated protocol column.}
+}
 }
 \description{
-Extracts and processes note information from a specified notes file, categorizing events
-based on predefined keywords, and updates two DataFrames with protocol information for
-different participants.
-}
-\note{
-\itemize{
-\item The 'Comment' field should start with '1' or '2' to indicate the participant,
-or it may be empty to indicate both.
-\item The \code{keywords_dict} can be modified to fit specific study protocols,
-with multi-group checks for keyword matching.
-\item See ReadMe or vignettes for more detailed examples.
-}
+Reads a note file, extracts protocol events for each participant, applies any detected time drift,
+and updates the protocol column in the provided room data frames.
 }
 \examples{
-notes_file <- system.file("extdata", "note.txt", package = "wrictools")
-df1 <- data.frame(datetime = as.POSIXct("2023-11-13 11:40:00") + 0:2*300)
-df2 <- data.frame(datetime = as.POSIXct("2023-11-13 11:40:00") + 0:2*300)
-result <- extract_note_info(notes_file, df1, df2)
+df1 <- data.frame(datetime = as.POSIXct(c("2023-11-13 22:40:00", "2023-11-13 22:50:00")))
+df2 <- data.frame(datetime = as.POSIXct(c("2023-11-13 22:40:00", "2023-11-13 22:50:00")))
+note_file <- system.file("extdata", "note.txt", package = "wrictools")
+res <- extract_note_info(note_file, df1, df2)
+res$df_room1
+res$df_room2
 }

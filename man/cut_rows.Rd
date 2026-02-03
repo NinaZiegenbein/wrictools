@@ -23,6 +23,10 @@ DataFrame with rows between the specified start and end dates, or the full DataF
 \description{
 Filters rows in a DataFrame based on an optional start and end datetime range.
 }
+\details{
+Throws an error if filtering by start and end results in an empty DataFrame:
+no rows remain after applying the start/end window.
+}
 \examples{
 df <- data.frame(
   datetime = as.POSIXct(c(

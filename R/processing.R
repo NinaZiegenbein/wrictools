@@ -226,9 +226,11 @@ add_relative_time <- function(df, start_time = NULL) {
 #'    Start datetime; rows before this will be removed. If NULL, uses the earliest datetime in the DataFrame.
 #' @param end character or POSIXct or NULL, optional
 #'   End datetime; rows after this will be removed. If NULL, uses the latest datetime in the DataFrame.
-#'
 #' @return data.frame
 #'   DataFrame with rows between the specified start and end dates, or the full DataFrame if both are NULL.
+#' @details
+#'   Throws an error if filtering by start and end results in an empty DataFrame:
+#'   no rows remain after applying the start/end window.
 #' @export
 #' @examples
 #' df <- data.frame(
@@ -256,6 +258,12 @@ cut_rows <- function(df, start = NULL, end = NULL) {
   start <- as.POSIXct(start)
   end <- as.POSIXct(end)
 
+  df_cut <- df[df$datetime >= start & df$datetime <= end, , drop = FALSE]
+
+  if (nrow(df_cut) == 0) {
+    stop("No rows left after applying start and end filter. Check your time window.")
+  }
+
   return(df[df$datetime >= start & df$datetime <= end, , drop = FALSE])
 }
 
@@ -279,6 +287,11 @@ update_protocol <- function(df, protocol_list) {
     return(df)  # If no protocols, return original DataFrame
   }
 
+  # initialize protocol column
+  if (!"protocol" %in% colnames(df)) {
+    df[["protocol"]] <- NA
+  }
+
   for (i in seq_len(nrow(df))) {
     # While there are more timestamps and the current row's datetime is greater than or equal to the timestamp
     while (current_index <= nrow(protocol_list) &&
@@ -291,30 +304,6 @@ update_protocol <- function(df, protocol_list) {
   }
 
   return(df)
-}
-
-#' Update protocol dictionary with new entry
-#'
-#' Internal helper for [extract_note_info()]. Updates a participant's
-#' protocol dictionary at a given timestamp.
-#'
-#' @param dict_protocol List storing protocol information.
-#' @param participant Participant ID or `NULL` if entry applies to both.
-#' @param datetime Timestamp for the protocol entry.
-#' @param value Value to assign at the given timestamp.
-#'
-#' @return Updated `dict_protocol` list.
-#' @noRd
-#' @keywords internal
-save_dict <- function(dict_protocol, participant, datetime, value) {
-  if (!is.null(participant)) {
-    dict_protocol[[as.character(participant)]][[as.character(datetime)]] <- value
-  } else {
-    dict_protocol[["1"]][[as.character(datetime)]] <- value
-    dict_protocol[["2"]][[as.character(datetime)]] <- value
-  }
-
-  return(dict_protocol)
 }
 
 #' Automatically detect enter and exit from the chamber based on the notefile.
@@ -417,153 +406,20 @@ append_protocol_entry <- function(dict_protocol, participant, timestamp, value) 
   return(keywords_dict)
 }
 
-#' Extracts and processes note information from a specified notes file, categorizing events
-#' based on predefined keywords, and updates two DataFrames with protocol information for
-#' different participants.
-#'
-#' @param notes_path string - The file path to the notes file containing event data.
-#' @param df_room1 DataFrame - DataFrame for participant 1, to be updated with protocol info.
-#' @param df_room2 DataFrame - DataFrame for participant 2, to be updated with protocol info.
-#' @param keywords_dict nested list - used to identify keywords to extract protocol values
-#' @return list - A list containing two updated DataFrames:
-#'         - `df_room1`: Updated DataFrame for participant 1 with protocol data.
-#'         - `df_room2`: Updated DataFrame for participant 2 with protocol data.
-#' @note
-#' - The 'Comment' field should start with '1' or '2' to indicate the participant,
-#'   or it may be empty to indicate both.
-#' - The `keywords_dict` can be modified to fit specific study protocols,
-#'   with multi-group checks for keyword matching.
-#' - See ReadMe or vignettes for more detailed examples.
-#' @export
-#' @examples
-#' notes_file <- system.file("extdata", "note.txt", package = "wrictools")
-#' df1 <- data.frame(datetime = as.POSIXct("2023-11-13 11:40:00") + 0:2*300)
-#' df2 <- data.frame(datetime = as.POSIXct("2023-11-13 11:40:00") + 0:2*300)
-#' result <- extract_note_info(notes_file, df1, df2)
-extract_note_info <- function(notes_path, df_room1, df_room2, keywords_dict = NULL) {
 
-  # Define keywords dictionary
-  if (is.null(keywords_dict)) {
-    keywords_dict <- .get_keywords_dict()
-  }
-
-  # Load note file and create DataFrame
-  notes_content <- readLines(notes_path, encoding = "UTF-8")
-  lines <- strsplit(notes_content[-(1:2)], "\t")
-  df_note <- as.data.frame(do.call(rbind, lines[-(1:2)]), stringsAsFactors = FALSE)
-  colnames(df_note) <- unlist(lines[[1]])
-  df_note <- na.omit(df_note)
-
-  # Convert to datetime
-  df_note$datetime <- as.POSIXct(paste(df_note$Date, df_note$Time), format = "%m/%d/%y %H:%M:%S")
-  df_note <- df_note[, !names(df_note) %in% c("Date", "Time")]
-
-  # Time pattern and dictionary for protocols
-  time_pattern <- "([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5]\\d"
-  drift_pattern <- "^\\d{2}:\\d{2}(:\\d{2})?$"
-  dict_protocol <- list("1" = list(), "2" = list())
-  drift <- NULL
-
-  for (i in seq_len(nrow(df_note))) {
-    row <- df_note[i, ]
-    comment <- tolower(row$Comment)
-    comment <- iconv(comment, to = "UTF-8")
-    if (grepl("^1", comment)) {
-      participant <- "1"
-    } else if (grepl("^2", comment)) {
-      participant <- "2"
-    } else {
-      participant <- c("1", "2")  # Correctly assigns both participants
-    }
-
-    # Check for time drift in the first entry
-    if (i == 1 && grepl(drift_pattern, row$Comment)) {
-      if (grepl("^\\d{2}:\\d{2}$", row$Comment)) {
-        # If only HH:MM, add ':00' to make it HH:MM:SS
-        row$Comment <- paste0(row$Comment, ":00")
-      }
-      new_datetime <- as.POSIXct(paste(as.Date(row$datetime), row$Comment), format = "%Y-%m-%d %H:%M:%S")
-      drift <- new_datetime - row$datetime
-
-      message("Drift: ", drift)
-      if (!is.na(drift)) {
-        # Apply drift to dataframes (if not NA - something went wrong)
-        df_room1$datetime <- df_room1$datetime + drift
-        df_room2$datetime <- df_room2$datetime + drift
-        next
-      } else {
-        print("Warning: The drift calculation resulted in a NA value and drift will not be applied going further!")
-      }
-
-    }
-
-    for (category in names(keywords_dict)) {
-      entry <- keywords_dict[[category]]
-      keywords <- entry$keywords
-      value <- entry$value
-
-      if (length(keywords) > 1) {
-        # Multi-group keyword check
-        if (all(sapply(keywords, function(group) any(grepl(paste(group, collapse = "|"), comment, ignore.case = TRUE))))) {
-          match <- regmatches(comment, regexpr(time_pattern, comment))
-
-          if (length(match) > 0) {
-            new_datetime <- as.POSIXct(paste(as.Date(row$datetime), match), format = "%Y-%m-%d %H:%M")
-            timestamp <- new_datetime
-            dict_protocol <- append_protocol_entry(dict_protocol, participant, timestamp, value)
-          } else {
-            timestamp <- row$datetime
-            dict_protocol <- append_protocol_entry(dict_protocol, participant, timestamp, value)
-          }
-        }
-      } else {
-        # Single-group keyword check
-        if (any(sapply(keywords, function(group) any(grepl(paste(group, collapse = "|"), comment, ignore.case = TRUE))))) {
-          match <- regmatches(comment, regexpr(time_pattern, comment))
-
-          if (length(match) > 0) {
-            new_datetime <- as.POSIXct(paste(as.Date(row$datetime), match), format = "%Y-%m-%d %H:%M")
-            timestamp <- new_datetime
-            dict_protocol <- append_protocol_entry(dict_protocol, participant, timestamp, value)
-          } else {
-            timestamp <- row$datetime
-            dict_protocol <- append_protocol_entry(dict_protocol, participant, timestamp, value)
-          }
-        }
-      }
-    }
-  }
-
-  # Convert dict_protocol into a data frame and sort it
-  protocol_list_1 <- do.call(rbind, lapply(dict_protocol[["1"]], function(x) data.frame(timestamp = x$timestamp, protocol = x$protocol)))
-  protocol_list_2 <- do.call(rbind, lapply(dict_protocol[["2"]], function(x) data.frame(timestamp = x$timestamp, protocol = x$protocol)))
-
-  print(protocol_list_1)
-  print(protocol_list_2)
-
-  # Sort by timestamp
-  protocol_list_1 <- protocol_list_1[order(protocol_list_1$timestamp), ]
-  protocol_list_2 <- protocol_list_2[order(protocol_list_2$timestamp), ]
-
-  # Adding the time drift parameter
-  if (!is.null(drift)) {
-    protocol_list_1$timestamp <- protocol_list_1$timestamp + drift
-    protocol_list_2$timestamp <- protocol_list_2$timestamp + drift
-  }
-  # Update DataFrames with sorted protocol lists
-  df_room1 <- update_protocol(df_room1, protocol_list_1)
-  df_room2 <- update_protocol(df_room2, protocol_list_2)
-
-  return(list(df_room1 = df_room1, df_room2 = df_room2))
-}
 
 #' Extract protocol events from a note file (without applying to dataframes)
 #'
 #' @param notes_path Path to the note file (.txt)
 #' @param keywords_dict Optional custom keywords dictionary
 #' @param v1 Logical, TRUE if old software format (two participants), FALSE for new format (single participant / all)
-#' @return A list with protocol events, structured by participant ("1", "2", or "all")
-#' @export
+#' @return A list with two elements:
+#'   \describe{
+#'     \item{protocols}{A list of protocol events structured by participant ("1", "2") for v1, or "all" for v2. Each entry contains a timestamp and protocol value.}
+#'     \item{drift}{POSIXct time difference applied to timestamps, or NULL if no drift was detected.}
+#'   }
+#' @keywords internal
+#' @noRd
 extract_protocol_events <- function(notes_path, keywords_dict = NULL, v1 = FALSE) {
 
   if (is.null(keywords_dict)) {
@@ -671,31 +527,100 @@ extract_protocol_events <- function(notes_path, keywords_dict = NULL, v1 = FALSE
     }
   }
 
-  return(dict_protocol)
+  return(list(protocols = dict_protocol, drift = drift))
 }
 
-#' Apply protocol events to a WRIC dataframe
+#' Apply protocol events from note files to room data
 #'
-#' @param df A dataframe with a `datetime` column.
-#' @param protocol_events List returned by `extract_protocol_events_only()`.
-#' @param participant Optional, "1", "2", or "all" (used for v2). Default is "all".
-#' @return The input dataframe with a new column `protocol` containing the protocol values.
+#' Reads a note file, extracts protocol events for each participant, applies any detected time drift,
+#' and updates the protocol column in the provided room data frames.
+#'
+#' @param notes_path character
+#'   Path to the note file containing protocol events.
+#' @param df_room1 data.frame
+#'   Data frame for room 1 containing at least a "datetime" column.
+#' @param df_room2 data.frame
+#'   Data frame for room 2 containing at least a "datetime" column.
+#' @param keywords_dict list, optional
+#'   Custom dictionary of keywords to identify protocol events. If NULL, a default set is used.
+#'
+#' @return A list with two elements:
+#'   \describe{
+#'     \item{df_room1}{Data frame for room 1 with updated protocol column.}
+#'     \item{df_room2}{Data frame for room 2 with updated protocol column.}
+#'   }
 #' @export
-apply_protocols <- function(df, protocol_events, participant = "all") {
-  df <- df %>% dplyr::mutate(protocol = 0)  # default 0
+#'
+#' @examples
+#' df1 <- data.frame(datetime = as.POSIXct(c("2023-11-13 22:40:00", "2023-11-13 22:50:00")))
+#' df2 <- data.frame(datetime = as.POSIXct(c("2023-11-13 22:40:00", "2023-11-13 22:50:00")))
+#' note_file <- system.file("extdata", "note.txt", package = "wrictools")
+#' res <- extract_note_info(note_file, df1, df2)
+#' res$df_room1
+#' res$df_room2
+extract_note_info <- function(notes_path, df_room1, df_room2, keywords_dict = NULL) {
+  # Extract events from notes
+  res <- extract_protocol_events(notes_path = notes_path, keywords_dict = keywords_dict, v1 = TRUE)
 
-  events <- protocol_events[[participant]]
+  # Convert protocol lists to data frames and sort
+  protocol_list_1 <- do.call(rbind, lapply(res$protocols[["1"]], function(x) data.frame(timestamp = x$timestamp, protocol = x$protocol)))
+  protocol_list_2 <- do.call(rbind, lapply(res$protocols[["2"]], function(x) data.frame(timestamp = x$timestamp, protocol = x$protocol)))
+  protocol_list_1 <- protocol_list_1[order(protocol_list_1$timestamp), ]
+  protocol_list_2 <- protocol_list_2[order(protocol_list_2$timestamp), ]
 
-  if (length(events) == 0) return(df)
-
-  # Apply protocol events
-  for (ev in events) {
-    df$protocol[df$datetime >= ev$timestamp] <- ev$protocol
+  # Apply drift if present
+  if (!is.null(res$drift)) {
+    df_room1$datetime <- df_room1$datetime + res$drift
+    df_room2$datetime <- df_room2$datetime + res$drift
   }
+
+  # Update dataframes using update_protocol
+  df_room1 <- update_protocol(df_room1, protocol_list_1)
+  df_room2 <- update_protocol(df_room2, protocol_list_2)
+
+  return(list(df_room1 = df_room1, df_room2 = df_room2))
+}
+
+#' Apply protocol events from note files to a single room data frame (new software)
+#'
+#' Reads a note file, extracts protocol events, applies any detected time drift,
+#' and updates the protocol column in the provided data frame. Designed for notes
+#' generated by the newer software version where all participants are in a single data frame.
+#'
+#' @param df data.frame
+#'   Data frame containing at least a "datetime" column.
+#' @param notes_path character
+#'   Path to the note file containing protocol events.
+#' @param keywords_dict list, optional
+#'   Custom dictionary of keywords to identify protocol events. If NULL, a default set is used.
+#'
+#' @return data.frame
+#'   The input data frame with an updated "protocol" column based on extracted events.
+#' @export
+#'
+#' @examples
+#' df <- data.frame(datetime = as.POSIXct(c("2023-11-13 22:40:00", "2023-11-13 22:50:00")))
+#' note_file <- system.file("extdata", "note_v2.txt", package = "wrictools")
+#' df_updated <- extract_note_info_new(df, note_file)
+#' df_updated
+extract_note_info_new <- function(df, notes_path, keywords_dict = NULL) {
+  # Extract events from notes
+  res <- extract_protocol_events(notes_path = notes_path, keywords_dict = keywords_dict, v1 = FALSE)
+
+  # Convert protocol list to data frame and sort
+  protocol_list <- do.call(rbind, lapply(res$protocols[["all"]], function(x) data.frame(timestamp = x$timestamp, protocol = x$protocol)))
+  protocol_list <- protocol_list[order(protocol_list$timestamp), ]
+
+  # Apply drift if present
+  if (!is.null(res$drift)) {
+    df$datetime <- df$datetime + res$drift
+  }
+
+  # Update dataframe using update_protocol
+  df <- update_protocol(df, protocol_list)
 
   return(df)
 }
-
 
 
 #' Creates DataFrames for wric data from a file and optionally saves them as CSV files.
@@ -731,7 +656,7 @@ apply_protocols <- function(df, protocol_events, participant = "all") {
 #'   end = NULL,
 #'   notefilepath = notes_txt
 #' )
-create_wric_df <- function(filepath, lines, code_1, code_2, path_to_save, start, end, notefilepath, entry_exit_dict) {
+create_wric_df <- function(filepath, lines, code_1, code_2, path_to_save = NULL, start = NULL, end = NULL, notefilepath = NULL, entry_exit_dict = NULL) {
 
   data_start_index <- which(grepl("^Room 1 Set 1", lines)) + 1
   df <- read_tsv(filepath, skip = data_start_index, col_names = FALSE)

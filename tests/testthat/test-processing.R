@@ -15,7 +15,6 @@ test_that("preprocess_wric_file does not throw errors with various inputs", {
   data_no_comment_txt <- system.file("extdata", "data_no_comment.txt", package = "wrictools")
   note_txt <- system.file("extdata", "note.txt", package = "wrictools")
   note_v2_txt <- system.file("extdata", "note_v2.txt", package = "wrictools")
-  note_new_txt <- system.file("extdata", "note_new.txt", package = "wrictools")
   tmp <- tempdir()
 
   # Test with only filepath and default parameters
@@ -57,7 +56,7 @@ test_that("preprocess_wric_file does not throw errors with various inputs", {
                                    start = "2023-11-13 11:43:00",
                                    end = "2023-11-13 12:09:00",
                                    path_to_save = tmp)
-  }, NA)
+  }, regexp = "No rows left after applying start and end filter")
 
   # Test with filepath, method and code
   expect_error({
@@ -71,8 +70,8 @@ test_that("preprocess_wric_file does not throw errors with various inputs", {
   expect_error({
     result <- preprocess_wric_file(data_txt,
                                    code = "id+comment",
-                                   start = "2023-11-13 11:43:00",
-                                   end = "2023-11-13 12:09:00",
+                                   start = "2023-11-14 05:43:00",
+                                   end = "2023-11-14 07:09:00",
                                    path_to_save = tmp)
   }, NA)
 
@@ -297,7 +296,7 @@ test_that("extract_protocol_events works for old and new software", {
   cat("\n--- v1 output ---\n")
   str(output_v1)
   # sanity check: check first timestamp and protocol for participant 1
-  first_entry_v1 <- output_v1[["1"]][[1]]
+  first_entry_v1 <- output_v1$protocols[["1"]][[1]]
   expect_s3_class(first_entry_v1$timestamp, "POSIXct")
   expect_equal(as.character(first_entry_v1$timestamp), "2023-11-13 22:41:14")
   expect_equal(first_entry_v1$protocol, 1)
@@ -311,37 +310,73 @@ test_that("extract_protocol_events works for old and new software", {
   str(output_v2)
 
   # sanity check: first timestamp and protocol for "all"
-  first_entry_v2 <- output_v2[["all"]][[1]]
+  first_entry_v2 <- output_v2$protocols[["all"]][[1]]
   expect_s3_class(first_entry_v2$timestamp, "POSIXct")
   expect_equal(as.character(first_entry_v2$timestamp), "2026-01-14 11:58:01")
   expect_equal(first_entry_v2$protocol, 4)
 
 })
 
-test_that("apply_protocols applies protocol correctly", {
+test_that("extract_note_info and extract_note_info_new wrappers work correctly", {
+
+  # ---- v1 example ----
+  data_v1_path <- system.file("extdata", "data.txt", package = "wrictools")
+  note_v1_path <- system.file("extdata", "note.txt", package = "wrictools")
+
+  # Preprocess WRIC file
+  res_v1 <- open_file(data_v1_path)
+  lines_v1 <- res_v1$lines
+  v1_flag <- res_v1$v1
+
+  meta_v1 <- extract_meta_data(lines_v1, code = "id")
+  df_result_v1 <- create_wric_df(
+    filepath = data_v1_path,
+    lines = lines_v1,
+    code_1 = meta_v1$code_1,
+    code_2 = meta_v1$code_2
+  )
+
+  df_room1 <- df_result_v1$df_room1
+  df_room2 <- df_result_v1$df_room2
+
+  # Apply wrapper
+  out_v1 <- extract_note_info(note_v1_path, df_room1, df_room2)
+
+  # ---- checks ----
+  expect_true("protocol" %in% names(out_v1$df_room1))
+  expect_true("protocol" %in% names(out_v1$df_room2))
+  expect_true(1 %in% out_v1$df_room1$protocol)
+  expect_true(1 %in% out_v1$df_room2$protocol)
+  expect_s3_class(out_v1$df_room1$datetime, "POSIXct")
+
+  print(summary(out_v1$df_room1$protocol))
+
+  # ---- v2 example ----
   data_v2_path <- system.file("extdata", "data_v2.txt", package = "wrictools")
   note_v2_path <- system.file("extdata", "note_v2.txt", package = "wrictools")
 
-  # Load df
-  lines <- readLines(data_v2_path)
-  df <- create_wric_df_new(filepath = data_v2_path, lines = lines, code = "study+id",
-                           start = NULL, end = NULL, notefilepath = NULL)
+  res_v2 <- open_file(data_v2_path)
+  lines_v2 <- res_v2$lines
 
-  # Extract protocol
-  protocol_events <- extract_protocol_events(note_v2_path, v1 = FALSE)
+  meta_v2 <- extract_metadata_new(lines_v2, code = "study+id")
+  df_result_v2 <- create_wric_df_new(
+    filepath = data_v2_path,
+    lines = lines_v2,
+    code = meta_v2$code
+  )
 
-  # Apply protocol
-  df_applied <- apply_protocols(df, protocol_events, participant = "all")
+  # Combine rooms into single df if needed
+  df_combined <- combine_measurements(df_result_v2, method = "mean")
 
-  # Check first protocol value
-  first_protocol <- df_applied$protocol[df_applied$datetime >= protocol_events[["all"]][[1]]$timestamp][1]
-  expect_equal(first_protocol, 4)
+  out_v2 <- extract_note_info_new(df_combined, note_v2_path)
 
-  # Check last protocol value
-  last_protocol <- df_applied$protocol[df_applied$datetime >= protocol_events[["all"]][[2]]$timestamp][1]
-  expect_equal(last_protocol, 0)
+  expect_true("protocol" %in% names(out_v2))
+  expect_true(4 %in% out_v2$protocol)
+  expect_true(0 %in% out_v2$protocol)
+  expect_s3_class(out_v2$datetime, "POSIXct")
 
-  # Manual inspection
-  # str(df_applied)
+  # Optional: print for manual inspection
+  print("hello")
+  str(out_v1)
+  str(out_v2)
 })
-
