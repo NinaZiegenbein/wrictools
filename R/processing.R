@@ -1150,7 +1150,22 @@ upload_file_to_redcap <- function(filepath, record_id, fieldname, api_url, api_t
 #' @param fieldname The field name for exporting wric data from RedCAP.
 #' @inheritParams preprocess_wric_file
 #' @inheritParams export_file_from_redcap
-#' @return A list where each key is a record ID and each value is a list with: (r1_metadata, r2_metadata, df_room1, df_room2).
+#' @return A named list where each name corresponds to a record ID. Each element of the list is itself a list containing:
+#' \describe{
+#'   \item{version}{Character, either "1" or "2" depending on the WRIC file version.}
+#'   \item{metadata}{List of metadata.
+#'     \describe{
+#'       \item{v1}{List with `r1` and `r2` metadata for version 1 files.}
+#'       \item{v2}{List with `metadata` for version 2 files.}
+#'     }
+#'   }
+#'   \item{dfs}{List of data frames.
+#'     \describe{
+#'       \item{v1}{List with `room1` and `room2` data frames for version 1 files.}
+#'       \item{v2}{List with `data` for version 2 files.}
+#'     }
+#'   }
+#' }
 #' @export
 #' @examplesIf file.exists(path.expand("~/.config.R"))
 #' source(path.expand("~/.config.R"))
@@ -1175,24 +1190,32 @@ preprocess_wric_files <- function(csv_file, fieldname, code = "id", manual = NUL
   record_ids <- read_csv(csv_file, col_names = FALSE)$X1
 
   # Initialize list to store data for each record ID
-  dataframes <- list()
+  results <- list()
 
   for (record_id in record_ids) {
     # export the file from redcap
     export_file_from_redcap(record_id, fieldname, path = NULL, api_url, api_token)
 
-    # call preprocess_wric_file function
+    # call preprocess_wric_file function (currently only without note file)
     result <- preprocess_wric_file("./tmp/export.raw.txt", code, manual, save_csv, path_to_save, combine, method, start, end)
-
     # store the results for the record ID
-    dataframes[[as.character(record_id)]] <- list(
-      r1_metadata = result$r1_metadata,
-      r2_metadata = result$r2_metadata,
-      df_room1 = result$df_room1,
-      df_room2 = result$df_room2
-    )
+    if (result$version == "1") {
+      # v1: two rooms and separate metadata
+      results[[as.character(record_id)]] <- list(
+        version = result$version,
+        metadata = result$metadata,
+        dfs = result$dfs
+      )
+    } else {
+      # v2: single data frame and metadata
+      results[[as.character(record_id)]] <- list(
+        version = result$version,
+        metadata = result$metadata,
+        dfs = result$dfs
+      )
+    }
   }
 
-  return(dataframes)
+  return(results)
 }
 

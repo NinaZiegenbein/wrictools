@@ -48,7 +48,22 @@ preprocess_wric_files(
 \item{api_token}{String, personal token for the REDCap API, should be specified in your personal config.R file}
 }
 \value{
-A list where each key is a record ID and each value is a list with: (r1_metadata, r2_metadata, df_room1, df_room2).
+A named list where each name corresponds to a record ID. Each element of the list is itself a list containing:
+\describe{
+\item{version}{Character, either "1" or "2" depending on the WRIC file version.}
+\item{metadata}{List of metadata.
+\describe{
+\item{v1}{List with \code{r1} and \code{r2} metadata for version 1 files.}
+\item{v2}{List with \code{metadata} for version 2 files.}
+}
+}
+\item{dfs}{List of data frames.
+\describe{
+\item{v1}{List with \code{room1} and \code{room2} data frames for version 1 files.}
+\item{v2}{List with \code{data} for version 2 files.}
+}
+}
+}
 }
 \description{
 Preprocesses multiple wric_files by RedCAP record ID, extracting metadata, creating DataFrames, and optionally saving results.

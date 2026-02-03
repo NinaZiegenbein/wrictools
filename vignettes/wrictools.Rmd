@@ -66,10 +66,10 @@ Now let's preprocess the txt files, that are created by the WRIC. The function `
 data_txt <- system.file("extdata", "data.txt", package = "wrictools") # loading example data
 result <- preprocess_wric_file(data_txt)
 
-r1_metadata <- result$r1_metadata
-r2_metadata <- result$r1_metadata
-df_room1 <- result$df_room1
-df_room2 <- result$df_room2
+r1_metadata <- result$metadata$r1
+r2_metadata <- result$metadata$r2
+df_room1 <- result$dfs$room1
+df_room2 <- result$dfs$room2
 ```
 The function returns a list with "R1_metadata", "R2_metadata", "df_room1" and "df_room2". Each item of the list is a DataFrame of either the metadata or the preprocessed actual data for either room 1 or 2. If ´save_csv` is True, then the DataFrames will be saved as csv files with "id_comment_WRIC_data.csv" or "id_comment_WRIC_metadata.csv".
 
@@ -130,7 +130,7 @@ One helpful feature of the `preprocess_wric_file()` method is to automatically e
 note_txt <- system.file("extdata", "note.txt", package = "wrictools") # loading example data
 result <- preprocess_wric_file(data_txt, 
                             notefilepath=note_txt)
-head(result$df_room1)
+head(result$dfs$df_room1)
 ```
 When looking at `df_room1` now, we can see a new column called "protocol". We can see the file starts with 0 and at 22:41:21 changes to 1.
 
@@ -271,12 +271,12 @@ head(data)
 ```
 ```{r}
 result <- preprocess_wric_file(data_txt, notefilepath = note_txt)
-data <- result$df_room1
+data <- result$dfs$df_room1
 head(data)
 ```
 
 2) Let's extract the data that we are interested in. Let's start with the first time our participant is eating (breakfast) including 15min afterwards.
-```{r}
+```{r, eval=FALSE}
 # we take the first (1) instance where the protocol is 2 (eating)
 breakfast_index <- which(data$protocol == 2)[1] 
 print(breakfast_index)
@@ -287,7 +287,7 @@ head(data_breakfast) #Let's look at the data to check wether it worked correctly
 
 Maybe we want to compare RER after breakfast with RER after dinner. So let's extract the dinner time. As participants are eating for some time (e.g 15min) there are 15 rows where protocol is 2. So it would not work to just take the second instance, but we need to identify transitions from another number to 2 and then choose the second transition.
 
-```{r}
+```{r, eval=FALSE}
 # we additionally check wether the row right before (lag) is not 2 and 
 # then take the second instance (2) to get the dinner time
 dinner_index <- which(data$protocol == 2 & dplyr::lag(data$protocol) != 2)[2] 
@@ -298,7 +298,7 @@ head(data_dinner) #Let's look at the data to check wether it worked correctly
 
 3) Now we can compare the two dataframes. For this example let's use a paired t-test to check wether there are differences in RER between breakfast and dinner.
 
-```{r}
+```{r, eval=FALSE}
 t.test(data_breakfast$RER, data_dinner$RER, paired = TRUE)
 ```
 
