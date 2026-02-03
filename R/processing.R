@@ -975,13 +975,18 @@ combine_measurements <- function(df, method = "mean") {
 #' @param notefilepath String, Directory path of the corresponding note file (.txt)
 #' @param keywords_dict Nested List, used to extract protocol values from note file
 #' @param entry_exit_dict Nested List, used to extract entry/exit times from note file
-#' @return A list with four elements:
-#' \describe{
-#'   \item{r1_metadata}{List containing metadata extracted for Room 1.}
-#'   \item{r2_metadata}{List containing metadata extracted for Room 2.}
-#'   \item{df_room1}{Data frame with processed WRIC measurements for Room 1.}
-#'   \item{df_room2}{Data frame with processed WRIC measurements for Room 2.}
-#' }
+#' @return list
+#'   A list with the following components:
+#'   \describe{
+#'     \item{version}{Character string indicating the detected software version
+#'       (`"1"` for old software, `"2"` for new software).}
+#'     \item{metadata}{A named list containing extracted metadata.
+#'       For version 1, this includes `r1` and `r2`.
+#'       For version 2, this contains a single `metadata` entry.}
+#'     \item{dfs}{A named list containing processed data frames.
+#'       For version 1: `room1` and `room2`.
+#'       For version 2: `data`.}
+#'   }
 #' @export
 #' @examples
 #' outdir <- file.path(tempdir(), "wrictools")
@@ -993,34 +998,77 @@ preprocess_wric_file <- function(filepath, code = "id", manual = NULL, save_csv 
   res <- open_file(filepath)
   lines <- res$lines
   v1 <- res$v1
-  result <- extract_meta_data(lines, code, manual, save_csv, path_to_save)
-  r1_metadata <- result$r1_metadata
-  r2_metadata <- result$r2_metadata
-  code_1 <- result$code_1
-  code_2 <- result$code_2
-  result <- create_wric_df(filepath, lines, code_1, code_2, path_to_save, start, end, notefilepath, entry_exit_dict)
-  df_room1 <- result$df_room1
-  df_room2 <- result$df_room2
 
+  # Extract Metadata
+  if (v1) {
+    meta <- extract_meta_data(lines, code, manual, save_csv, path_to_save)
+    r1_metadata <- meta$r1_metadata
+    r2_metadata <- meta$r2_metadata
+    code_1 <- meta$code_1
+    code_2 <- meta$code_2
+  } else {
+    meta <- extract_metadata_new(lines, code, manual, save_csv, path_to_save)
+    metadata <- meta$metadata
+    code_new <- meta$code
+  }
+
+  # Create WRIC Dataframe
+  if (v1) {
+    res_df <- create_wric_df(filepath, lines, code_1, code_2, path_to_save, start, end, notefilepath, entry_exit_dict)
+    df_room1 <- res_df$df_room1
+    df_room2 <- res_df$df_room2
+  } else {
+    df <- create_wric_df_new(filepath, lines, code_new, path_to_save, start, end, notefilepath, entry_exit_dict)
+  }
+
+  # Combine Measurement
   if (combine) {
-    df_room1 <- combine_measurements(df_room1, method)
-    df_room2 <- combine_measurements(df_room2, method)
+    if (v1) {
+      df_room1 <- combine_measurements(df_room1, method)
+      df_room2 <- combine_measurements(df_room2, method)
+    } else {
+      df <- combine_measurements(df, method)
+    }
   }
 
+  # Extract notes
   if (!is.null(notefilepath)) {
-    result <- extract_note_info(notefilepath, df_room1, df_room2, keywords_dict)
-    df_room1 <- result$df_room1
-    df_room2 <- result$df_room2
+    if (v1) {
+      res_note <- extract_note_info(notefilepath, df_room1, df_room2, keywords_dict)
+      df_room1 <- res_note$df_room1
+      df_room2 <- res_note$df_room2
+    } else {
+      df <- extract_note_info_new(df, notefilepath, keywords_dict)
+    }
   }
 
+  # Save CSV
   if (save_csv) {
-    room1_filename <- ifelse(!is.null(path_to_save), paste0(path_to_save, "/", code_1, "_wric_data.csv"), paste0(code_1, "_wric_data.csv"))
-    room2_filename <- ifelse(!is.null(path_to_save), paste0(path_to_save, "/", code_2, "_wric_data.csv"), paste0(code_2, "_wric_data.csv"))
-    write.csv(df_room1, room1_filename, row.names = FALSE)
-    write.csv(df_room2, room2_filename, row.names = FALSE)
+    if (v1) {
+      f1 <- if (!is.null(path_to_save)) file.path(path_to_save, paste0(code_1, "_wric_data.csv")) else paste0(code_1, "_wric_data.csv")
+      f2 <- if (!is.null(path_to_save)) file.path(path_to_save, paste0(code_2, "_wric_data.csv")) else paste0(code_2, "_wric_data.csv")
+      write.csv(df_room1, f1, row.names = FALSE)
+      write.csv(df_room2, f2, row.names = FALSE)
+    } else {
+      f <- if (!is.null(path_to_save)) file.path(path_to_save, paste0(code_new, "_wric_data.csv")) else paste0(code_new, "_wric_data.csv")
+      write.csv(df, f, row.names = FALSE)
+    }
   }
 
-  return(list(r1_metadata = r1_metadata, r2_metadata = r2_metadata, df_room1 = df_room1, df_room2 = df_room2))
+  # Return
+  if (v1) {
+    return(list(
+      version = "1",
+      metadata = list(r1 = r1_metadata, r2 = r2_metadata),
+      dfs = list(room1 = df_room1, room2 = df_room2)
+      ))
+  } else {
+    return(list(
+      version = "2",
+      metadata = list(metadata = metadata),
+      dfs = list(data = df)
+    ))
+  }
 }
 
 #' Exports a file from REDCap based on the specified record ID and field name.

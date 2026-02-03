@@ -45,12 +45,17 @@ preprocess_wric_file(
 \item{entry_exit_dict}{Nested List, used to extract entry/exit times from note file}
 }
 \value{
-A list with four elements:
+list
+A list with the following components:
 \describe{
-\item{r1_metadata}{List containing metadata extracted for Room 1.}
-\item{r2_metadata}{List containing metadata extracted for Room 2.}
-\item{df_room1}{Data frame with processed WRIC measurements for Room 1.}
-\item{df_room2}{Data frame with processed WRIC measurements for Room 2.}
+\item{version}{Character string indicating the detected software version
+(\code{"1"} for old software, \code{"2"} for new software).}
+\item{metadata}{A named list containing extracted metadata.
+For version 1, this includes \code{r1} and \code{r2}.
+For version 2, this contains a single \code{metadata} entry.}
+\item{dfs}{A named list containing processed data frames.
+For version 1: \code{room1} and \code{room2}.
+For version 2: \code{data}.}
 }
 }
 \description{
