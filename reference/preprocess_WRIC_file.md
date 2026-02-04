@@ -70,7 +70,43 @@ preprocess_wric_file(
 
 - keywords_dict:
 
-  Nested List, used to extract protocol values from note file
+  list, optional A dictionary of keywords used to extract protocol
+  events from a note file. Each entry should be a named list with:
+
+  keywords
+
+  :   A character vector of keywords or phrases to match in the note
+      comment. Matching is case-insensitive.
+
+  value
+
+  :   Numeric protocol value to assign when the keyword is detected.
+
+  type
+
+  :   Optional character, either "instant" or omitted. "instant" events
+      are applied at the specified timestamp and revert to the previous
+      protocol immediately after. Non-instant events set the protocol
+      until another event occurs.
+
+  Behavior rules:
+
+  Non-instant events
+
+  :   Set the protocol value from their timestamp until another event
+      overwrites it or until a stop keyword sets it to 0.
+
+  Instant events
+
+  :   Apply only at the timestamp of the note line, then revert to the
+      protocol that was active immediately before.
+
+  Stop keywords
+
+  :   Always set the protocol to 0, regardless of previous state, unless
+      overridden by an instant event.
+
+  If `NULL`, a default set of keywords is used.
 
 - entry_exit_dict:
 
