@@ -401,7 +401,8 @@ append_protocol_entry <- function(dict_protocol, participant, timestamp, value) 
     stop_sleeping = list(keywords = list(c("vaagen", "vaekke", "vaek", "wake", "woken", "vaagnet")), value = 0),
     stop_anything = list(keywords = list(c("faerdig", "faerdig", "stop", "end ", "finished", "slut")), value = 0),
     activity = list(keywords = list(c("start", "begin", "began"), c("step", "exercise", "physical activity", "active", "motion", "aktiv")), value = 3),
-    ree_start = list(keywords = list(c("start", "begin", "began"), c("REE", "BEE", "BMR", "RMR", "RER")), value = 4)
+    ree_start = list(keywords = list(c("start", "begin", "began"), c("REE", "BEE", "BMR", "RMR", "RER")), value = 4),
+    blood_draw    = list(keywords = list(c("blood draw","bp","blood sample", "blod proeve")), value = 5, type = "instant")
   )
   return(keywords_dict)
 }
@@ -411,7 +412,7 @@ append_protocol_entry <- function(dict_protocol, participant, timestamp, value) 
 #' Extract protocol events from a note file (without applying to dataframes)
 #'
 #' @param notes_path Path to the note file (.txt)
-#' @param keywords_dict Optional custom keywords dictionary
+#' @inheritParams preprocess_wric_file
 #' @param v1 Logical, TRUE if old software format (two participants), FALSE for new format (single participant / all)
 #' @return A list with two elements:
 #'   \describe{
@@ -447,11 +448,13 @@ extract_protocol_events <- function(notes_path, keywords_dict = NULL, v1 = FALSE
   drift_pattern <- "^\\d{2}:\\d{2}(:\\d{2})?$"
   drift <- NULL
 
-  # Initialize empty protocol list
+  # Initialize empty protocol list and save last protocol
   if (v1) {
     dict_protocol <- list("1" = list(), "2" = list())
+    last_protocol <- list("1" = 0, "2" = 0)
   } else {
     dict_protocol <- list("all" = list())
+    last_protocol <- list("all" = 0)
   }
 
   for (i in seq_len(nrow(df_note))) {
@@ -511,7 +514,19 @@ extract_protocol_events <- function(notes_path, keywords_dict = NULL, v1 = FALSE
 
         # Append to protocol list
         for (p in participants) {
+          # Store current protocol before adding instant event
+          prev_protocol <- last_protocol[[p]]
+
+          # Add the event
           dict_protocol[[p]] <- append(dict_protocol[[p]], list(list(timestamp = timestamp, protocol = value)))
+
+          if (!is.null(entry$type) && entry$type == "instant") {
+            # Append a restore event 1 minute later
+            dict_protocol[[p]] <- append(dict_protocol[[p]], list(list(timestamp = timestamp + 60, protocol = prev_protocol)))
+          } else {
+            # Update last_protocol for ongoing intervals
+            last_protocol[[p]] <- value
+          }
         }
       }
     }
@@ -541,8 +556,7 @@ extract_protocol_events <- function(notes_path, keywords_dict = NULL, v1 = FALSE
 #'   Data frame for room 1 containing at least a "datetime" column.
 #' @param df_room2 data.frame
 #'   Data frame for room 2 containing at least a "datetime" column.
-#' @param keywords_dict list, optional
-#'   Custom dictionary of keywords to identify protocol events. If NULL, a default set is used.
+#' @inheritParams preprocess_wric_file
 #'
 #' @return A list with two elements:
 #'   \describe{
@@ -591,8 +605,7 @@ extract_note_info <- function(notes_path, df_room1, df_room2, keywords_dict = NU
 #'   Data frame containing at least a "datetime" column.
 #' @param notes_path character
 #'   Path to the note file containing protocol events.
-#' @param keywords_dict list, optional
-#'   Custom dictionary of keywords to identify protocol events. If NULL, a default set is used.
+#' @inheritParams preprocess_wric_file
 #'
 #' @return data.frame
 #'   The input data frame with an updated "protocol" column based on extracted events.
@@ -973,7 +986,20 @@ combine_measurements <- function(df, method = "mean") {
 #' @param start character or POSIXct or NULL, rows before this will be removed, if NULL takes first row e.g "2023-11-13 11:43:00"
 #' @param end character or POSIXct or NULL, rows after this will be removed, if NULL takes last row e.g "2023-11-13 11:43:00"
 #' @param notefilepath String, Directory path of the corresponding note file (.txt)
-#' @param keywords_dict Nested List, used to extract protocol values from note file
+#' @param keywords_dict list, optional
+#'   A dictionary of keywords used to extract protocol events from a note file. Each entry should be a named list with:
+#'   \describe{
+#'     \item{keywords}{A character vector of keywords or phrases to match in the note comment. Matching is case-insensitive.}
+#'     \item{value}{Numeric protocol value to assign when the keyword is detected.}
+#'     \item{type}{Optional character, either "instant" or omitted. "instant" events are applied at the specified timestamp and revert to the previous protocol immediately after. Non-instant events set the protocol until another event occurs.}
+#'   }
+#'   Behavior rules:
+#'   \describe{
+#'     \item{Non-instant events}{Set the protocol value from their timestamp until another event overwrites it or until a stop keyword sets it to 0.}
+#'     \item{Instant events}{Apply only at the timestamp of the note line, then revert to the protocol that was active immediately before.}
+#'     \item{Stop keywords}{Always set the protocol to 0, regardless of previous state, unless overridden by an instant event.}
+#'   }
+#'   If `NULL`, a default set of keywords is used.
 #' @param entry_exit_dict Nested List, used to extract entry/exit times from note file
 #' @return list
 #'   A list with the following components:

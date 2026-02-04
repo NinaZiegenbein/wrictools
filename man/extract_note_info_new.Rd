@@ -14,7 +14,19 @@ Data frame containing at least a "datetime" column.}
 Path to the note file containing protocol events.}
 
 \item{keywords_dict}{list, optional
-Custom dictionary of keywords to identify protocol events. If NULL, a default set is used.}
+A dictionary of keywords used to extract protocol events from a note file. Each entry should be a named list with:
+\describe{
+\item{keywords}{A character vector of keywords or phrases to match in the note comment. Matching is case-insensitive.}
+\item{value}{Numeric protocol value to assign when the keyword is detected.}
+\item{type}{Optional character, either "instant" or omitted. "instant" events are applied at the specified timestamp and revert to the previous protocol immediately after. Non-instant events set the protocol until another event occurs.}
+}
+Behavior rules:
+\describe{
+\item{Non-instant events}{Set the protocol value from their timestamp until another event overwrites it or until a stop keyword sets it to 0.}
+\item{Instant events}{Apply only at the timestamp of the note line, then revert to the protocol that was active immediately before.}
+\item{Stop keywords}{Always set the protocol to 0, regardless of previous state, unless overridden by an instant event.}
+}
+If \code{NULL}, a default set of keywords is used.}
 }
 \value{
 data.frame

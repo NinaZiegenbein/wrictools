@@ -481,3 +481,19 @@ test_that("extract_note_info and extract_note_info_new wrappers work correctly",
   str(out_v1)
   str(out_v2)
 })
+
+test_that("instant blood_draw keyword is applied and reverts correctly", {
+  notes_path <- system.file("extdata", "note_v2.txt", package = "wrictools")
+
+  # run the extraction
+  result <- extract_protocol_events(notes_path, v1 = FALSE)
+  protocol <- result$protocols$all
+
+  # extract the sequence of protocol values in order
+  protocol_values <- sapply(protocol, function(x) x$protocol)
+
+  # expected sequence: 4 (Start RER), 5 (1 bp), 4 (Continue RER), 0 (Stop RER)
+  expected <- c(4, 5, 4, 0)
+  expect_equal(protocol_values, expected)
+})
+

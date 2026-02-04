@@ -1,8 +1,10 @@
-OmniCal software by ing.P.F.M.Schoffelen, Dept. of Human Biology, Maastricht Universityfile identifier is C:\Omnical\Notes\Main_Note_202601261429.txt	
+OmniCal software by ing.P.F.M.Schoffelen, Dept. of Human Biology, Maastricht University
+file identifier is C:\Omnical\Notes\Main_Note_202601261429.txt
 Date	Time	Comment
 
 14/01/2026	11:58:23	11:56:09
 14/01/2026	11:59:43	In
 14/01/2026	12:00:15	Start RER
+14/01/2026	12:00:15	1 bp
 14/01/2026	12:19:24	Stop RER
 14/01/2026	12:20:15	out
