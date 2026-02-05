@@ -8,6 +8,9 @@
   Add Relative Time in minutes to DataFrame. Rows before the
   `start_time` will be indicated negative.
 
+- [`analyse_zero_test()`](https://ninaziegenbein.github.io/wrictools/reference/analyse_zero_test.md)
+  : Analyse a Zero Test WRIC file
+
 - [`check_code()`](https://ninaziegenbein.github.io/wrictools/reference/check_code.md)
   : Check the subject ID code and return corresponding Room 1 and Room 2
   codes.
