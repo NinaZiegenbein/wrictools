@@ -23,7 +23,8 @@ Imports:
     magrittr,
     RCurl,
     readr,
-    rlang
+    rlang,
+    tidyr
 URL: https://github.com/NinaZiegenbein/wrictools, https://ninaziegenbein.github.io/wrictools/
 BugReports: https://github.com/NinaZiegenbein/wrictools/issues
 VignetteBuilder: knitr

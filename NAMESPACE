@@ -2,6 +2,7 @@
 
 export("%>%")
 export(add_relative_time)
+export(analyse_zero_test)
 export(check_code)
 export(check_discrepancies)
 export(combine_measurements)

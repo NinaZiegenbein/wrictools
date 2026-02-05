@@ -20,8 +20,8 @@ test_that("preprocess_wric_file does not throw errors with various inputs", {
     result <- preprocess_wric_file(data_txt, path_to_save = tmp)
   }, NA)
 
-  print("old version")
-  str(result$df_room1)
+  #print("old version")
+  #str(result$df_room1)
 
   # Test with specific filepath and code parameter
   expect_error({
@@ -124,8 +124,8 @@ test_that("preprocess_wric_file v2 does not throw errors with various inputs", {
     result <- preprocess_wric_file(data_v2_txt, path_to_save = tmp)
   }, NA)
 
-  print("new version")
-  str(result$dfs$data)
+  #print("new version")
+  #str(result$dfs$data)
 
   # Test with specific filepath and code parameter
   expect_error({
@@ -394,8 +394,8 @@ test_that("extract_protocol_events works for old and new software", {
     notes_path = note_path_v1,
     v1 = TRUE
   )
-  cat("\n--- v1 output ---\n")
-  str(output_v1)
+  #cat("\n--- v1 output ---\n")
+  #str(output_v1)
   # sanity check: check first timestamp and protocol for participant 1
   first_entry_v1 <- output_v1$protocols[["1"]][[1]]
   expect_s3_class(first_entry_v1$timestamp, "POSIXct")
@@ -407,8 +407,8 @@ test_that("extract_protocol_events works for old and new software", {
     notes_path = note_path_v2,
     v1 = FALSE
   )
-  cat("\n--- v2 output ---\n")
-  str(output_v2)
+  #cat("\n--- v2 output ---\n")
+  #str(output_v2)
 
   # sanity check: first timestamp and protocol for "all"
   first_entry_v2 <- output_v2$protocols[["all"]][[1]]
@@ -450,7 +450,7 @@ test_that("extract_note_info and extract_note_info_new wrappers work correctly",
   expect_true(1 %in% out_v1$df_room2$protocol)
   expect_s3_class(out_v1$df_room1$datetime, "POSIXct")
 
-  print(summary(out_v1$df_room1$protocol))
+  #print(summary(out_v1$df_room1$protocol))
 
   # ---- v2 example ----
   data_v2_path <- system.file("extdata", "data_v2.txt", package = "wrictools")
@@ -475,11 +475,6 @@ test_that("extract_note_info and extract_note_info_new wrappers work correctly",
   expect_true(4 %in% out_v2$protocol)
   expect_true(0 %in% out_v2$protocol)
   expect_s3_class(out_v2$datetime, "POSIXct")
-
-  # Optional: print for manual inspection
-  print("hello")
-  str(out_v1)
-  str(out_v2)
 })
 
 test_that("instant blood_draw keyword is applied and reverts correctly", {
@@ -495,5 +490,23 @@ test_that("instant blood_draw keyword is applied and reverts correctly", {
   # expected sequence: 4 (Start RER), 5 (1 bp), 4 (Continue RER), 0 (Stop RER)
   expected <- c(4, 5, 4, 0)
   expect_equal(protocol_values, expected)
+})
+
+test_that("analyse_zero_test runs on v1 and v2 without error", {
+
+  # v1 example
+  file_v1 <- system.file("extdata", "data.txt", package = "wrictools")
+  expect_error(
+    stats_v1 <- analyse_zero_test(file_v1),
+    NA
+  )
+
+  # v2 example
+  file_v2 <- system.file("extdata", "data_v2.txt", package = "wrictools")
+  expect_error(
+    stats_v2 <- analyse_zero_test(file_v2),
+    NA
+  )
+
 })
 
