@@ -25,7 +25,7 @@ analyse_methanol_burn(
 \arguments{
 \item{filepath}{Path to the wric .txt file.}
 
-\item{methanolfilepath}{File path to an Excel file with columns:
+\item{methanolfilepath}{File path to a csv or Excel file with columns:
 \describe{
 \item{datetime}{Timestamp of measurement, format \code{\%d-\%m-\%y \%H:\%M} by default. Can override with \code{datetime_format}.}
 \item{methanol}{Methanol mass (g) at each timestamp.}

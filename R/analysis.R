@@ -33,7 +33,7 @@ plot_and_stats <- function(df,
 
   # Basic stats
   stats <- bind_rows(
-    df |> summarise(
+    df %>% summarise(
         variable = "VO2",
         mean = mean(.data[["VO2"]], na.rm = TRUE),
         sd   = sd(.data[["VO2"]], na.rm = TRUE),
@@ -41,7 +41,7 @@ plot_and_stats <- function(df,
         max  = max(.data[["VO2"]], na.rm = TRUE),
         slope = coef(lm(.data[["VO2"]] ~ as.numeric(.data[["datetime"]])))[2]
       ),
-    df |> summarise(
+    df %>% summarise(
         variable = "VCO2",
         mean = mean(.data[["VCO2"]], na.rm = TRUE),
         sd   = sd(.data[["VCO2"]], na.rm = TRUE),
@@ -151,8 +151,7 @@ analyse_methanol_burn <- function(filepath, methanolfilepath, room1 = TRUE, date
     )
   }
 
-  df_methanol <- df_methanol %>% arrange(datetime)
-  print(df_methanol)
+  df_methanol <- df_methanol %>% arrange(.data$datetime)
 
   # compute values for each interval
   intervals <- tibble(
@@ -163,59 +162,59 @@ analyse_methanol_burn <- function(filepath, methanolfilepath, room1 = TRUE, date
 
   intervals <- intervals %>%
     mutate(
-      delta_CO2_L = delta_methanol_g * 22.41383 / 32.04,
-      delta_O2_L  = delta_CO2_L * 1.5,
-      delta_time_min = as.numeric(difftime(t2, t1, units = "mins")),
-      CO2_ml_min = delta_CO2_L / delta_time_min * 1000,
-      O2_ml_min  = delta_O2_L / delta_time_min * 1000,
-      methanol_g_min = delta_methanol_g / delta_time_min
+      delta_CO2_L = .data$delta_methanol_g * 22.41383 / 32.04,
+      delta_O2_L  = .data$delta_CO2_L * 1.5,
+      delta_time_min = as.numeric(difftime(.data$t2, .data$t1, units = "mins")),
+      CO2_ml_min = .data$delta_CO2_L / .data$delta_time_min * 1000,
+      O2_ml_min  = .data$delta_O2_L / .data$delta_time_min * 1000,
+      methanol_g_min = .data$delta_methanol_g / .data$delta_time_min
     )
 
   # compute measured VO2/VCO2 per interval
   intervals <- intervals %>%
     rowwise() %>%
     mutate(
-      VO2_measured = mean(df_wric$VO2[df_wric$datetime >= t1 & df_wric$datetime <= t2], na.rm = TRUE),
-      VCO2_measured = mean(df_wric$VCO2[df_wric$datetime >= t1 & df_wric$datetime <= t2], na.rm = TRUE),
-      VO2_dev = VO2_measured / O2_ml_min - 1,
-      VCO2_dev = VCO2_measured / CO2_ml_min - 1,
-      RER = VCO2_measured / VO2_measured
+      VO2_measured = mean(df_wric$VO2[df_wric$datetime >= .data$t1 & df_wric$datetime <= .data$t2], na.rm = TRUE),
+      VCO2_measured = mean(df_wric$VCO2[df_wric$datetime >= .data$t1 & df_wric$datetime <= .data$t2], na.rm = TRUE),
+      VO2_dev = .data$VO2_measured / .data$O2_ml_min - 1,
+      VCO2_dev = .data$VCO2_measured / .data$CO2_ml_min - 1,
+      RER = .data$VCO2_measured / .data$VO2_measured
     ) %>%
     ungroup()
 
   # overall session summary
   overall <- intervals %>%
     summarise(
-      VO2_avg_meas = mean(VO2_measured, na.rm = TRUE),
-      VCO2_avg_meas = mean(VCO2_measured, na.rm = TRUE),
-      O2_avg_calc = mean(O2_ml_min, na.rm = TRUE),
-      CO2_avg_calc = mean(CO2_ml_min, na.rm = TRUE),
-      VO2_dev_avg = mean(VO2_dev, na.rm = TRUE),
-      VCO2_dev_avg = mean(VCO2_dev, na.rm = TRUE),
-      RER_avg = mean(RER, na.rm = TRUE)
+      VO2_avg_meas = mean(.data$VO2_measured, na.rm = TRUE),
+      VCO2_avg_meas = mean(.data$VCO2_measured, na.rm = TRUE),
+      O2_avg_calc = mean(.data$O2_ml_min, na.rm = TRUE),
+      CO2_avg_calc = mean(.data$CO2_ml_min, na.rm = TRUE),
+      VO2_dev_avg = mean(.data$VO2_dev, na.rm = TRUE),
+      VCO2_dev_avg = mean(.data$VCO2_dev, na.rm = TRUE),
+      RER_avg = mean(.data$RER, na.rm = TRUE)
     )
 
   # plots
   p1 <- ggplot(intervals) +
-    geom_line(aes(x = t2, y = VO2_measured, color = "VO2 measured")) +
-    geom_line(aes(x = t2, y = O2_ml_min, color = "O2 predicted")) +
+    geom_line(aes(x = .data$t2, y = .data$VO2_measured, color = "VO2 measured")) +
+    geom_line(aes(x = .data$t2, y = .data$O2_ml_min, color = "O2 predicted")) +
     labs(title = "O2: Measured vs Predicted", x = "Time", y = "ml/min") +
     theme_minimal() +
     scale_color_manual(values = c("blue", "red"))
 
   p2 <- ggplot(intervals) +
-    geom_line(aes(x = t2, y = VCO2_measured, color = "VCO2 measured")) +
-    geom_line(aes(x = t2, y = CO2_ml_min, color = "CO2 predicted")) +
+    geom_line(aes(x = .data$t2, y = .data$VCO2_measured, color = "VCO2 measured")) +
+    geom_line(aes(x = .data$t2, y = .data$CO2_ml_min, color = "CO2 predicted")) +
     labs(title = "CO2: Measured vs Predicted", x = "Time", y = "ml/min") +
     theme_minimal() +
     scale_color_manual(values = c("blue", "red"))
 
   p3 <- ggplot(intervals) +
-    geom_line(aes(x = t2, y = RER)) +
+    geom_line(aes(x = .data$t2, y = .data$RER)) +
     labs(title = "RER over time", x = "Time", y = "VCO2 / VO2") +
     theme_minimal()
 
-  p4 <- ggplot(intervals, aes(x = t2, y = methanol_g_min)) +
+  p4 <- ggplot(intervals, aes(x = .data$t2, y = .data$methanol_g_min)) +
     geom_line(linewidth = 1) +
     geom_point(size = 2) +
     labs(

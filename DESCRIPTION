@@ -24,7 +24,8 @@ Imports:
     RCurl,
     readr,
     rlang,
-    tidyr
+    tidyr,
+    readxl
 URL: https://github.com/NinaZiegenbein/wrictools, https://ninaziegenbein.github.io/wrictools/
 BugReports: https://github.com/NinaZiegenbein/wrictools/issues
 VignetteBuilder: knitr
