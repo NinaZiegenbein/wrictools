@@ -1017,7 +1017,7 @@ combine_measurements <- function(df, method = "mean") {
 #' @examples
 #' outdir <- file.path(tempdir(), "wrictools")
 #' dir.create(outdir, showWarnings = FALSE)
-#' data_txt <- system.file("extdata", "data_no_comment.txt", package = "wrictools")
+#' data_txt <- system.file("extdata", "data.txt", package = "wrictools")
 #' result <- preprocess_wric_file(data_txt, path_to_save = outdir)
 #' unlink(outdir, recursive = TRUE)
 preprocess_wric_file <- function(filepath, code = "id", manual = NULL, save_csv = FALSE, path_to_save = NULL, combine = TRUE, method = "mean", start = NULL, end = NULL, notefilepath = NULL, keywords_dict = NULL, entry_exit_dict = NULL) {

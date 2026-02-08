@@ -14,15 +14,19 @@
 NULL
 
 # Import from dplyr
-#' @importFrom dplyr select mutate filter contains all_of where lead
+#' @importFrom dplyr select mutate filter contains all_of where lead bind_rows summarise tibble arrange ungroup rowwise
 NULL
 
 # Import from readr
 #' @importFrom readr read_csv read_tsv
 NULL
 
+# Import from readxl
+#' @importFrom readxl read_excel
+NULL
+
 # Import from stats
-#' @importFrom stats median na.omit setNames
+#' @importFrom stats median na.omit setNames sd coef lm
 NULL
 
 # Import from utils
@@ -38,5 +42,13 @@ NULL
 NULL
 
 # Import from ggplot
-#' @importFrom ggplot2 aes coord_cartesian geom_line geom_rect ggplot ggsave labs scale_fill_manual theme_minimal
+#' @importFrom ggplot2 aes coord_cartesian geom_line geom_rect ggplot ggsave labs scale_fill_manual theme_minimal scale_color_manual geom_point
+NULL
+
+# Import from tools
+#' @importFrom tools file_ext
+NULL
+
+# Import from tidyr
+#' @importFrom tidyr pivot_longer
 NULL
