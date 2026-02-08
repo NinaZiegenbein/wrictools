@@ -1,13 +1,15 @@
-# Preprocesses a wric data file, extracting metadata, creating DataFrames, and optionally saving results.
+# Analyse methanol burn experiment
 
-Preprocesses a wric data file, extracting metadata, creating DataFrames,
-and optionally saving results.
+Analyse methanol burn experiment
 
 ## Usage
 
 ``` r
-preprocess_wric_file(
+analyse_methanol_burn(
   filepath,
+  methanolfilepath,
+  room1 = TRUE,
+  datetime_format = "%d-%m-%y %H:%M",
   code = "id",
   manual = NULL,
   save_csv = FALSE,
@@ -27,6 +29,30 @@ preprocess_wric_file(
 - filepath:
 
   Path to the wric .txt file.
+
+- methanolfilepath:
+
+  File path to a csv or Excel file with columns:
+
+  datetime
+
+  :   Timestamp of measurement, format `%d-%m-%y %H:%M` by default. Can
+      override with `datetime_format`.
+
+  methanol
+
+  :   Methanol mass (g) at each timestamp.
+
+- room1:
+
+  Logical; if TRUE uses room1 data from WRIC file, else room2. This is
+  only relevant for files generates by software version 1. Default is
+  TRUE.
+
+- datetime_format:
+
+  Character; format string for parsing methanol datetime column. Default
+  is "%d-%m-%y %H:%M" (25-03-25 13:58).
 
 - code:
 
@@ -114,40 +140,28 @@ preprocess_wric_file(
 
 ## Value
 
-list A list with the following components:
+A list with:
 
-- version:
+- per_interval:
 
-  Character string indicating the detected software version (`"1"` for
-  old software, `"2"` for new software).
+  Data frame with per-timestep methanol burn, predicted CO2/O2, measured
+  VO2/VCO2, deviations, RER
 
-- metadata:
+- overall:
 
-  A named list containing extracted metadata. For version 1, this
-  includes `r1` and `r2`. For version 2, this contains a single
-  `metadata` entry.
+  Summary for the whole session
 
-- dfs:
+- plots:
 
-  A named list containing processed data frames. For version 1: `room1`
-  and `room2`. For version 2: `data`.
+  List of ggplot objects (values shown correspond to the end of each
+  interval)
 
 ## Examples
 
 ``` r
-outdir <- file.path(tempdir(), "wrictools")
-dir.create(outdir, showWarnings = FALSE)
+if (FALSE) { # file.exists(path.expand("~/methanol.xlsx"))
+methanol <- source(path.expand("~/methanol.xlsx"))
 data_txt <- system.file("extdata", "data.txt", package = "wrictools")
-result <- preprocess_wric_file(data_txt, path_to_save = outdir)
-#> Rows: 717 Columns: 67
-#> ── Column specification ────────────────────────────────────────────────────────
-#> Delimiter: "\t"
-#> chr   (4): X1, X18, X35, X52
-#> dbl  (56): X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15, X16, X2...
-#> lgl   (3): X17, X34, X51
-#> time  (4): X2, X19, X36, X53
-#> 
-#> ℹ Use `spec()` to retrieve the full column specification for this data.
-#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-unlink(outdir, recursive = TRUE)
+analyse_methanol_burn (data_txt, methanol, room1 = FALSE)
+}
 ```

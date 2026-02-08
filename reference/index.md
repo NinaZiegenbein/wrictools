@@ -8,6 +8,9 @@
   Add Relative Time in minutes to DataFrame. Rows before the
   `start_time` will be indicated negative.
 
+- [`analyse_methanol_burn()`](https://ninaziegenbein.github.io/wrictools/reference/analyse_methanol_burn.md)
+  : Analyse methanol burn experiment
+
 - [`analyse_zero_test()`](https://ninaziegenbein.github.io/wrictools/reference/analyse_zero_test.md)
   : Analyse a Zero Test WRIC file
 
