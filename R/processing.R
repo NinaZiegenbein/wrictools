@@ -64,9 +64,9 @@ extract_meta_data <- function(lines, code, manual, save_csv = FALSE, path_to_sav
   adjust_length <- function(data, reference) {
     length_diff <- length(reference) - length(data)
     if (length_diff > 0) {
-      data <- c(data, rep(NA, length_diff))  # Pad with NAs if too short (no comment)
+      data <- c(data, rep(NA, length_diff)) # Pad with NAs if too short (no comment)
     } else if (length_diff < 0) {
-      data <- head(data, length(reference))  # Truncate if too long (new lines in comment)
+      data <- head(data, length(reference)) # Truncate if too long (new lines in comment)
     }
     return(data)
   }
@@ -124,9 +124,7 @@ extract_meta_data <- function(lines, code, manual, save_csv = FALSE, path_to_sav
 #'
 #' # Extract metadata using a manual code
 #' extract_metadata_new(lines, code = "manual", manual = "custom_code", save_csv = FALSE)
-
 extract_metadata_new <- function(lines, code, manual = NULL, save_csv = FALSE, path_to_save = NULL) {
-
   header_line <- unlist(strsplit(trimws(lines[5]), "\t"))
   data_line <- unlist(strsplit(trimws(lines[6]), "\t"))
 
@@ -134,9 +132,9 @@ extract_metadata_new <- function(lines, code, manual = NULL, save_csv = FALSE, p
   adjust_length <- function(data, reference) {
     length_diff <- length(reference) - length(data)
     if (length_diff > 0) {
-      data <- c(data, rep(NA, length_diff))  # pad with NAs
+      data <- c(data, rep(NA, length_diff)) # pad with NAs
     } else if (length_diff < 0) {
-      data <- head(data, length(reference))  # truncate if too long
+      data <- head(data, length(reference)) # truncate if too long
     }
     return(data)
   }
@@ -146,7 +144,7 @@ extract_metadata_new <- function(lines, code, manual = NULL, save_csv = FALSE, p
   metadata <- as.data.frame(
     setNames(as.list(data_line), header_line),
     stringsAsFactors = FALSE
-    )
+  )
   code <- check_code(code, if (!is.null(manual)) manual[1] else NULL, metadata, v1 = FALSE)
 
   # Save CSV if requested
@@ -186,8 +184,7 @@ open_file <- function(filepath) {
   # Check for version 2 header
   else if (grepl("^2\\.[0-9]+\\.[0-9]+\\.[0-9]+\\s+Omnical software by Maastricht Instruments B\\.V\\.", lines[1])) {
     v1 <- FALSE
-  }
-  else {
+  } else {
     stop("The provided file is not a recognized Maastricht Instruments WRIC data file (neither version 1 nor 2).")
   }
 
@@ -253,7 +250,7 @@ cut_rows <- function(df, start = NULL, end = NULL) {
   df$datetime <- as.POSIXct(df$datetime)
 
   start <- if (is.null(start) || is.na(start)) min(df$datetime, na.rm = TRUE) else as.POSIXct(start)
-  end   <- if (is.null(end)   || is.na(end))   max(df$datetime, na.rm = TRUE) else as.POSIXct(end)
+  end <- if (is.null(end) || is.na(end)) max(df$datetime, na.rm = TRUE) else as.POSIXct(end)
 
   start <- as.POSIXct(start)
   end <- as.POSIXct(end)
@@ -284,7 +281,7 @@ update_protocol <- function(df, protocol_list) {
 
   # Ensure protocol_list is a data frame and check for empty data frame
   if (nrow(protocol_list) == 0) {
-    return(df)  # If no protocols, return original DataFrame
+    return(df) # If no protocols, return original DataFrame
   }
 
   # initialize protocol column
@@ -295,9 +292,9 @@ update_protocol <- function(df, protocol_list) {
   for (i in seq_len(nrow(df))) {
     # While there are more timestamps and the current row's datetime is greater than or equal to the timestamp
     while (current_index <= nrow(protocol_list) &&
-           df$datetime[i] >= protocol_list[current_index, "timestamp"]) {
-      current_protocol <- protocol_list[current_index, "protocol"]  # Update current protocol
-      current_index <- current_index + 1  # Move to the next timestamp
+      df$datetime[i] >= protocol_list[current_index, "timestamp"]) {
+      current_protocol <- protocol_list[current_index, "protocol"] # Update current protocol
+      current_index <- current_index + 1 # Move to the next timestamp
     }
 
     df$protocol[i] <- current_protocol
@@ -352,14 +349,14 @@ detect_start_end <- function(notes_path, v1 = FALSE, entry_exit_dict = NULL) {
 
     for (participant in participants) {
       if (is.na(start_end_times[[participant]][1]) &&
-          any(grepl(paste(keywords_dict$start, collapse = "|"), comment))) {
-        first_three <- head(df_note$datetime, 4) #there is one empty line, one for clock check and then up to two saying when there going in, rest is not searched
+        any(grepl(paste(keywords_dict$start, collapse = "|"), comment))) {
+        first_three <- head(df_note$datetime, 4) # there is one empty line, one for clock check and then up to two saying when there going in, rest is not searched
         if (df_note$datetime[i] %in% first_three) {
           start_end_times[[participant]][1] <- df_note$datetime[i]
         }
       } else if (is.na(start_end_times[[participant]][2]) &&
-                 any(grepl(paste(keywords_dict$end, collapse = "|"), comment))) {
-        last_two <- tail(df_note$datetime, 2) #only checking the last two rows
+        any(grepl(paste(keywords_dict$end, collapse = "|"), comment))) {
+        last_two <- tail(df_note$datetime, 2) # only checking the last two rows
         if (df_note$datetime[i] %in% last_two) {
           start_end_times[[participant]][2] <- df_note$datetime[i]
         }
@@ -388,7 +385,6 @@ detect_start_end <- function(notes_path, v1 = FALSE, entry_exit_dict = NULL) {
 #' @keywords internal
 append_protocol_entry <- function(dict_protocol, participant, timestamp, value) {
   for (p in participant) {
-
     dict_protocol[[p]] <- append(dict_protocol[[p]], list(list(timestamp = timestamp, protocol = value)))
   }
   return(dict_protocol)
@@ -402,11 +398,10 @@ append_protocol_entry <- function(dict_protocol, participant, timestamp, value) 
     stop_anything = list(keywords = list(c("faerdig", "faerdig", "stop", "end ", "finished", "slut")), value = 0),
     activity = list(keywords = list(c("start", "begin", "began"), c("step", "exercise", "physical activity", "active", "motion", "aktiv")), value = 3),
     ree_start = list(keywords = list(c("start", "begin", "began"), c("REE", "BEE", "BMR", "RMR", "RER")), value = 4),
-    blood_draw    = list(keywords = list(c("blood draw","bp","blood sample", "blod proeve")), value = 5, type = "instant")
+    blood_draw = list(keywords = list(c("blood draw", "bp", "blood sample", "blod proeve")), value = 5, type = "instant")
   )
   return(keywords_dict)
 }
-
 
 
 #' Extract protocol events from a note file (without applying to dataframes)
@@ -422,7 +417,6 @@ append_protocol_entry <- function(dict_protocol, participant, timestamp, value) 
 #' @keywords internal
 #' @noRd
 extract_protocol_events <- function(notes_path, keywords_dict = NULL, v1 = FALSE) {
-
   if (is.null(keywords_dict)) {
     keywords_dict <- .get_keywords_dict()
   }
@@ -435,9 +429,9 @@ extract_protocol_events <- function(notes_path, keywords_dict = NULL, v1 = FALSE
   df_note <- na.omit(df_note)
 
   # Convert to datetime
-  if (v1) {# old software: mm/dd/yy
+  if (v1) { # old software: mm/dd/yy
     df_note$datetime <- as.POSIXct(paste(df_note$Date, df_note$Time), format = "%m/%d/%y %H:%M:%S")
-  } else {# new software: dd/mm/yyyy
+  } else { # new software: dd/mm/yyyy
     df_note$datetime <- as.POSIXct(paste(df_note$Date, df_note$Time), format = "%d/%m/%Y %H:%M:%S")
   }
 
@@ -670,17 +664,18 @@ extract_note_info_new <- function(df, notes_path, keywords_dict = NULL) {
 #'   notefilepath = notes_txt
 #' )
 create_wric_df <- function(filepath, lines, code_1, code_2, path_to_save = NULL, start = NULL, end = NULL, notefilepath = NULL, entry_exit_dict = NULL) {
-
   data_start_index <- which(grepl("^Room 1 Set 1", lines)) + 1
-  df <- read_tsv(filepath, skip = data_start_index, col_names = FALSE)
+  df <- read_tsv(filepath, skip = data_start_index, col_names = FALSE, show_col_types = FALSE)
 
   # Drop columns with all NA values
   df <- df %>% select(where(~ !all(is.na(.))))
 
   # Define new column names
-  columns <- c("Date", "Time", "VO2", "VCO2", "RER", "FiO2", "FeO2", "FiCO2", "FeCO2", "Flow",
-               "Activity Monitor", "Energy Expenditure (kcal/min)", "Energy Expenditure (kJ/min)",
-               "Pressure Ambient", "Temperature Room", "Relative Humidity Room")
+  columns <- c(
+    "Date", "Time", "VO2", "VCO2", "RER", "FiO2", "FeO2", "FiCO2", "FeCO2", "Flow",
+    "Activity Monitor", "Energy Expenditure (kcal/min)", "Energy Expenditure (kJ/min)",
+    "Pressure Ambient", "Temperature Room", "Relative Humidity Room"
+  )
   new_columns <- c()
   for (set_num in c("S1", "S2")) {
     for (room in c("r1", "r2")) {
@@ -693,7 +688,7 @@ create_wric_df <- function(filepath, lines, code_1, code_2, path_to_save = NULL,
   date_columns <- df %>% select(contains("Date"))
   time_columns <- df %>% select(contains("Time"))
   if (!all(apply(date_columns, 1, function(x) length(unique(x)) == 1)) ||
-      !all(apply(time_columns, 1, function(x) length(unique(x)) == 1))) {
+    !all(apply(time_columns, 1, function(x) length(unique(x)) == 1))) {
     stop("Date or Time columns do not match in some rows")
   }
 
@@ -738,8 +733,10 @@ create_wric_df <- function(filepath, lines, code_1, code_2, path_to_save = NULL,
     }
     df_room1 <- cut_rows(df_room1, start_1, end_1)
     df_room2 <- cut_rows(df_room2, start_2, end_2)
-    print(paste("Starting time for room 1 is", start_1, "and end", end_1,
-                "and for room 2 start is", start_2, "and end", end_2))
+    print(paste(
+      "Starting time for room 1 is", start_1, "and end", end_1,
+      "and for room 2 start is", start_2, "and end", end_2
+    ))
   } else {
     df_room1 <- cut_rows(df_room1, start, end)
     df_room2 <- cut_rows(df_room2, start, end)
@@ -785,7 +782,6 @@ create_wric_df <- function(filepath, lines, code_1, code_2, path_to_save = NULL,
 #'   notefilepath = notes_v2_txt
 #' )
 create_wric_df_new <- function(filepath, lines, code, path_to_save = NULL, start = NULL, end = NULL, notefilepath = NULL, entry_exit_dict = NULL) {
-
   header_start_index <- which(grepl("^Set 1", lines))
   if (length(header_start_index) == 0) {
     stop("Could not find 'Set 1' header in file.")
@@ -807,7 +803,8 @@ create_wric_df_new <- function(filepath, lines, code, path_to_save = NULL, start
   base_columns <- c(
     "Date", "Time", "VO2", "VCO2", "RER", "Energy Expenditure (kJ/min)", "Energy Expenditure (kcal/min)",
     "FiO2", "FeO2", "FiCO2", "FeCO2", "Flow", "Pressure Ambient", "Temperature Flow",
-    "Relative Humidity Flow", "Temperature Room", "Relative Humidity Room")
+    "Relative Humidity Flow", "Temperature Room", "Relative Humidity Room"
+  )
 
   new_columns <- c(paste0("S1_", base_columns), paste0("S2_", base_columns))
 
@@ -821,7 +818,7 @@ create_wric_df_new <- function(filepath, lines, code, path_to_save = NULL, start
   date_cols <- df %>% dplyr::select(contains("_Date"))
   time_cols <- df %>% dplyr::select(contains("_Time"))
   if (!all(apply(date_cols, 1, function(x) length(unique(x)) == 1)) ||
-      !all(apply(time_cols, 1, function(x) length(unique(x)) == 1))) {
+    !all(apply(time_cols, 1, function(x) length(unique(x)) == 1))) {
     stop("Date or Time columns do not match across sets in some rows.")
   }
 
@@ -840,10 +837,10 @@ create_wric_df_new <- function(filepath, lines, code, path_to_save = NULL, start
   } else if (!is.null(notefilepath)) {
     se_times <- detect_start_end(notefilepath, v1 = FALSE, entry_exit_dict = entry_exit_dict)
     start_time <- as.POSIXct(se_times[[1]][[1]], origin = "1970-01-01")
-    end_time   <- as.POSIXct(se_times[[1]][[2]], origin = "1970-01-01")
+    end_time <- as.POSIXct(se_times[[1]][[2]], origin = "1970-01-01")
 
     if (!is.null(start)) start_time <- start
-    if (!is.null(end))   end_time   <- end
+    if (!is.null(end)) end_time <- end
 
     df <- cut_rows(df, start_time, end_time)
   }
@@ -852,7 +849,6 @@ create_wric_df_new <- function(filepath, lines, code, path_to_save = NULL, start
 
   return(df)
 }
-
 
 
 #' Checks for discrepancies between S1 and S2 measurements in the DataFrame and prints them to the console.
@@ -880,12 +876,15 @@ create_wric_df_new <- function(filepath, lines, code, path_to_save = NULL, start
 #' )
 #' check_discrepancies(result$df_room1)
 check_discrepancies <- function(df, threshold = 0.05, individual = FALSE) {
-
   env_params <- c("Pressure Ambient", "Temperature", "Relative Humidity", "Activity Monitor")
   df_filtered <- df %>% select(-contains(env_params))
 
-  s1_columns <- df_filtered %>% select(contains("_S1_")) %>% names()
-  s2_columns <- df_filtered %>% select(contains("_S2_")) %>% names()
+  s1_columns <- df_filtered %>%
+    select(contains("_S1_")) %>%
+    names()
+  s2_columns <- df_filtered %>%
+    select(contains("_S2_")) %>%
+    names()
 
   discrepancies <- c()
 
@@ -945,8 +944,12 @@ check_discrepancies <- function(df, threshold = 0.05, individual = FALSE) {
 #' combined_s1 <- combine_measurements(result$df_room1)
 #'
 combine_measurements <- function(df, method = "mean") {
-  s1_columns <- df %>% select(contains("S1_")) %>% names()
-  s2_columns <- df %>% select(contains("S2_")) %>% names()
+  s1_columns <- df %>%
+    select(contains("S1_")) %>%
+    names()
+  s2_columns <- df %>%
+    select(contains("S2_")) %>%
+    names()
   non_s_columns <- names(df)[!names(df) %in% c(s1_columns, s2_columns)]
 
   combined <- df[, non_s_columns]
@@ -1087,7 +1090,7 @@ preprocess_wric_file <- function(filepath, code = "id", manual = NULL, save_csv 
       version = "1",
       metadata = list(r1 = r1_metadata, r2 = r2_metadata),
       dfs = list(room1 = df_room1, room2 = df_room2)
-      ))
+    ))
   } else {
     return(list(
       version = "2",
@@ -1111,10 +1114,11 @@ preprocess_wric_file <- function(filepath, code = "id", manual = NULL, save_csv 
 #' @export
 #' @examplesIf file.exists(path.expand("~/.config.R"))
 #' source(path.expand("~/.config.R"))
-#' export_file_from_redcap(record_id = "1", fieldname = "wric_data",
-#'                         api_url = api_url, api_token = api_token)
+#' export_file_from_redcap(
+#'   record_id = "1", fieldname = "wric_data",
+#'   api_url = api_url, api_token = api_token
+#' )
 export_file_from_redcap <- function(record_id, fieldname, path = NULL, api_url, api_token) {
-
   # avoid cross-plattform errors by setting the certificate globally
   download.file(url = "https://curl.se/ca/cacert.pem", destfile = "cacert.pem")
   options(RCurlOptions = list(cainfo = "cacert.pem"))
@@ -1133,7 +1137,6 @@ export_file_from_redcap <- function(record_id, fieldname, path = NULL, api_url, 
   f <- file(filepath, "wb")
   writeLines(result, f)
   close(f)
-
 }
 
 #' Uploads a file to REDCap for a specified record ID and field name.
@@ -1149,10 +1152,11 @@ export_file_from_redcap <- function(record_id, fieldname, path = NULL, api_url, 
 #' source(path.expand("~/.config.R"))
 #' tmp <- tempfile(fileext = ".txt")
 #' writeLines(c("Example content"), tmp)
-#' upload_file_to_redcap(filepath = tmp, record_id = "1", fieldname = "wric_data",
-#'                         api_url = api_url, api_token = api_token)
+#' upload_file_to_redcap(
+#'   filepath = tmp, record_id = "1", fieldname = "wric_data",
+#'   api_url = api_url, api_token = api_token
+#' )
 upload_file_to_redcap <- function(filepath, record_id, fieldname, api_url, api_token) {
-
   # avoid cross-plattform errors by setting the certificate globally
   download.file(url = "https://curl.se/ca/cacert.pem", destfile = "cacert.pem")
   options(RCurlOptions = list(cainfo = "cacert.pem"))
@@ -1244,4 +1248,3 @@ preprocess_wric_files <- function(csv_file, fieldname, code = "id", manual = NUL
 
   return(results)
 }
-

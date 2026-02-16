@@ -37,7 +37,7 @@ install.packages("wrictools")
 If instead you want to install `wrictools` from GitHub use:
 ```{r eval = FALSE}
 library(remotes)
-install_github( "NinaZiegenbein/wrictools")
+install_github("NinaZiegenbein/wrictools")
 ```
 
 ## Example Usage
@@ -102,7 +102,7 @@ For a more detailed tutorial on how to use the package, please look at vignette 
 ### Preprocess multiple files on RedCap
 If you want to preprocess multiple WRIC files stored on a REDCap server, you can supply a CSV file containing the record IDs of interest. The function will automatically fetch the corresponding raw WRIC data, preprocess it, and return the results.
 
-To connect to your REDCap project, you need your API token and the API URL for your instance. These should be stored in a local file (for example ~/.config.R) and sourced when you run the function. A minimal config file looks like this:
+To connect to your REDCap project, you need your API token and the API URL for your instance. These can be assigned in the global environment manually, or be stored in a local file (for example ~/.config.R) and sourced when you run the function. A minimal config file looks like this:
 
 ```{r eval = FALSE}
 api_token <- '123C09E18E747592A693467A304EA32'
