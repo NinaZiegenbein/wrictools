@@ -33,7 +33,7 @@ This document serves as a guided tutorial to help you get started using the WRIC
   
   ## FAQ and "Programming Terms"
   ### What is the difference between R and RStudio?
-  **R** is a programming language, while **RStudio** is a, so called, integrated development environment (IDE) designed specifically for R, offering a user-friendly interface for coding, plotting, and managing projects. You can think of R like a language, like english, where RStudio is Word - a program you can write english inside. But you could also use other programs for example libre office or latex.
+  **R** is a programming language, while **RStudio** is a, so called, integrated development environment (IDE) designed specifically for R, offering a user-friendly interface for coding, plotting, and managing projects. You can think of R like a language, like English, where RStudio is Word - a program you can write English inside. But you could also use other programs for example LibreOffice or LaTeX.
   
   ### R vs Rmd 
   There are different types of files where you can write R code. A file ending in **.R** is a standard R script for writing and running R code, while in **.Rmd (R Markdown)** you can combine code and text for dynamic reports, or for example this tutorial/vignette.
@@ -45,10 +45,10 @@ This document serves as a guided tutorial to help you get started using the WRIC
 We are in the process of submitting `wrictools` to CRAN, so for now you can install the current wrictools **development** version via GitHub:
 ```{r eval = FALSE}
 library(remotes)
-install_github( "NinaZiegenbein/wrictools")
+install_github("NinaZiegenbein/wrictools")
 ```
 
-On the package is on CRAN you can install the `wrictools` package from CRAN:
+Once the package is on CRAN you can install the `wrictools` package from CRAN as normal:
 ```{r eval = FALSE}
 install.packages("wrictools")
 ```
@@ -61,7 +61,7 @@ library(wrictools)
 
 
 ## Preprocess WRIC data
-Now let's preprocess the txt files, that are created by the WRIC. The function `preprocess_wric_file()` disentangles the meta-data at the top of the file (ID, comment etc) and creates DataFrames and csv-files with the actual data, seperated between both rooms and summarized between the two measurements for each room.
+Now let's preprocess the txt files, that are created by the WRIC. The function `preprocess_wric_file()` disentangles the meta-data at the top of the file (ID, comment etc) and creates DataFrames and csv-files with the actual data, separated between both rooms and summarized between the two measurements for each room.
 ```{r}
 data_txt <- system.file("extdata", "data.txt", package = "wrictools") # loading example data
 result <- preprocess_wric_file(data_txt)
@@ -71,7 +71,7 @@ r2_metadata <- result$metadata$r2
 df_room1 <- result$dfs$room1
 df_room2 <- result$dfs$room2
 ```
-The function returns a list with "R1_metadata", "R2_metadata", "df_room1" and "df_room2". Each item of the list is a DataFrame of either the metadata or the preprocessed actual data for either room 1 or 2. If ´save_csv` is True, then the DataFrames will be saved as csv files with "id_comment_WRIC_data.csv" or "id_comment_WRIC_metadata.csv".
+The function returns a list with "R1_metadata", "R2_metadata", "df_room1" and "df_room2". Each item of the list is a `data.frame` of either the metadata or the preprocessed actual data for either room 1 or 2. If ´save_csv` is True, then the data.frames will be saved as csv files with "id_comment_WRIC_data.csv" or "id_comment_WRIC_metadata.csv".
 
 Let's look at the output really quick for room 1:
 ```{r}
@@ -112,7 +112,7 @@ If you specify a path to the corresponding notefile, the code will try to automa
 
 To explore the available functionality and arguments for key functions, simply call:
 ```{r}
-? preprocess_wric_file
+?preprocess_wric_file
 ```
 
 ### <span style="color:green">Your Turn</span>
@@ -120,7 +120,7 @@ So now it is your turn. Using the `preprocess_wric_file()` method create a csv f
 
 1) create a csv with the name "XXXX_WRIC_data.csv" combining S1 and S2 measurements by taking the mean between them.
 2) create a csv, but cut-off the start to 22:45 on 13/11/2023 and the end to 23:45 on the same day. The csv should be saved as "testing_start_end_parameter_WRIC_data.csv".
-3) _Optional:_ Try out the notefilepath parameter and see what happens.
+3) _Optional:_ Try out the `notefilepath` parameter and see what happens.
 
 
 ## Automatic note file extraction - adaptation to your notes
@@ -153,7 +153,7 @@ When specifying a notefilepath, the function will
     
     This package was developed in Denmark, which is why it includes danish signal words. If your notefile is in another language besides English or Danish you can specify your own keywords (or simply replace all with the english words):
     ```{r}
-    # Example how to specify your own keywords 
+    # Example how to specify your own keywords in German
     entry_exit_dict <- list(
       end = c("aus", "raus", "Ausgang", "Ende"),
       start = c("rein", "in der Kammer", "innen", "hinein")
@@ -165,13 +165,13 @@ When specifying a notefilepath, the function will
 3) Read each row and compare if it contains a keyword that responds to one of the predefined keywords. If yes change the label for that time and all following times until the next match. If you do not specify the `keywords_dict` parameter it will use a default dictionary of keywords and protocol values:
 ```{r}
 keywords_dict <- list(
-      sleeping = list(keywords = list(c("seng", "sleeping", "bed", "sove", "soeve", "godnat", "night", "sleep")), value = 1), 
-      eating = list(keywords = list(c("start", "begin", "began"), c("maaltid", "eat", "meal", "food", "spis", "maal", "mad", "frokost", "morgenmad", "middag", "snack", "aftensmad")), value = 2), 
-      stop_sleeping = list(keywords = list(c("vaagen", "vaekke", "wake", "woken", "vaagnet")), value = 0), 
-      stop_anything = list(keywords = list(c("faerdig", "stop", "end ", "finished", "slut")), value = 0), 
-      activity = list(keywords = list(c("start", "begin", "began"), c("step", "exercise", "physical activity", "active", "motion", "aktiv")), value = 3), 
-      ree_start = list(keywords = list(c("start", "begin", "began"), c("REE", "BEE", "BMR", "RMR", "RER")), value = 4)
-    )
+  sleeping = list(keywords = list(c("seng", "sleeping", "bed", "sove", "soeve", "godnat", "night", "sleep")), value = 1),
+  eating = list(keywords = list(c("start", "begin", "began"), c("maaltid", "eat", "meal", "food", "spis", "maal", "mad", "frokost", "morgenmad", "middag", "snack", "aftensmad")), value = 2),
+  stop_sleeping = list(keywords = list(c("vaagen", "vaekke", "wake", "woken", "vaagnet")), value = 0),
+  stop_anything = list(keywords = list(c("faerdig", "stop", "end ", "finished", "slut")), value = 0),
+  activity = list(keywords = list(c("start", "begin", "began"), c("step", "exercise", "physical activity", "active", "motion", "aktiv")), value = 3),
+  ree_start = list(keywords = list(c("start", "begin", "began"), c("REE", "BEE", "BMR", "RMR", "RER")), value = 4)
+)
 ```
 If there are to lists e.g. for `sleeping`, at least one word of each list need to be present for it to be classified as sleeping. The value at the end of the list is the value used int he protocol column in the created dataframe.
 
@@ -258,17 +258,18 @@ Your folder structure will look different, so adjust this code to fit your folde
 ## RedCap
 You can also use RedCap's API (Application Programming Interface) to use files directly from RedCap, and also upload the resulting files. To loop over record IDs and process all files within a project on RedCap, use the `preprocess_wric_files` function. To find out more about using RedCap, please see the `RedCAP` vignette.
 
-_OBS:_ During processing, the data-file(s) will be downloaded and afterwards deleted again. If the data is not allowed to be on your personal device at any point, please use this package on a secure server, where you are allowed to (temporarily) store the data.
+_ATTENTION!_ During processing, the data-file(s) will be downloaded and afterwards deleted again. If the data is not allowed to be on your personal device at any point, please use this package on a secure server, where you are allowed to (temporarily) store the data.
 
 
 ## Working with a subset of the data (specific time)
 Often you are interested in a certain time period (e.g. after eating or during exercise) and want to perform some calculations based on those time frames. Let's look at how we would do that.
 
-1) Import the preprocessed data (the csv-file) _You can skip this step, if you already have the data.frame, for example right after calling_ `preprocess_wric_files`.
+1) Import the preprocessed data (the csv-file) _You can skip this step, if you already have the data.frame, for example right after calling_ `preprocess_wric_files()`.
 ```{r eval = FALSE}
 data <- read.csv("./example_data/my_project/XXXX_comment_WRIC_data.csv") 
 head(data)
 ```
+
 ```{r}
 result <- preprocess_wric_file(data_txt, notefilepath = note_txt)
 data <- result$dfs$df_room1
@@ -306,8 +307,8 @@ _Please note that this is shortened synthetic example data, so the "dinner" is a
 
 Some more helpful functions, you might want to use for/on your sub-dataframes:
 
-- `add_relative_time(dataframe)` - Renumbers _relative_time_ column starting from 0. Might be more intuitiv for further use. Example: `data_dinner <- add_relative_time(data_dinner)`
-- `cut_rows`- With this function you can easily create a subdataframe (like we did above) based on datetime values (instead of the protocol value). Example: `data_dinner <- cut_rows(data, start="2023-11-14 20:04:00", end="2023-11-14 21:04:00")`
+- `add_relative_time(dataframe)` - Renumbers _relative_time_ column starting from 0. Might be more intuitive for further use. Example: `data_dinner <- add_relative_time(data_dinner)`
+- `cut_rows`- With this function you can easily create a sub-dataframe (like we did above) based on datetime values (instead of the protocol value). Example: `data_dinner <- cut_rows(data, start="2023-11-14 20:04:00", end="2023-11-14 21:04:00")`
 
 Of course you can do these analyses batch-wise as well, the same way as above. Here an example:
 ```{r, eval=FALSE}
