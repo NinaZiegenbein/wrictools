@@ -46,15 +46,16 @@ Use the example config_example.r provided in the repository.
 Here is an example of how your config.r file should look:
 
 ``` r
-api_token       <- 'YOUR_API_TOKEN'  # Replace with your personal API token
-api_url         <- 'https://redcap.au.dk/api/'  # URL for AU RedCap projects
+api_token <- '123C09E18E747592A693467A304EA32'
+api_url   <- 'https://redcap.au.dk/api/' #change this url to your RedCAP url (e.g. 'https://redcap.wustl.edu/')
 ```
 
 Important: Keep this file secure. If you are working with sensitive
 data, make sure not to share this file or commit it to a public
 repository. *If you use Git, make sure you add a `.gitignore` file and
-add `config.R` to it. You can take a look at the gitignore file in this
-repository for inspriation.*
+add `config.R` to it (or consider storing it outside of the project
+directory). You can take a look at the gitignore file in this repository
+for inspiration.*
 
 ### 3. Export Files from RedCap
 
@@ -81,8 +82,8 @@ Let’s assume you have multiple records and files that need to be
 processed. You can use the preprocess_WRIC_files function to download
 and process files for multiple records. You need to specify the record
 IDs in your project, and the easiest is if you save them in a .csv file.
-The function has arguments very similair to function
-`preprocess_WRIC_file` (and the functionname is only different in the
+The function has arguments very similar to function
+`preprocess_WRIC_file` (and the function name is only different in the
 additional s in the end):
 
 - csv_file: The path to the CSV file containing the record IDs.

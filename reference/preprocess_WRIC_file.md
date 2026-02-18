@@ -139,15 +139,5 @@ outdir <- file.path(tempdir(), "wrictools")
 dir.create(outdir, showWarnings = FALSE)
 data_txt <- system.file("extdata", "data.txt", package = "wrictools")
 result <- preprocess_wric_file(data_txt, path_to_save = outdir)
-#> Rows: 717 Columns: 67
-#> ── Column specification ────────────────────────────────────────────────────────
-#> Delimiter: "\t"
-#> chr   (4): X1, X18, X35, X52
-#> dbl  (56): X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15, X16, X2...
-#> lgl   (3): X17, X34, X51
-#> time  (4): X2, X19, X36, X53
-#> 
-#> ℹ Use `spec()` to retrieve the full column specification for this data.
-#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 unlink(outdir, recursive = TRUE)
 ```

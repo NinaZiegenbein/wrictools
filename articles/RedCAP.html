@@ -113,14 +113,14 @@ config.r file. This file will store your API token and the RedCap URL.
 Use the example config_example.r provided in the repository.</p>
 <p>Here is an example of how your config.r file should look:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">api_token</span>       <span class="op">&lt;-</span> <span class="st">'YOUR_API_TOKEN'</span>  <span class="co"># Replace with your personal API token</span></span>
-<span><span class="va">api_url</span>         <span class="op">&lt;-</span> <span class="st">'https://redcap.au.dk/api/'</span>  <span class="co"># URL for AU RedCap projects</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">api_token</span> <span class="op">&lt;-</span> <span class="st">'123C09E18E747592A693467A304EA32'</span></span>
+<span><span class="va">api_url</span>   <span class="op">&lt;-</span> <span class="st">'https://redcap.au.dk/api/'</span> <span class="co">#change this url to your RedCAP url (e.g. 'https://redcap.wustl.edu/')</span></span></code></pre></div>
 <p>Important: Keep this file secure. If you are working with sensitive
 data, make sure not to share this file or commit it to a public
 repository. <em>If you use Git, make sure you add a
-<code>.gitignore</code> file and add <code>config.R</code> to it. You
-can take a look at the gitignore file in this repository for
-inspriation.</em></p>
+<code>.gitignore</code> file and add <code>config.R</code> to it (or
+consider storing it outside of the project directory). You can take a
+look at the gitignore file in this repository for inspiration.</em></p>
 </div>
 <div class="section level3">
 <h3 id="export-files-from-redcap">3. Export Files from RedCap<a class="anchor" aria-label="anchor" href="#export-files-from-redcap"></a>
@@ -148,8 +148,8 @@ with your actual record ID and field name:</p>
 processed. You can use the preprocess_WRIC_files function to download
 and process files for multiple records. You need to specify the record
 IDs in your project, and the easiest is if you save them in a .csv file.
-The function has arguments very similair to function
-<code>preprocess_WRIC_file</code> (and the functionname is only
+The function has arguments very similar to function
+<code>preprocess_WRIC_file</code> (and the function name is only
 different in the additional s in the end):</p>
 <ul>
 <li>csv_file: The path to the CSV file containing the record IDs.</li>

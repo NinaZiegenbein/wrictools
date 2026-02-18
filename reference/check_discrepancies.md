@@ -49,16 +49,6 @@ result <- create_wric_df(
   end = NULL,
   notefilepath = NULL
 )
-#> Rows: 717 Columns: 67
-#> ── Column specification ────────────────────────────────────────────────────────
-#> Delimiter: "\t"
-#> chr   (4): X1, X18, X35, X52
-#> dbl  (56): X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15, X16, X2...
-#> lgl   (3): X17, X34, X51
-#> time  (4): X2, X19, X36, X53
-#> 
-#> ℹ Use `spec()` to retrieve the full column specification for this data.
-#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 check_discrepancies(result$df_room1)
 #> r1_S1_VO2 and r1_S2_VO2 have a mean relative delta of 0.0267.
 #> r1_S1_VO2 and r1_S2_VO2 exceed the 0.05% threshold.

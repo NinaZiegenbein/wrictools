@@ -31,9 +31,9 @@ the following installed:
   **R** is a programming language, while **RStudio** is a, so called,
   integrated development environment (IDE) designed specifically for R,
   offering a user-friendly interface for coding, plotting, and managing
-  projects. You can think of R like a language, like english, where
-  RStudio is Word - a program you can write english inside. But you
-  could also use other programs for example libre office or latex.
+  projects. You can think of R like a language, like English, where
+  RStudio is Word - a program you can write English inside. But you
+  could also use other programs for example LibreOffice or LaTeX.
 
   ### R vs Rmd
 
@@ -49,11 +49,11 @@ can install the current wrictools **development** version via GitHub:
 
 ``` r
 library(remotes)
-install_github( "NinaZiegenbein/wrictools")
+install_github("NinaZiegenbein/wrictools")
 ```
 
-On the package is on CRAN you can install the `wrictools` package from
-CRAN:
+Once the package is on CRAN you can install the `wrictools` package from
+CRAN as normal:
 
 ``` r
 install.packages("wrictools")
@@ -71,22 +71,12 @@ Now let’s preprocess the txt files, that are created by the WRIC. The
 function
 [`preprocess_wric_file()`](https://ninaziegenbein.github.io/wrictools/reference/preprocess_WRIC_file.md)
 disentangles the meta-data at the top of the file (ID, comment etc) and
-creates DataFrames and csv-files with the actual data, seperated between
+creates DataFrames and csv-files with the actual data, separated between
 both rooms and summarized between the two measurements for each room.
 
 ``` r
 data_txt <- system.file("extdata", "data.txt", package = "wrictools") # loading example data
 result <- preprocess_wric_file(data_txt)
-#> Rows: 717 Columns: 67
-#> ── Column specification ────────────────────────────────────────────────────────
-#> Delimiter: "\t"
-#> chr   (4): X1, X18, X35, X52
-#> dbl  (56): X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15, X16, X2...
-#> lgl   (3): X17, X34, X51
-#> time  (4): X2, X19, X36, X53
-#> 
-#> ℹ Use `spec()` to retrieve the full column specification for this data.
-#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 
 r1_metadata <- result$metadata$r1
 r2_metadata <- result$metadata$r2
@@ -95,9 +85,9 @@ df_room2 <- result$dfs$room2
 ```
 
 The function returns a list with “R1_metadata”, “R2_metadata”,
-“df_room1” and “df_room2”. Each item of the list is a DataFrame of
+“df_room1” and “df_room2”. Each item of the list is a `data.frame` of
 either the metadata or the preprocessed actual data for either room 1 or
-2. If ´save_csv\` is True, then the DataFrames will be saved as csv
+2. If ´save_csv\` is True, then the data.frames will be saved as csv
 files with “id_comment_WRIC_data.csv” or “id_comment_WRIC_metadata.csv”.
 
 Let’s look at the output really quick for room 1:
@@ -157,16 +147,6 @@ result <- preprocess_wric_file(
     notefilepath= NULL,
     keywords_dict=NULL
 )
-#> Rows: 717 Columns: 67
-#> ── Column specification ────────────────────────────────────────────────────────
-#> Delimiter: "\t"
-#> chr   (4): X1, X18, X35, X52
-#> dbl  (56): X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15, X16, X2...
-#> lgl   (3): X17, X34, X51
-#> time  (4): X2, X19, X36, X53
-#> 
-#> ℹ Use `spec()` to retrieve the full column specification for this data.
-#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
 Here are explanations and options to all parameters you can specify:
@@ -209,7 +189,7 @@ To explore the available functionality and arguments for key functions,
 simply call:
 
 ``` r
-? preprocess_wric_file
+?preprocess_wric_file
 ```
 
 #### Your Turn
@@ -223,7 +203,8 @@ method create a csv file using “data.txt” in folder example_data.
 2.  create a csv, but cut-off the start to 22:45 on 13/11/2023 and the
     end to 23:45 on the same day. The csv should be saved as
     “testing_start_end_parameter_WRIC_data.csv”.
-3.  *Optional:* Try out the notefilepath parameter and see what happens.
+3.  *Optional:* Try out the `notefilepath` parameter and see what
+    happens.
 
 ### Automatic note file extraction - adaptation to your notes
 
@@ -239,16 +220,6 @@ compare various e.g. eating periods. Let’s try it:
 note_txt <- system.file("extdata", "note.txt", package = "wrictools") # loading example data
 result <- preprocess_wric_file(data_txt, 
                             notefilepath=note_txt)
-#> Rows: 717 Columns: 67
-#> ── Column specification ────────────────────────────────────────────────────────
-#> Delimiter: "\t"
-#> chr   (4): X1, X18, X35, X52
-#> dbl  (56): X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15, X16, X2...
-#> lgl   (3): X17, X34, X51
-#> time  (4): X2, X19, X36, X53
-#> 
-#> ℹ Use `spec()` to retrieve the full column specification for this data.
-#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 #> [1] "Starting time for room 1 is 2023-11-13 21:14:22 and end 2023-11-14 08:47:48 and for room 2 start is 2023-11-13 21:14:22 and end 2023-11-14 08:51:36"
 head(result$dfs$df_room1)
 #> NULL
@@ -292,22 +263,12 @@ When specifying a notefilepath, the function will
     This package was developed in Denmark, which is why it includes danish signal words. If your notefile is in another language besides English or Danish you can specify your own keywords (or simply replace all with the english words):
 
     ``` r
-    # Example how to specify your own keywords 
+    # Example how to specify your own keywords in German
     entry_exit_dict <- list(
       end = c("aus", "raus", "Ausgang", "Ende"),
       start = c("rein", "in der Kammer", "innen", "hinein")
     )
     preprocess_wric_file(data_txt, entry_exit_dict = entry_exit_dict)
-    #>  [1mRows:  [22m [34m717 [39m  [1mColumns:  [22m [34m67 [39m
-    #>  [36m── [39m  [1mColumn specification [22m  [36m──────────────────────────────────────────────────────── [39m
-    #>  [1mDelimiter: [22m "\t"
-    #>  [31mchr [39m   (4): X1, X18, X35, X52
-    #>  [32mdbl [39m  (56): X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15, X16, X2...
-    #>  [33mlgl [39m   (3): X17, X34, X51
-    #>  [34mtime [39m  (4): X2, X19, X36, X53
-    #> 
-    #>  [36mℹ [39m Use `spec()` to retrieve the full column specification for this data.
-    #>  [36mℹ [39m Specify the column types or set `show_col_types = FALSE` to quiet this message.
     #> $version
     #> [1] "1"
     #> 
@@ -6079,13 +6040,13 @@ When specifying a notefilepath, the function will
 
 ``` r
 keywords_dict <- list(
-      sleeping = list(keywords = list(c("seng", "sleeping", "bed", "sove", "soeve", "godnat", "night", "sleep")), value = 1), 
-      eating = list(keywords = list(c("start", "begin", "began"), c("maaltid", "eat", "meal", "food", "spis", "maal", "mad", "frokost", "morgenmad", "middag", "snack", "aftensmad")), value = 2), 
-      stop_sleeping = list(keywords = list(c("vaagen", "vaekke", "wake", "woken", "vaagnet")), value = 0), 
-      stop_anything = list(keywords = list(c("faerdig", "stop", "end ", "finished", "slut")), value = 0), 
-      activity = list(keywords = list(c("start", "begin", "began"), c("step", "exercise", "physical activity", "active", "motion", "aktiv")), value = 3), 
-      ree_start = list(keywords = list(c("start", "begin", "began"), c("REE", "BEE", "BMR", "RMR", "RER")), value = 4)
-    )
+  sleeping = list(keywords = list(c("seng", "sleeping", "bed", "sove", "soeve", "godnat", "night", "sleep")), value = 1),
+  eating = list(keywords = list(c("start", "begin", "began"), c("maaltid", "eat", "meal", "food", "spis", "maal", "mad", "frokost", "morgenmad", "middag", "snack", "aftensmad")), value = 2),
+  stop_sleeping = list(keywords = list(c("vaagen", "vaekke", "wake", "woken", "vaagnet")), value = 0),
+  stop_anything = list(keywords = list(c("faerdig", "stop", "end ", "finished", "slut")), value = 0),
+  activity = list(keywords = list(c("start", "begin", "began"), c("step", "exercise", "physical activity", "active", "motion", "aktiv")), value = 3),
+  ree_start = list(keywords = list(c("start", "begin", "began"), c("REE", "BEE", "BMR", "RMR", "RER")), value = 4)
+)
 ```
 
 If there are to lists e.g. for `sleeping`, at least one word of each
@@ -6194,7 +6155,7 @@ over record IDs and process all files within a project on RedCap, use
 the `preprocess_wric_files` function. To find out more about using
 RedCap, please see the `RedCAP` vignette.
 
-*OBS:* During processing, the data-file(s) will be downloaded and
+*ATTENTION!* During processing, the data-file(s) will be downloaded and
 afterwards deleted again. If the data is not allowed to be on your
 personal device at any point, please use this package on a secure
 server, where you are allowed to (temporarily) store the data.
@@ -6207,7 +6168,7 @@ time frames. Let’s look at how we would do that.
 
 1.  Import the preprocessed data (the csv-file) *You can skip this step,
     if you already have the data.frame, for example right after calling*
-    `preprocess_wric_files`.
+    [`preprocess_wric_files()`](https://ninaziegenbein.github.io/wrictools/reference/preprocess_WRIC_files.md).
 
 ``` r
 data <- read.csv("./example_data/my_project/XXXX_comment_WRIC_data.csv") 
@@ -6216,16 +6177,6 @@ head(data)
 
 ``` r
 result <- preprocess_wric_file(data_txt, notefilepath = note_txt)
-#> Rows: 717 Columns: 67
-#> ── Column specification ────────────────────────────────────────────────────────
-#> Delimiter: "\t"
-#> chr   (4): X1, X18, X35, X52
-#> dbl  (56): X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15, X16, X2...
-#> lgl   (3): X17, X34, X51
-#> time  (4): X2, X19, X36, X53
-#> 
-#> ℹ Use `spec()` to retrieve the full column specification for this data.
-#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 #> [1] "Starting time for room 1 is 2023-11-13 21:14:22 and end 2023-11-14 08:47:48 and for room 2 start is 2023-11-13 21:14:22 and end 2023-11-14 08:51:36"
 data <- result$dfs$df_room1
 head(data)
@@ -6278,9 +6229,9 @@ Some more helpful functions, you might want to use for/on your
 sub-dataframes:
 
 - `add_relative_time(dataframe)` - Renumbers *relative_time* column
-  starting from 0. Might be more intuitiv for further use. Example:
+  starting from 0. Might be more intuitive for further use. Example:
   `data_dinner <- add_relative_time(data_dinner)`
-- `cut_rows`- With this function you can easily create a subdataframe
+- `cut_rows`- With this function you can easily create a sub-dataframe
   (like we did above) based on datetime values (instead of the protocol
   value). Example:
   `data_dinner <- cut_rows(data, start="2023-11-14 20:04:00", end="2023-11-14 21:04:00")`
