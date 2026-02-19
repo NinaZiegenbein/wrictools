@@ -20,5 +20,10 @@ Useful links:
 \author{
 \strong{Maintainer}: Nina Ziegenbein \email{nina.ziegenbein@web.de} (\href{https://orcid.org/0009-0005-4913-8910}{ORCID}) [copyright holder]
 
+Other contributors:
+\itemize{
+  \item Anders Isaksen \email{andaas@rm.dk} (\href{https://orcid.org/0000-0001-8457-5466}{ORCID}) [reviewer]
+}
+
 }
 \keyword{internal}

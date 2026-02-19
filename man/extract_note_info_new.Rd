@@ -13,7 +13,7 @@ Data frame containing at least a "datetime" column.}
 \item{notes_path}{character
 Path to the note file containing protocol events.}
 
-\item{keywords_dict}{list, optional
+\item{keywords_dict}{List,
 A dictionary of keywords used to extract protocol events from a note file. Each entry should be a named list with:
 \describe{
 \item{keywords}{A character vector of keywords or phrases to match in the note comment. Matching is case-insensitive.}

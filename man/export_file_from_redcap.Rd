@@ -27,7 +27,9 @@ which is deleted when your R session ends.
 \examples{
 \dontshow{if (file.exists(path.expand("~/.config.R"))) withAutoprint(\{ # examplesIf}
 source(path.expand("~/.config.R"))
-export_file_from_redcap(record_id = "1", fieldname = "wric_data",
-                        api_url = api_url, api_token = api_token)
+export_file_from_redcap(
+  record_id = "1", fieldname = "wric_data",
+  api_url = api_url, api_token = api_token
+)
 \dontshow{\}) # examplesIf}
 }

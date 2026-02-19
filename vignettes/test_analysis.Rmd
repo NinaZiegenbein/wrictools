@@ -62,4 +62,8 @@ write.csv(methanol_df, methanol_file, row.names = FALSE)
 methanol_results <- analyse_methanol_burn(filepath = data_txt, methanolfilepath = methanol_file)
 print(methanol_results)
 ```
-Again these results are non-sense because the wric-data we're analyzing is not a methanol burn and the methanol measurements are fictional as well. But you can easily see the information the function returns. We can see the different measurements and most importantly the deviation between calculated and measured VO2 and VCO2 for each interval, meaning each time period between two measurements in the methanol measurement file.
+Again these results are non-sense because the wric-data we're analyzing is not a methanol burn and the methanol measurements are fictional as well. But you can easily see the information the function returns. 
+
+We can see the different measurements and most importantly the deviation between calculated and measured VO2 and VCO2 for each interval, meaning each time period between two measurements in the methanol measurement file. This deviation should ideally be 0. If it is not, check whether this might be at the beginning or end of the file where a door or hatch might have been opened. There is an additional table showing the same measurements for the entire period - if you use these values make sure to cut of any time in the beginning or end that might show noise from the door opening. You can easily do that by specifying start and end parameters.
+
+Additionally, 4 plots are created showing predicted vs measured O2 and CO2 over time. It is important to note that the value from one interval is plotted at the end point of that interval. The other two plots show RER over time and the methanol burn rate.

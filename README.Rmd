@@ -91,8 +91,8 @@ If you specify a path to the corresponding notefile, the code will try to automa
 * **keywords_dict:** [Nested List] A dictionary of keywords used to extract protocol events from a note file. Each entry should be a named list with keywords, value and type. Find out more in the function documentation or in `vignette("wrictools")`.
 
 The function returns a named list with the elements `metadata` and `df`.
-For version 1, `metadata` contains `r1_metadata` and `r2_metadata`, and `df` contains `df_room1` and `df_room2`.  
-For version 2, `metadata` and `df` each contain a single data frame.
+For software version 1, `metadata` contains `r1` and `r2`, and `df` contains `room1` and `room2`.  
+For version 2, `metadata` and `df` each contain a single data frame `metadata`and `data`. 
 If `save_csv` is True, then the DataFrames will be saved as csv files with "id_visit_WRIC_data.csv" or "id_visit_WRIC_metadata.csv".
 
 As this is probably the most important function I have explained this here in length. But you can always run

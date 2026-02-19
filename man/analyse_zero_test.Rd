@@ -40,7 +40,7 @@ analyse_zero_test(
 
 \item{notefilepath}{String, Directory path of the corresponding note file (.txt)}
 
-\item{keywords_dict}{list, optional
+\item{keywords_dict}{List,
 A dictionary of keywords used to extract protocol events from a note file. Each entry should be a named list with:
 \describe{
 \item{keywords}{A character vector of keywords or phrases to match in the note comment. Matching is case-insensitive.}
