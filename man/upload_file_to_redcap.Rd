@@ -18,7 +18,7 @@ upload_file_to_redcap(filepath, record_id, fieldname, api_url, api_token)
 \item{api_token}{String, personal token for the REDCap API, should be specified in your personal config.R file}
 }
 \value{
-None. Prints the HTTP status code of the request.
+The HTTP status code of the request.
 }
 \description{
 Uploads a file to REDCap for a specified record ID and field name.

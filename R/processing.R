@@ -858,7 +858,7 @@ create_wric_df_new <- function(filepath, lines, code, path_to_save = NULL, start
 #' @param df DataFrame containing wric data with columns for S1 and S2 measurements.
 #' @param threshold Numeric threshold percentage for mean relative delta discrepancies (default 0.05).
 #' @param individual Logical, if TRUE checks and reports individual row discrepancies beyond the threshold (default FALSE).
-#' @return None. Prints discrepancies to the console.
+#' @return Returns the discrepancies as a single character vector.
 #' @export
 #' @examples
 #' data_txt <- system.file("extdata", "data.txt", package = "wrictools")
@@ -912,8 +912,8 @@ check_discrepancies <- function(df, threshold = 0.05, individual = FALSE) {
       }
     }
   }
-
   cat(discrepancies, sep = "\n")
+  return(discrepancies)
 }
 
 #' Combines S1 and S2 measurements in the DataFrame using the specified method.
@@ -1110,7 +1110,7 @@ preprocess_wric_file <- function(filepath, code = "id", manual = NULL, save_csv 
 #' @param path File path where the exported file will be saved.
 #' @param api_url String, URL to the REDCap API, should be specified in your personal config.R file
 #' @param api_token String, personal token for the REDCap API, should be specified in your personal config.R file
-#' @return None. The file is saved to the specified path.
+#' @return filepath String, the filepath that the file was just saved to.
 #' @export
 #' @examplesIf file.exists(path.expand("~/.config.R"))
 #' source(path.expand("~/.config.R"))
@@ -1137,6 +1137,8 @@ export_file_from_redcap <- function(record_id, fieldname, path = NULL, api_url, 
   f <- file(filepath, "wb")
   writeLines(result, f)
   close(f)
+
+  return(filepath)
 }
 
 #' Uploads a file to REDCap for a specified record ID and field name.
@@ -1146,7 +1148,7 @@ export_file_from_redcap <- function(record_id, fieldname, path = NULL, api_url, 
 #' @param fieldname Field name to which the file will be uploaded.
 #' @param api_url String, URL to the REDCap API, should be specified in your personal config.R file
 #' @param api_token String, personal token for the REDCap API, should be specified in your personal config.R file
-#' @return None. Prints the HTTP status code of the request.
+#' @return The HTTP status code of the request.
 #' @export
 #' @examplesIf file.exists(path.expand("~/.config.R"))
 #' source(path.expand("~/.config.R"))
@@ -1172,6 +1174,8 @@ upload_file_to_redcap <- function(filepath, record_id, fieldname, api_url, api_t
     returnFormat = "json",
     file = file_content
   )
+
+  return(result)
 }
 
 #' Preprocesses multiple wric_files by RedCAP record ID, extracting metadata, creating DataFrames, and optionally saving results.

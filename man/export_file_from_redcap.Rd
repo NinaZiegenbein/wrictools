@@ -18,7 +18,7 @@ export_file_from_redcap(record_id, fieldname, path = NULL, api_url, api_token)
 \item{api_token}{String, personal token for the REDCap API, should be specified in your personal config.R file}
 }
 \value{
-None. The file is saved to the specified path.
+filepath String, the filepath that the file was just saved to.
 }
 \description{
 If you do not specify a path, the data will be downloaded to a temporary folder

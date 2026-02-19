@@ -16,7 +16,7 @@ check_discrepancies(df, threshold = 0.05, individual = FALSE)
 \item{individual}{Logical, if TRUE checks and reports individual row discrepancies beyond the threshold (default FALSE).}
 }
 \value{
-None. Prints discrepancies to the console.
+Returns the discrepancies as a single character vector.
 }
 \description{
 Checks for discrepancies between S1 and S2 measurements in the DataFrame and prints them to the console.

@@ -71,7 +71,6 @@ plot_and_stats <- function(df,
 #' @examples
 #' filepath <- system.file("extdata", "data.txt", package = "wrictools")
 #' analyse_zero_test(filepath)
-
 analyse_zero_test <- function(filepath, code = "id", manual = NULL, save_csv = FALSE, path_to_save = NULL,
                               combine = TRUE, method = "mean", start = NULL, end = NULL, notefilepath = NULL, keywords_dict = NULL, entry_exit_dict = NULL) {
 
@@ -88,7 +87,7 @@ analyse_zero_test <- function(filepath, code = "id", manual = NULL, save_csv = F
     }
     stats[[name]] <- plot_and_stats(df = dfs_list[[name]], start = start, end = end, title = title)
   }
-  stats
+  return(stats)
 }
 
 #' Analyse methanol burn experiment
@@ -224,9 +223,10 @@ analyse_methanol_burn <- function(filepath, methanolfilepath, room1 = TRUE, date
     ) +
     theme_minimal()
 
-  list(
+  stats_plots <- list(
     per_interval = intervals,
     overall = overall,
     plots = list(O2 = p1, CO2 = p2, RER = p3, burn_rate = p4)
   )
+  return(stats_plots)
 }

@@ -60,6 +60,7 @@ write.csv(methanol_df, methanol_file, row.names = FALSE)
 
 # Analyse methanol burn
 methanol_results <- analyse_methanol_burn(filepath = data_txt, methanolfilepath = methanol_file)
+
 print(methanol_results)
 ```
 Again these results are non-sense because the wric-data we're analyzing is not a methanol burn and the methanol measurements are fictional as well. But you can easily see the information the function returns. 
