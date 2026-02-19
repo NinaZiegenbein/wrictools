@@ -1,0 +1,65 @@
+---
+title: "Analyzing WRIC Data: Zero Tests and Methanol Burns"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{test_analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(wrictools)
+```
+
+# Introduction
+
+This vignette shows how to analyze **Zero Tests** and **Methanol Burn experiments** using `analyse_zero_test()` and `analyse_methanol_burn()`.
+
+---
+
+# Zero Test Analysis
+
+A zero test checks the baseline VO2 and VCO2 of the WRIC system, the mean should be 0 and the standard deviation low and both should be constant over time. Use `analyse_zero_test()` with a data file to get plots and statistics.
+
+```{r}
+# Example file included with the package
+filepath <- system.file("extdata", "data.txt", package = "wrictools")
+
+# Analyse zero test
+zero_stats <- analyse_zero_test(filepath)
+
+print(zero_stats)
+```
+
+As you can see the example data provided with this package does not look like a zero test, which you can also see when looking at the statistics. This vignette is intended as a quick example on how to use the package. If you change the file to your own zero test you can quickly assess whether the mean is 0, the standard deviation or whether there is an offset. 
+
+# Methanol Burn Analysis
+
+Methanol burns validate energy measurements in the WRIC. Use `analyse_methanol_burn()` with a WRIC data file and a methanol measurement file. The measurement file needs two columns named `datetime`and `methanol`. Datetime by default assume this format "2023-11-13 22:00", but you can specify your own dateformat and give it as a parameter to the function.
+
+```{r}
+# Example WRIC file
+data_txt <- system.file("extdata", "data.txt", package = "wrictools")
+
+# Made up methanol measurements to show functionality
+methanol_df <- data.frame(
+  datetime = as.POSIXct(c(
+    "2023-11-13 22:00", "2023-11-13 23:30", "2023-11-14 03:00", "2023-11-14 06:00", "2023-11-14 08:00"
+  ), format = "%Y-%m-%d %H:%M"),
+  methanol = c(4842.9, 4785.7, 4758.6, 4675.1, 4629.2)
+)
+methanol_file <- tempfile(fileext = ".csv")
+write.csv(methanol_df, methanol_file, row.names = FALSE)
+
+# Analyse methanol burn
+methanol_results <- analyse_methanol_burn(filepath = data_txt, methanolfilepath = methanol_file)
+print(methanol_results)
+```
+Again these results are non-sense because the wric-data we're analyzing is not a methanol burn and the methanol measurements are fictional as well. But you can easily see the information the function returns. We can see the different measurements and most importantly the deviation between calculated and measured VO2 and VCO2 for each interval, meaning each time period between two measurements in the methanol measurement file.

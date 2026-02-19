@@ -989,7 +989,7 @@ combine_measurements <- function(df, method = "mean") {
 #' @param start character or POSIXct or NULL, rows before this will be removed, if NULL takes first row e.g "2023-11-13 11:43:00"
 #' @param end character or POSIXct or NULL, rows after this will be removed, if NULL takes last row e.g "2023-11-13 11:43:00"
 #' @param notefilepath String, Directory path of the corresponding note file (.txt)
-#' @param keywords_dict list, optional
+#' @param keywords_dict List,
 #'   A dictionary of keywords used to extract protocol events from a note file. Each entry should be a named list with:
 #'   \describe{
 #'     \item{keywords}{A character vector of keywords or phrases to match in the note comment. Matching is case-insensitive.}

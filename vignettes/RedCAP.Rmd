@@ -47,8 +47,8 @@ Before you can interact with the RedCap API, you need to create a config.r file.
 
 Here is an example of how your config.r file should look:
 ```{r eval = FALSE}
-api_token <- '123C09E18E747592A693467A304EA32'
-api_url   <- 'https://redcap.au.dk/api/' #change this url to your RedCAP url (e.g. 'https://redcap.wustl.edu/')
+api_token <- 'YOUR_API_TOKEN' # Replace with your personal API token
+api_url <- 'https://redcap.au.dk/api/' #change this url to your RedCAP url (e.g. 'https://redcap.wustl.edu/')
 
 ```
 
