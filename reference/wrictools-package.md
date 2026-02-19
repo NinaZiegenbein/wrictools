@@ -1,4 +1,4 @@
-# wrictools: Analyze Whole Room Indirect Calorimetery (WRIC) Data
+# wrictools: Analyze Whole Room Indirect Calorimetry (WRIC) Data
 
 Provides functions, tutorials, and examples to preprocess, analyze, and
 visualize data from whole room indirect calorimeters (WRIC) by
