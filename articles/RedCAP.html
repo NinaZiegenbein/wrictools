@@ -35,6 +35,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/RedCAP.html">RedCAP</a></li>
+    <li><a class="dropdown-item" href="../articles/test_analysis.html">Analyzing WRIC Data: Zero Tests and Methanol Burns</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -113,8 +114,8 @@ config.r file. This file will store your API token and the RedCap URL.
 Use the example config_example.r provided in the repository.</p>
 <p>Here is an example of how your config.r file should look:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">api_token</span> <span class="op">&lt;-</span> <span class="st">'123C09E18E747592A693467A304EA32'</span></span>
-<span><span class="va">api_url</span>   <span class="op">&lt;-</span> <span class="st">'https://redcap.au.dk/api/'</span> <span class="co">#change this url to your RedCAP url (e.g. 'https://redcap.wustl.edu/')</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">api_token</span> <span class="op">&lt;-</span> <span class="st">'YOUR_API_TOKEN'</span> <span class="co"># Replace with your personal API token</span></span>
+<span><span class="va">api_url</span> <span class="op">&lt;-</span> <span class="st">'https://redcap.au.dk/api/'</span> <span class="co">#change this url to your RedCAP url (e.g. 'https://redcap.wustl.edu/')</span></span></code></pre></div>
 <p>Important: Keep this file secure. If you are working with sensitive
 data, make sure not to share this file or commit it to a public
 repository. <em>If you use Git, make sure you add a

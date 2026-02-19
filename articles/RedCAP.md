@@ -46,8 +46,8 @@ Use the example config_example.r provided in the repository.
 Here is an example of how your config.r file should look:
 
 ``` r
-api_token <- '123C09E18E747592A693467A304EA32'
-api_url   <- 'https://redcap.au.dk/api/' #change this url to your RedCAP url (e.g. 'https://redcap.wustl.edu/')
+api_token <- 'YOUR_API_TOKEN' # Replace with your personal API token
+api_url <- 'https://redcap.au.dk/api/' #change this url to your RedCAP url (e.g. 'https://redcap.wustl.edu/')
 ```
 
 Important: Keep this file secure. If you are working with sensitive

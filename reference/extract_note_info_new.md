@@ -23,8 +23,8 @@ extract_note_info_new(df, notes_path, keywords_dict = NULL)
 
 - keywords_dict:
 
-  list, optional A dictionary of keywords used to extract protocol
-  events from a note file. Each entry should be a named list with:
+  List, A dictionary of keywords used to extract protocol events from a
+  note file. Each entry should be a named list with:
 
   keywords
 

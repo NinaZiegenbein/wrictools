@@ -21,3 +21,8 @@ Useful links:
 
 **Maintainer**: Nina Ziegenbein <nina.ziegenbein@web.de>
 ([ORCID](https://orcid.org/0009-0005-4913-8910)) \[copyright holder\]
+
+Other contributors:
+
+- Anders Isaksen <andaas@rm.dk>
+  ([ORCID](https://orcid.org/0000-0001-8457-5466)) \[reviewer\]

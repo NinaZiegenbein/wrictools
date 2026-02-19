@@ -5,6 +5,9 @@
 - **Nina Ziegenbein**. Author, maintainer, copyright holder.
   [](https://orcid.org/0009-0005-4913-8910)
 
+- **Anders Isaksen**. Reviewer.
+  [](https://orcid.org/0000-0001-8457-5466)
+
 ## Citation
 
 Source:

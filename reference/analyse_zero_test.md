@@ -72,8 +72,8 @@ analyse_zero_test(
 
 - keywords_dict:
 
-  list, optional A dictionary of keywords used to extract protocol
-  events from a note file. Each entry should be a named list with:
+  List, A dictionary of keywords used to extract protocol events from a
+  note file. Each entry should be a named list with:
 
   keywords
 

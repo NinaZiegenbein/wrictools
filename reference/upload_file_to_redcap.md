@@ -43,7 +43,9 @@ if (FALSE) { # file.exists(path.expand("~/.config.R"))
 source(path.expand("~/.config.R"))
 tmp <- tempfile(fileext = ".txt")
 writeLines(c("Example content"), tmp)
-upload_file_to_redcap(filepath = tmp, record_id = "1", fieldname = "wric_data",
-                        api_url = api_url, api_token = api_token)
+upload_file_to_redcap(
+  filepath = tmp, record_id = "1", fieldname = "wric_data",
+  api_url = api_url, api_token = api_token
+)
 }
 ```

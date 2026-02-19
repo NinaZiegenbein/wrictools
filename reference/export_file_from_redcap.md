@@ -42,7 +42,9 @@ None. The file is saved to the specified path.
 ``` r
 if (FALSE) { # file.exists(path.expand("~/.config.R"))
 source(path.expand("~/.config.R"))
-export_file_from_redcap(record_id = "1", fieldname = "wric_data",
-                        api_url = api_url, api_token = api_token)
+export_file_from_redcap(
+  record_id = "1", fieldname = "wric_data",
+  api_url = api_url, api_token = api_token
+)
 }
 ```
