@@ -1,6 +1,6 @@
 Package: wrictools
 Title: Analyze Whole Room Indirect Calorimetry (WRIC) Data
-Version: 0.0.0.9000
+Version: 1.0.0
 Authors@R: c(
     person("Nina", "Ziegenbein", , "nina.ziegenbein@web.de", role = c("aut", "cre", "cph"), comment = c(ORCID = "0009-0005-4913-8910")),
     person("Anders", "Isaksen", , "andaas@rm.dk", role = "rev", comment = c(ORCID = "0000-0001-8457-5466")))
