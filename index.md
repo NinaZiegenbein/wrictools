@@ -4,10 +4,10 @@
 
 This package provides functions, tutorials, and examples to preprocess,
 analyze, and visualize data from whole room indirect calorimeters (WRIC)
-by Maastricht Instruments, using the ‘OmniCal’ software. Some functions
-may also work with WRICs from other manufacturers, though full
-functionality has only been validated for Maastricht Instruments
-devices.
+by Maastricht Instruments, using the ‘OmniCal’ software (both version 1
+and 2). Some functions may also work with WRICs from other
+manufacturers, though full functionality has only been validated for
+Maastricht Instruments devices.
 
 If you instead want to use the functions in Python, please click below.
 Please note, that the Python code will not be further maintained as of
@@ -25,7 +25,7 @@ If instead you want to install `wrictools` from GitHub use:
 
 ``` r
 library(remotes)
-install_github( "NinaZiegenbein/wrictools")
+install_github("NinaZiegenbein/wrictools")
 ```
 
 ## Example Usage
@@ -36,11 +36,12 @@ If you have a WRIC text file locally and want to preprocess it, the
 workflow involves reading the metadata at the top of the file,
 extracting the raw measurements into a structured CSV format, and
 trimming the dataset to only include rows between the specified study
-start and end times. Additional steps include adding a relative time
-variable, combining the two measurement streams, and optionally
-splitting the data by room (room1 and room2) before saving the final
-output as a CSV file. Many of these steps are parameter-controlled,
-allowing you to choose which actions to apply during preprocessing.
+start and end times. Additional steps include extracting protocol
+information from the note file, combining the two measurement streams,
+optionally splitting the data by room (only for data collected with
+software version 1) before saving the final output as a CSV file. Many
+of these steps are parameter-controlled, allowing you to choose which
+actions to apply during preprocessing.
 
 *Note: The data.txt in the /data folder is synthetic data intended to
 highlight the data pipeline, but should not be used for actual analysis
@@ -52,16 +53,6 @@ library(wrictools)
 
 data_txt <- system.file("extdata", "data.txt", package = "wrictools") # loading example data
 result <- preprocess_wric_file(data_txt) 
-#> Rows: 717 Columns: 67
-#> ── Column specification ────────────────────────────────────────────────────────
-#> Delimiter: "\t"
-#> chr   (4): X1, X18, X35, X52
-#> dbl  (56): X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15, X16, X2...
-#> lgl   (3): X17, X34, X51
-#> time  (4): X2, X19, X36, X53
-#> 
-#> ℹ Use `spec()` to retrieve the full column specification for this data.
-#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
 The above code specifies only the necessary parameter `filepath` and
@@ -71,28 +62,19 @@ default options the two function calls return exactly the same results.
 
 ``` r
 result <- preprocess_wric_file(
-    data_txt, 
-    code="id", 
-    manual=NULL, 
-    save_csv=FALSE, 
-    path_to_save=NULL, 
-    combine=TRUE, 
-    method="mean",
-    start=NULL,
-    end=NULL,
-    notefilepath= NULL,
-    keywords_dict=NULL
+  filepath = data_txt, 
+  code = "id", 
+  manual = NULL, 
+  save_csv = FALSE, 
+  path_to_save = NULL, 
+  combine = TRUE, 
+  method = "mean", 
+  start = NULL, 
+  end = NULL, 
+  notefilepath = NULL, 
+  keywords_dict = NULL, 
+  entry_exit_dict = NULL
 )
-#> Rows: 717 Columns: 67
-#> ── Column specification ────────────────────────────────────────────────────────
-#> Delimiter: "\t"
-#> chr   (4): X1, X18, X35, X52
-#> dbl  (56): X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15, X16, X2...
-#> lgl   (3): X17, X34, X51
-#> time  (4): X2, X19, X36, X53
-#> 
-#> ℹ Use `spec()` to retrieve the full column specification for this data.
-#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
 Here are explanations and options to all parameters you can specify:
@@ -116,8 +98,9 @@ Here are explanations and options to all parameters you can specify:
   removed, if NULL takes first row e.g “2023-11-13 11:43:00”
 - **end** \[character or POSIXct or NULL\], rows after this will be
   removed, if NULL takes last rows e.g “2023-11-13 11:43:00”
-- **notefilepath:** If you specify a path to the corresponding notefile,
-  the code will try to automatically extract the datetime and current
+- **notefilepath:** \[String\] Directory path of the corresponding note
+  file (.txt) If you specify a path to the corresponding notefile, the
+  code will try to automatically extract the datetime and current
   protocol specification (sleeping, exercising, eating etc). If possible
   please read the [How To Note
   File](https://github.com/hulmanlab/wrictools/blob/main/HowToNoteFile.pdf),
@@ -128,13 +111,19 @@ Here are explanations and options to all parameters you can specify:
   keyword search. You can check currently included keywords and extend
   them by checking the keywords_dict in the extract_note_info() function
   of the preprocessing.R file.
-- **keywords_dict:** \[Nested List\] A “dictionary” with keywords for
-  extracting protocol information out of the notefile.
+- **keywords_dict:** \[Nested List\] A dictionary of keywords used to
+  extract protocol events from a note file. Each entry should be a named
+  list with keywords, value and type. Find out more in the function
+  documentation or in
+  [`vignette("wrictools")`](https://ninaziegenbein.github.io/wrictools/articles/wrictools.md).
 
-The function returns a list with
-`r1`\_metadata`,`r2_metadata`,`df_room1`and`df_room2`. Each item of the list is a DataFrame of either the metadata or the preprocessed actual data for either room 1 or 2. If`save_csv\`
-is True, then the DataFrames will be saved as csv files with
-“id_visit_WRIC_data.csv” or “id_visit_WRIC_metadata.csv”.
+The function returns a named list with the elements `metadata` and `df`.
+For software version 1, `metadata` contains `r1` and `r2`, and `df`
+contains `room1` and `room2`.  
+For version 2, `metadata` and `df` each contain a single data frame
+`metadata`and `data`. If `save_csv` is True, then the DataFrames will be
+saved as csv files with “id_visit_WRIC_data.csv” or
+“id_visit_WRIC_metadata.csv”.
 
 As this is probably the most important function I have explained this
 here in length. But you can always run
@@ -157,13 +146,14 @@ function will automatically fetch the corresponding raw WRIC data,
 preprocess it, and return the results.
 
 To connect to your REDCap project, you need your API token and the API
-URL for your instance. These should be stored in a local file (for
-example ~/.config.R) and sourced when you run the function. A minimal
-config file looks like this:
+URL for your instance. These can be assigned in the global environment
+manually, or be stored in a local file (for example ~/.config.R) and
+sourced when you run the function. A minimal config file looks like
+this:
 
 ``` r
-api_token <- '123C09E18E747592A693467A304EA32'
-api_url   <- 'https://redcap.au.dk/api/' #change this url to your RedCAP url (e.g. 'https://redcap.wustl.edu/')
+api_token <- 'YOUR_API_TOKEN' # Replace with your personal API token
+api_url <- 'https://redcap.au.dk/api/' #change this url to your RedCAP url (e.g. 'https://redcap.wustl.edu/')
 ```
 
 **Get your API Token for RedCap**
@@ -197,16 +187,15 @@ result <- preprocess_wric_files(
   csv_file   = tmp_csv,
   fieldname  = "wric_data",
   api_url    = api_url,
-  api_token  = api_token,
-  save_csv   = TRUE,
-  combine    = TRUE,
-  method     = "mean"
+  api_token  = api_token
 )
 ```
 
 The function returns a list, where each element corresponds to one
-record ID. Each record ID contains its own metadata and preprocessed
-data frames for room1 and room2.
+record ID. Each record ID contains its own returned named list (see
+description of
+[`preprocess_wric_file()`](https://ninaziegenbein.github.io/wrictools/reference/preprocess_WRIC_file.md)
+above)
 
 ## Other good-to-know functions
 
@@ -219,6 +208,8 @@ Remember that you can learn more about each function and it’s usage by
 - `cut_rows` to cut your dataframe to certain timepoints
 - `check-discrepancies`to check the difference between the two sensors
   within a chamber
+
+For analysis of zero tests or methanol burns find out more in xxx.#TODO
 
 ## Support, Maintenance and Future Work
 
