@@ -35,7 +35,7 @@ export_file_from_redcap(record_id, fieldname, path = NULL, api_url, api_token)
 
 ## Value
 
-None. The file is saved to the specified path.
+filepath String, the filepath that the file was just saved to.
 
 ## Examples
 

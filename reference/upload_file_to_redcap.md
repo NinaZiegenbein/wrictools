@@ -34,7 +34,7 @@ upload_file_to_redcap(filepath, record_id, fieldname, api_url, api_token)
 
 ## Value
 
-None. Prints the HTTP status code of the request.
+The HTTP status code of the request.
 
 ## Examples
 

@@ -78,6 +78,7 @@ write.csv(methanol_df, methanol_file, row.names = FALSE)
 
 # Analyse methanol burn
 methanol_results <- analyse_methanol_burn(filepath = data_txt, methanolfilepath = methanol_file)
+
 print(methanol_results)
 #> $per_interval
 #> # A tibble: 4 × 14
