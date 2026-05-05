@@ -14,13 +14,13 @@ Source:
 [`DESCRIPTION`](https://github.com/NinaZiegenbein/wrictools/blob/master/DESCRIPTION)
 
 Ziegenbein N (2026). *wrictools: Analyze Whole Room Indirect Calorimetry
-(WRIC) Data*. R package version 1.0.0,
+(WRIC) Data*. R package version 1.0.1,
 <https://github.com/NinaZiegenbein/wrictools>.
 
     @Manual{,
       title = {wrictools: Analyze Whole Room Indirect Calorimetry (WRIC) Data},
       author = {Nina Ziegenbein},
       year = {2026},
-      note = {R package version 1.0.0},
+      note = {R package version 1.0.1},
       url = {https://github.com/NinaZiegenbein/wrictools},
     }
