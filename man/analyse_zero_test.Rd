@@ -16,7 +16,8 @@ analyse_zero_test(
   end = NULL,
   notefilepath = NULL,
   keywords_dict = NULL,
-  entry_exit_dict = NULL
+  entry_exit_dict = NULL,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -56,6 +57,8 @@ Behavior rules:
 If \code{NULL}, a default set of keywords is used.}
 
 \item{entry_exit_dict}{Nested List, used to extract entry/exit times from note file}
+
+\item{verbose}{Logical; if TRUE (default), prints the plot and statistics.}
 }
 \value{
 A named list of data frames with statistics for each room (v1) or for all data (v2).

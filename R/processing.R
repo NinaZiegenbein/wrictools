@@ -733,7 +733,7 @@ create_wric_df <- function(filepath, lines, code_1, code_2, path_to_save = NULL,
     }
     df_room1 <- cut_rows(df_room1, start_1, end_1)
     df_room2 <- cut_rows(df_room2, start_2, end_2)
-    print(paste(
+    message(paste(
       "Starting time for room 1 is", start_1, "and end", end_1,
       "and for room 2 start is", start_2, "and end", end_2
     ))
@@ -912,7 +912,7 @@ check_discrepancies <- function(df, threshold = 0.05, individual = FALSE) {
       }
     }
   }
-  cat(discrepancies, sep = "\n")
+  message(discrepancies, sep = "\n")
   return(discrepancies)
 }
 

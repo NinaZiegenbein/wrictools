@@ -9,7 +9,7 @@
 #'
 #' @examples
 #' csv <- system.file("extdata", "example.csv", package = "wrictools")
-#' visualize_with_protocol(csv, plot = "VO2")
+#' figure <- visualize_with_protocol(csv, plot = "VO2")
 #' @export
 visualize_with_protocol <- function(csv_file, plot = "RER", protocol_colors_labels = NULL, save_png = FALSE, path_to_save = NULL) {
   protocol <- NULL
@@ -44,7 +44,6 @@ visualize_with_protocol <- function(csv_file, plot = "RER", protocol_colors_labe
                              fill = factor(protocol)), alpha = 0.3) +
     scale_fill_manual(values = setNames(protocol_colors_labels$color, as.character(protocol_colors_labels$protocol)),
                       labels = protocol_colors_labels$label, name = "Protocol")
-  print(p)  # Display the plot
 
   if (save_png) {
     if (plot == "Energy Expenditure (kcal/min)") {
@@ -55,7 +54,8 @@ visualize_with_protocol <- function(csv_file, plot = "RER", protocol_colors_labe
     plot_filename <- ifelse(!is.null(path_to_save),
                             paste0(path_to_save, "/", file_name, "_", plot, "_plot.png"),
                             paste0(file_name, "_", plot, "_plot.png"))
-    print(plot_filename)
+    message(plot_filename)
     ggsave(plot_filename, plot = p, width = 12, height = 6, dpi = 600)
   }
+  return(p)
 }

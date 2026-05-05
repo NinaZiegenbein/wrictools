@@ -31,5 +31,5 @@ Visualizes time-series data from a WRIC CSV file, highlighting protocol changes 
 }
 \examples{
 csv <- system.file("extdata", "example.csv", package = "wrictools")
-visualize_with_protocol(csv, plot = "VO2")
+figure <- visualize_with_protocol(csv, plot = "VO2")
 }

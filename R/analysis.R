@@ -5,7 +5,9 @@
 #' @param end POSIXct or character; optional end time to subset the data.
 #' @param title Character; plot title.
 #'
-#' @return A data frame with variables `variable` (VO2/VCO2), `mean`, `sd`, `min`, `max`, and `slope` (change over time).
+#'@return A list with two elements:
+#' \item{plot}{ggplot object of VO2 and VCO2 over time}
+#' \item{stats}{data frame with summary statistics for variables `variable` (VO2/VCO2), `mean`, `sd`, `min`, `max`, and `slope` (change over time)}
 #' @keywords internal
 #' @noRd
 plot_and_stats <- function(df,
@@ -28,8 +30,6 @@ plot_and_stats <- function(df,
       colour = NULL
     ) +
     theme_minimal()
-
-  print(p)
 
   # Basic stats
   stats <- bind_rows(
@@ -54,7 +54,7 @@ plot_and_stats <- function(df,
 
   # p <- ggplot(df, aes(x = .data[["relative_time"]], y = .data[[plot]]))
 
-  return(stats)
+  return(list(plot = p, stats = stats))
 }
 
 #' Analyse a Zero Test WRIC file
@@ -65,6 +65,7 @@ plot_and_stats <- function(df,
 #' a single dataset is processed.
 #'
 #' @inheritParams preprocess_wric_file
+#' @param verbose Logical; if TRUE (default), prints the plot and statistics.
 #'
 #' @return A named list of data frames with statistics for each room (v1) or for all data (v2).
 #' @export
@@ -72,7 +73,7 @@ plot_and_stats <- function(df,
 #' filepath <- system.file("extdata", "data.txt", package = "wrictools")
 #' analyse_zero_test(filepath)
 analyse_zero_test <- function(filepath, code = "id", manual = NULL, save_csv = FALSE, path_to_save = NULL,
-                              combine = TRUE, method = "mean", start = NULL, end = NULL, notefilepath = NULL, keywords_dict = NULL, entry_exit_dict = NULL) {
+                              combine = TRUE, method = "mean", start = NULL, end = NULL, notefilepath = NULL, keywords_dict = NULL, entry_exit_dict = NULL, verbose = TRUE) {
 
   result <- preprocess_wric_file(filepath, code, manual, save_csv, path_to_save, combine, method, start, end, notefilepath, keywords_dict, entry_exit_dict)
   dfs_list <- result$dfs
@@ -85,7 +86,14 @@ analyse_zero_test <- function(filepath, code = "id", manual = NULL, save_csv = F
     if (version == "1") {
       title <- paste(title, "- Room", gsub("room", "", name))
     }
-    stats[[name]] <- plot_and_stats(df = dfs_list[[name]], start = start, end = end, title = title)
+
+    res <- plot_and_stats(df = dfs_list[[name]], start = start, end = end, title = title)
+    if (verbose) {
+      print(res$plot)
+      print(res$stats)
+    }
+
+    stats[[name]] <- res$stats
   }
   return(stats)
 }
