@@ -29,7 +29,7 @@ This document serves as a guided tutorial to help you get started using the WRIC
   - **A Programming Environment (RStudio)**: I recommend using RStudio, but feel free to use a different IDE.
   
   - **[Install R](https://cran.r-project.org/mirrors.html)**
-  - **[Install RStudio](https://posit.co/download/rstudio-desktop/)**
+  - **[Install RStudio](https://posit.co/download/rstudio-desktop)**
   
   ## FAQ and "Programming Terms"
   ### What is the difference between R and RStudio?
