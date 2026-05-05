@@ -1,6 +1,7 @@
 # wrictools
 
 ``` r
+
 library(wrictools)
 ```
 
@@ -48,6 +49,7 @@ We are in the process of submitting `wrictools` to CRAN, so for now you
 can install the current wrictools **development** version via GitHub:
 
 ``` r
+
 library(remotes)
 install_github("NinaZiegenbein/wrictools")
 ```
@@ -56,12 +58,14 @@ Once the package is on CRAN you can install the `wrictools` package from
 CRAN as normal:
 
 ``` r
+
 install.packages("wrictools")
 ```
 
 Once installed, load the package:
 
 ``` r
+
 library(wrictools)
 ```
 
@@ -78,6 +82,7 @@ that returned multiple rooms in one file, as well as files created using
 the current software version 2.x.
 
 ``` r
+
 data_txt <- system.file("extdata", "data.txt", package = "wrictools") # loading example data
 result <- preprocess_wric_file(data_txt)
 
@@ -101,6 +106,7 @@ why it returns metadata and data.frames for both room 1 and room 2.
 Let’s look at the output really quick for room 1:
 
 ``` r
+
 head(r1_metadata)
 #>   Project Subject.ID Experiment.performed.by Comments
 #> 1 PROJECT       XXXX                JANE DOE  Visit 2
@@ -139,6 +145,7 @@ Let’s see what the output would look like for data from software version
 2:
 
 ``` r
+
 data_v2_txt <- system.file("extdata", "data_v2.txt", package = "wrictools") # loading example data
 result <- preprocess_wric_file(data_v2_txt)
 
@@ -185,6 +192,7 @@ their default values. Default means, that if you do not specify this
 parameter, this is the value that the parameter has by default.
 
 ``` r
+
 result <- preprocess_wric_file(
   filepath = data_txt, 
   code = "id", 
@@ -241,6 +249,7 @@ To explore the available functionality and arguments for key functions,
 simply call:
 
 ``` r
+
 ?preprocess_wric_file
 ```
 
@@ -269,10 +278,11 @@ etc. This enables quick processing and easy access to extract and
 compare various e.g. eating periods. Let’s try it:
 
 ``` r
+
 note_txt <- system.file("extdata", "note.txt", package = "wrictools") # loading example data
 result <- preprocess_wric_file(data_txt, 
                             notefilepath=note_txt)
-#> [1] "Starting time for room 1 is 2023-11-13 21:14:22 and end 2023-11-14 08:47:48 and for room 2 start is 2023-11-13 21:14:22 and end 2023-11-14 08:51:36"
+#> Starting time for room 1 is 2023-11-13 21:14:22 and end 2023-11-14 08:47:48 and for room 2 start is 2023-11-13 21:14:22 and end 2023-11-14 08:51:36
 head(result$dfs$room1)
 #>              datetime relative_time      VO2     VCO2       RER     FiO2
 #> 1 2023-11-13 21:16:21             0 686.7342 566.7062 0.8373200 19.49793
@@ -6117,6 +6127,7 @@ When specifying a notefilepath, the function will
     dictionary of keywords and protocol values:
 
 ``` r
+
 keywords_dict <- list(
   sleeping = list(keywords = list(c("seng", "sleeping", "bed", "sove", "soeve", "godnat", "night", "sleep")), value = 1),
   eating = list(keywords = list(c("start", "begin", "began"), c("maaltid", "eat", "meal", "food", "spis", "maal", "mad", "frokost", "morgenmad", "middag", "snack", "aftensmad")), value = 2),
@@ -6150,6 +6161,7 @@ of your wric_data files in one folder and want to process them at the
 same time. This is an example of just that.
 
 ``` r
+
 # Specify the folder with the wric_data
 data_folder <- "./example_data/my_project"
 
@@ -6171,6 +6183,7 @@ to create a list of filename pairs. Below you can see both options:
 ###### Option 1 - Pairs based on shared dates
 
 ``` r
+
 data_folder <- "./example_data/my_project"
 
 data_files <- list.files(data_folder, pattern = "^Results_.*_(\\d{12})\\.txt$", 
@@ -6197,6 +6210,7 @@ for (data_file in data_files) {
 ###### Option 2 - Based on File-Pairs
 
 ``` r
+
 # Manually specify the pairs of data files and note files (these are made up examples)
 filename_pairs <- list(
   list(
@@ -6249,13 +6263,15 @@ time frames. Let’s look at how we would do that.
     [`preprocess_wric_files()`](https://ninaziegenbein.github.io/wrictools/reference/preprocess_WRIC_files.md).
 
 ``` r
+
 data <- read.csv("./example_data/my_project/XXXX_comment_WRIC_data.csv") 
 head(data)
 ```
 
 ``` r
+
 result <- preprocess_wric_file(data_txt, notefilepath = note_txt)
-#> [1] "Starting time for room 1 is 2023-11-13 21:14:22 and end 2023-11-14 08:47:48 and for room 2 start is 2023-11-13 21:14:22 and end 2023-11-14 08:51:36"
+#> Starting time for room 1 is 2023-11-13 21:14:22 and end 2023-11-14 08:47:48 and for room 2 start is 2023-11-13 21:14:22 and end 2023-11-14 08:51:36
 data <- result$dfs$room1
 head(data)
 #>              datetime relative_time      VO2     VCO2       RER     FiO2
@@ -6293,6 +6309,7 @@ head(data)
     afterwards.
 
 ``` r
+
 # we take the first (1) instance where the protocol is 2 (eating)
 breakfast_index <- which(data$protocol == 2)[1] 
 print(breakfast_index)
@@ -6337,6 +6354,7 @@ to just take the second instance, but we need to identify transitions
 from another number to 2 and then choose the second transition.
 
 ``` r
+
 # we additionally check wether the row right before (lag) is not 2 and 
 # then take the second instance (2) to get the dinner time
 dinner_index <- which(data$protocol == 2 & dplyr::lag(data$protocol) != 2)[2] 
@@ -6379,6 +6397,7 @@ head(data_dinner) #Let's look at the data to check wether it worked correctly
     breakfast and dinner.
 
 ``` r
+
 t.test(data_breakfast$RER, data_dinner$RER, paired = TRUE)
 #> 
 #>  Paired t-test
@@ -6414,6 +6433,7 @@ Of course you can do these analyses batch-wise as well, the same way as
 above. Here an example:
 
 ``` r
+
 files <- list.files(folder_path, pattern = "_data\\.csv$", full.names = TRUE)
 for (file in files) {
     data <- read.csv(file)
@@ -6431,6 +6451,7 @@ for (file in files) {
 Let’s try to visualize the data highlighted by the protocol.
 
 ``` r
+
 example_csv <- system.file("extdata", "example.csv", package = "wrictools") # loading example data
 visualize_with_protocol(example_csv) 
 ```
@@ -6449,6 +6470,7 @@ To see all parameters we can specify, let’s use `?function_name` again.
 Here an example for batch processing over multiple files
 
 ``` r
+
 # Path to the folder containing the files
 folder_path <- "example_data/my_project"
 

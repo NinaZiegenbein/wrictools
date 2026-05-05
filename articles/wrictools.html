@@ -330,7 +330,7 @@ various e.g. eating periods. Let’s try it:</p>
 <code class="sourceCode R"><span><span class="va">note_txt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"note.txt"</span>, package <span class="op">=</span> <span class="st">"wrictools"</span><span class="op">)</span> <span class="co"># loading example data</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/preprocess_WRIC_file.html">preprocess_wric_file</a></span><span class="op">(</span><span class="va">data_txt</span>, </span>
 <span>                            notefilepath<span class="op">=</span><span class="va">note_txt</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Starting time for room 1 is 2023-11-13 21:14:22 and end 2023-11-14 08:47:48 and for room 2 start is 2023-11-13 21:14:22 and end 2023-11-14 08:51:36"</span></span>
+<span><span class="co">#&gt; Starting time for room 1 is 2023-11-13 21:14:22 and end 2023-11-14 08:47:48 and for room 2 start is 2023-11-13 21:14:22 and end 2023-11-14 08:51:36</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">dfs</span><span class="op">$</span><span class="va">room1</span><span class="op">)</span></span>
 <span><span class="co">#&gt;              datetime relative_time      VO2     VCO2       RER     FiO2</span></span>
 <span><span class="co">#&gt; 1 2023-11-13 21:16:21             0 686.7342 566.7062 0.8373200 19.49793</span></span>
@@ -6317,7 +6317,7 @@ calling</em> <code><a href="../reference/preprocess_WRIC_files.html">preprocess_
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/preprocess_WRIC_file.html">preprocess_wric_file</a></span><span class="op">(</span><span class="va">data_txt</span>, notefilepath <span class="op">=</span> <span class="va">note_txt</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Starting time for room 1 is 2023-11-13 21:14:22 and end 2023-11-14 08:47:48 and for room 2 start is 2023-11-13 21:14:22 and end 2023-11-14 08:51:36"</span></span>
+<span><span class="co">#&gt; Starting time for room 1 is 2023-11-13 21:14:22 and end 2023-11-14 08:47:48 and for room 2 start is 2023-11-13 21:14:22 and end 2023-11-14 08:51:36</span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">result</span><span class="op">$</span><span class="va">dfs</span><span class="op">$</span><span class="va">room1</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
 <span><span class="co">#&gt;              datetime relative_time      VO2     VCO2       RER     FiO2</span></span>

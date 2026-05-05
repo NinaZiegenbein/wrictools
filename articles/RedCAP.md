@@ -1,6 +1,7 @@
 # RedCAP
 
 ``` r
+
 library(wrictools)
 ```
 
@@ -46,6 +47,7 @@ Use the example config_example.r provided in the repository.
 Here is an example of how your config.r file should look:
 
 ``` r
+
 api_token <- 'YOUR_API_TOKEN' # Replace with your personal API token
 api_url <- 'https://redcap.au.dk/api/' #change this url to your RedCAP url (e.g. 'https://redcap.wustl.edu/')
 ```
@@ -73,6 +75,7 @@ following code to download a file. Replace record_id and fieldname with
 your actual record ID and field name:
 
 ``` r
+
 export_file_from_redcap(record_id = "12345", fieldname = "WRIC_raw")
 ```
 
@@ -111,6 +114,7 @@ df_room1, df_room2.
 and a fieldname of “WRIC_raw”, you can call the function like this:
 
 ``` r
+
 result <- preprocess_WRIC_files("./example_data/record_ids.csv", "WRIC_raw", 
                             code = "id", save_csv = TRUE)
 R1_metadata <- result$metadata$r1
@@ -133,6 +137,7 @@ record_id, and fieldname with your actual file path, record ID, and
 field name:
 
 ``` r
+
 upload_file_to_redcap(filepath = "./example_data/XXXX_WRIC_data.csv", 
                     record_id = "12345", fieldname = "WRIC_processed")
 ```

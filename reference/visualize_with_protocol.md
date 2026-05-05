@@ -49,5 +49,5 @@ highlights. Optionally saves the plot to a file if `save_png` is `TRUE`.
 
 ``` r
 csv <- system.file("extdata", "example.csv", package = "wrictools")
-visualize_with_protocol(csv, plot = "VO2")
+figure <- visualize_with_protocol(csv, plot = "VO2")
 ```

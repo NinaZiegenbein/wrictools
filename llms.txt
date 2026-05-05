@@ -17,6 +17,7 @@ March 2025.
 ## Installation
 
 ``` r
+
 # Install from CRAN
 install.packages("wrictools")
 ```
@@ -24,6 +25,7 @@ install.packages("wrictools")
 If instead you want to install `wrictools` from GitHub use:
 
 ``` r
+
 library(remotes)
 install_github("NinaZiegenbein/wrictools")
 ```
@@ -49,6 +51,7 @@ as it is unphysiological and does not correlate to the note.txt file
 either!*
 
 ``` r
+
 library(wrictools)
 
 data_txt <- system.file("extdata", "data.txt", package = "wrictools") # loading example data
@@ -61,6 +64,7 @@ these parameters for yourself, as can be seen below. As these are the
 default options the two function calls return exactly the same results.
 
 ``` r
+
 result <- preprocess_wric_file(
   filepath = data_txt, 
   code = "id", 
@@ -129,6 +133,7 @@ As this is probably the most important function I have explained this
 here in length. But you can always run
 
 ``` r
+
 ?preprocess_wric_file
 ```
 
@@ -152,6 +157,7 @@ sourced when you run the function. A minimal config file looks like
 this:
 
 ``` r
+
 api_token <- 'YOUR_API_TOKEN' # Replace with your personal API token
 api_url <- 'https://redcap.au.dk/api/' #change this url to your RedCAP url (e.g. 'https://redcap.wustl.edu/')
 ```
@@ -175,6 +181,7 @@ record IDs (one per row, no headers or extra text). The record IDs must
 exactly match those used in REDCap.
 
 ``` r
+
 # Load your REDCap credentials
 source(path.expand("~/.config.R"))
 

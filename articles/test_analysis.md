@@ -1,6 +1,7 @@
 # Analyzing WRIC Data: Zero Tests and Methanol Burns
 
 ``` r
+
 library(wrictools)
 ```
 
@@ -23,6 +24,7 @@ constant over time. Use
 with a data file to get plots and statistics.
 
 ``` r
+
 # Example file included with the package
 filepath <- system.file("extdata", "data.txt", package = "wrictools")
 
@@ -30,21 +32,28 @@ filepath <- system.file("extdata", "data.txt", package = "wrictools")
 zero_stats <- analyse_zero_test(filepath)
 ```
 
-![](test_analysis_files/figure-html/unnamed-chunk-2-1.png)![](test_analysis_files/figure-html/unnamed-chunk-2-2.png)
+![](test_analysis_files/figure-html/unnamed-chunk-2-1.png)
 
-``` r
+    #>   variable     mean        sd       min      max       slope
+    #> 1      VO2 356.7205 100.54488 -29.90960 786.6187 0.002766024
+    #> 2     VCO2 298.4697  87.95359 -45.17043 674.9738 0.002499467
 
-print(zero_stats)
-#> $room1
-#>   variable     mean        sd       min      max       slope
-#> 1      VO2 356.7205 100.54488 -29.90960 786.6187 0.002766024
-#> 2     VCO2 298.4697  87.95359 -45.17043 674.9738 0.002499467
-#> 
-#> $room2
-#>   variable     mean        sd       min      max       slope
-#> 1      VO2 332.0050 122.09571 -500.9322 708.2423 0.001944661
-#> 2     VCO2 267.9337  99.32789 -413.3808 565.4705 0.001476097
-```
+![](test_analysis_files/figure-html/unnamed-chunk-2-2.png)
+
+    #>   variable     mean        sd       min      max       slope
+    #> 1      VO2 332.0050 122.09571 -500.9322 708.2423 0.001944661
+    #> 2     VCO2 267.9337  99.32789 -413.3808 565.4705 0.001476097
+
+    print(zero_stats)
+    #> $room1
+    #>   variable     mean        sd       min      max       slope
+    #> 1      VO2 356.7205 100.54488 -29.90960 786.6187 0.002766024
+    #> 2     VCO2 298.4697  87.95359 -45.17043 674.9738 0.002499467
+    #> 
+    #> $room2
+    #>   variable     mean        sd       min      max       slope
+    #> 1      VO2 332.0050 122.09571 -500.9322 708.2423 0.001944661
+    #> 2     VCO2 267.9337  99.32789 -413.3808 565.4705 0.001476097
 
 As you can see the example data provided with this package does not look
 like a zero test, which you can also see when looking at the statistics.
@@ -63,6 +72,7 @@ default assume this format “2023-11-13 22:00”, but you can specify your
 own dateformat and give it as a parameter to the function.
 
 ``` r
+
 # Example WRIC file
 data_txt <- system.file("extdata", "data.txt", package = "wrictools")
 

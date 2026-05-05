@@ -20,7 +20,8 @@ analyse_zero_test(
   end = NULL,
   notefilepath = NULL,
   keywords_dict = NULL,
-  entry_exit_dict = NULL
+  entry_exit_dict = NULL,
+  verbose = TRUE
 )
 ```
 
@@ -114,6 +115,10 @@ analyse_zero_test(
 
   Nested List, used to extract entry/exit times from note file
 
+- verbose:
+
+  Logical; if TRUE (default), prints the plot and statistics.
+
 ## Value
 
 A named list of data frames with statistics for each room (v1) or for
@@ -125,7 +130,13 @@ all data (v2).
 filepath <- system.file("extdata", "data.txt", package = "wrictools")
 analyse_zero_test(filepath)
 
+#>   variable     mean        sd       min      max       slope
+#> 1      VO2 356.7205 100.54488 -29.90960 786.6187 0.002766024
+#> 2     VCO2 298.4697  87.95359 -45.17043 674.9738 0.002499467
 
+#>   variable     mean        sd       min      max       slope
+#> 1      VO2 332.0050 122.09571 -500.9322 708.2423 0.001944661
+#> 2     VCO2 267.9337  99.32789 -413.3808 565.4705 0.001476097
 #> $room1
 #>   variable     mean        sd       min      max       slope
 #> 1      VO2 356.7205 100.54488 -29.90960 786.6187 0.002766024
