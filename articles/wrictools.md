@@ -23,7 +23,7 @@ the following installed:
 
   - **[Install R](https://cran.r-project.org/mirrors.html)**
 
-  - **[Install RStudio](https://posit.co/download/rstudio-desktop/)**
+  - **[Install RStudio](https://posit.co/download/rstudio-desktop)**
 
   ## FAQ and “Programming Terms”
 
